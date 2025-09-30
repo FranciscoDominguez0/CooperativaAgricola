@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Cooperativa Agrícola La Pintada</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+</head>
+<body>
+    <div class="container">
+        <!-- Panel lateral decorativo -->
+        <div class="side-panel">
+            <h1>Únete a Nosotros</h1>
+            <h2>Cooperativa La Pintada</h2>
+            <p>Regístrate y forma parte de una comunidad comprometida con la agricultura sostenible y el desarrollo rural. Juntos cultivamos el futuro.</p>
+            <div style="margin-top: 30px; font-size: 2rem; opacity: 0.7;">
+                🌱 🤝 🌍
+            </div>
+        </div>
+
+        <!-- Área del formulario -->
+        <div class="form-area">
+            <div class="form-container">
+                <h2 class="form-title">
+                    <span class="icon">📝</span>
+                    Registro
+                </h2>
+                <p class="form-subtitle">Crea tu cuenta en la cooperativa</p>
+
+                <!-- Área de mensajes -->
+                <div id="mensaje" class="alert"></div>
+                
+                <!-- Loading spinner -->
+                <div id="loading" class="loading">
+                    <div class="spinner"></div>
+                    <p>Creando tu cuenta...</p>
+                </div>
+
+                <!-- Formulario de registro -->
+                <form id="registroForm">
+                    <div class="form-group">
+                        <label for="nombre">
+                            <span class="icon">👤</span>
+                            Nombre Completo
+                        </label>
+                        <input 
+                            type="text" 
+                            id="nombre" 
+                            name="nombre" 
+                            placeholder="Tu nombre completo"
+                            required
+                            autocomplete="name"
+                            minlength="2"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="correo">
+                            <span class="icon">📧</span>
+                            Correo Electrónico
+                        </label>
+                        <input 
+                            type="email" 
+                            id="correo" 
+                            name="correo" 
+                            placeholder="tu.correo@ejemplo.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="rol">
+                            <span class="icon">🏷️</span>
+                            Tipo de Miembro
+                        </label>
+                        <select id="rol" name="rol" required>
+                            <option value="">Selecciona tu rol</option>
+                            <option value="productor">🌾 Productor Agrícola</option>
+                            <option value="cliente">🏪 Cliente</option>
+                            <option value="contador">📊 Contador</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="contraseña">
+                            <span class="icon">🔒</span>
+                            Contraseña
+                        </label>
+                        <input 
+                            type="password" 
+                            id="contraseña" 
+                            name="contraseña" 
+                            placeholder="Mínimo 6 caracteres"
+                            required
+                            autocomplete="new-password"
+                            minlength="6"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmar_contraseña">
+                            <span class="icon">🔐</span>
+                            Confirmar Contraseña
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirmar_contraseña" 
+                            name="confirmar_contraseña" 
+                            placeholder="Repite tu contraseña"
+                            required
+                            autocomplete="new-password"
+                            minlength="6"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <span class="icon">🌱</span>
+                        Crear Cuenta
+                    </button>
+                </form>
+
+                <!-- Enlaces adicionales -->
+                <div class="link">
+                    <p>¿Ya tienes cuenta?</p>
+                    <a href="login.html">
+                        <span class="icon">🚀</span>
+                        Iniciar sesión
+                    </a>
+                </div>
+
+                <div class="link" style="margin-top: 15px;">
+                    <p style="font-size: 0.85rem; color: #666; line-height: 1.4;">
+                        Al registrarte, aceptas formar parte de nuestra comunidad agrícola y seguir nuestros principios de cooperación y desarrollo sostenible.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/registro.js"></script>
+</body>
+</html>
