@@ -7,46 +7,67 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Obtener lista de socios
     try {
         $pdo = conectarDB();
         
-        $search = $_GET['search'] ?? '';
-        $page = (int)($_GET['page'] ?? 1);
-        $limit = (int)($_GET['limit'] ?? 10);
-        $offset = ($page - 1) * $limit;
-        
-        $whereClause = '';
-        $params = [];
-        
-        if (!empty($search)) {
-            $whereClause = "WHERE nombre LIKE ? OR cedula LIKE ? OR email LIKE ?";
-            $searchTerm = "%$search%";
-            $params = [$searchTerm, $searchTerm, $searchTerm];
+        // Verificar si se solicita un socio específico
+        if (isset($_GET['id_socio'])) {
+            // Obtener un socio específico
+            $id_socio = (int)$_GET['id_socio'];
+            $stmt = $pdo->prepare("SELECT * FROM socios WHERE id_socio = ?");
+            $stmt->execute([$id_socio]);
+            $socio = $stmt->fetch();
+            
+            if ($socio) {
+                echo json_encode([
+                    'success' => true,
+                    'data' => $socio
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Socio no encontrado'
+                ]);
+            }
+        } else {
+            // Obtener lista de socios
+            $search = $_GET['search'] ?? '';
+            $page = (int)($_GET['page'] ?? 1);
+            $limit = (int)($_GET['limit'] ?? 10);
+            $offset = ($page - 1) * $limit;
+            
+            $whereClause = '';
+            $params = [];
+            
+            if (!empty($search)) {
+                $whereClause = "WHERE nombre LIKE ? OR cedula LIKE ? OR email LIKE ?";
+                $searchTerm = "%$search%";
+                $params = [$searchTerm, $searchTerm, $searchTerm];
+            }
+            
+            // Contar total de registros
+            $countQuery = "SELECT COUNT(*) as total FROM socios $whereClause";
+            $countStmt = $pdo->prepare($countQuery);
+            $countStmt->execute($params);
+            $totalRecords = $countStmt->fetch()['total'];
+            
+            // Obtener socios con paginación
+            $query = "SELECT * FROM socios $whereClause ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute($params);
+            $socios = $stmt->fetchAll();
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $socios,
+                'pagination' => [
+                    'current_page' => $page,
+                    'total_pages' => ceil($totalRecords / $limit),
+                    'total_records' => $totalRecords,
+                    'per_page' => $limit
+                ]
+            ]);
         }
-        
-        // Contar total de registros
-        $countQuery = "SELECT COUNT(*) as total FROM socios $whereClause";
-        $countStmt = $pdo->prepare($countQuery);
-        $countStmt->execute($params);
-        $totalRecords = $countStmt->fetch()['total'];
-        
-        // Obtener socios con paginación
-        $query = "SELECT * FROM socios $whereClause ORDER BY created_at DESC LIMIT $limit OFFSET $offset";
-        $stmt = $pdo->prepare($query);
-        $stmt->execute($params);
-        $socios = $stmt->fetchAll();
-        
-        echo json_encode([
-            'success' => true,
-            'data' => $socios,
-            'pagination' => [
-                'current_page' => $page,
-                'total_pages' => ceil($totalRecords / $limit),
-                'total_records' => $totalRecords,
-                'per_page' => $limit
-            ]
-        ]);
         
     } catch (PDOException $e) {
         echo json_encode(['success' => false, 'message' => 'Error al obtener socios: ' . $e->getMessage()]);
@@ -114,6 +135,9 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
     // Actualizar socio
     parse_str(file_get_contents("php://input"), $data);
     
+    // Debug: Log what we're receiving
+    error_log("PUT Data received: " . print_r($data, true));
+    
     try {
         $pdo = conectarDB();
         
@@ -131,6 +155,14 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'PUT') {
         
         if (empty($id_socio) || empty($nombre) || empty($cedula)) {
             echo json_encode(['success' => false, 'message' => 'Datos incompletos']);
+            exit();
+        }
+        
+        // Verificar si la cédula ya existe en otro socio
+        $checkStmt = $pdo->prepare("SELECT id_socio FROM socios WHERE cedula = ? AND id_socio != ?");
+        $checkStmt->execute([$cedula, $id_socio]);
+        if ($checkStmt->rowCount() > 0) {
+            echo json_encode(['success' => false, 'message' => 'Ya existe otro socio con esta cédula']);
             exit();
         }
         

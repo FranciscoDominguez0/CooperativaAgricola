@@ -7,600 +7,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            background: #f8fafc;
-            color: #1f2937;
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #2d5016, #4a7c59);
-            color: white;
-            padding: 1.5rem 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .header-content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .logo-icon {
-            width: 50px;
-            height: 50px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .logo-icon i {
-            font-size: 1.5rem;
-        }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-3px); }
-        }
-
-        .logo h1 {
-            font-size: 1.5rem;
-            font-weight: 700;
-        }
-
-        .user-info {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .user-details {
-            text-align: right;
-        }
-
-        .user-name {
-            font-weight: 600;
-            font-size: 1.1rem;
-        }
-
-        .user-role {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .logout-btn {
-            background: rgba(255, 255, 255, 0.15);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .logout-btn:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-1px);
-        }
-
-        /* Main Content */
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-
-        .welcome-section {
-            background: white;
-            border-radius: 20px;
-            padding: 3rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            border: 1px solid #e5e7eb;
-        }
-
-        .welcome-icon {
-            width: 100px;
-            height: 100px;
-            background: linear-gradient(135deg, #4a7c59, #2d5016);
-            border-radius: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 2rem;
-            box-shadow: 0 12px 32px rgba(45, 80, 22, 0.3);
-            animation: float 3s ease-in-out infinite;
-        }
-
-        .welcome-icon i {
-            font-size: 3rem;
-            color: white;
-        }
-
-        .welcome-section h2 {
-            color: #2d5016;
-            font-size: 2.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .welcome-section p {
-            color: #6b7280;
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        /* Stats Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 3rem;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 20px;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            text-align: center;
-            transition: all 0.3s ease;
-            border: 1px solid #e5e7eb;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 16px 48px rgba(0, 0, 0, 0.12);
-        }
-
-        .stat-icon {
-            width: 70px;
-            height: 70px;
-            background: linear-gradient(135deg, #4a7c59, #2d5016);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
-        }
-
-        .stat-icon i {
-            font-size: 2rem;
-            color: white;
-        }
-
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: #2d5016;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            color: #6b7280;
-            font-weight: 500;
-            font-size: 1rem;
-        }
-
-        /* Socios Section */
-        .socios-section {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-            border: 1px solid #e5e7eb;
-            margin-bottom: 2rem;
-        }
-
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .section-title {
-            color: #2d5016;
-            font-size: 2rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .section-title i {
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #4a7c59, #2d5016);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.5rem;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .search-input {
-            padding: 0.75rem 1rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            min-width: 250px;
-            transition: all 0.3s ease;
-        }
-
-        .search-input:focus {
-            outline: none;
-            border-color: #4a7c59;
-            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
-        }
-
-        .btn {
-            padding: 0.75rem 1.5rem;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            font-size: 0.95rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #2d5016, #4a7c59);
-            color: white;
-            box-shadow: 0 8px 24px rgba(45, 80, 22, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 32px rgba(45, 80, 22, 0.4);
-        }
-
-        .btn-secondary {
-            background: #f8fafc;
-            color: #6b7280;
-            border: 1px solid #e5e7eb;
-        }
-
-        .btn-secondary:hover {
-            background: #f1f5f9;
-        }
-
-        .btn-danger {
-            background: #dc2626;
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #b91c1c;
-        }
-
-        /* Table */
-        .table-container {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid #e5e7eb;
-        }
-
-        .table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-
-        .table th {
-            background: linear-gradient(135deg, #f8fafc, #f1f5f9);
-            color: #2d5016;
-            font-weight: 600;
-            padding: 1rem;
-            text-align: left;
-            border-bottom: 2px solid #e5e7eb;
-        }
-
-        .table td {
-            padding: 1rem;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        .table tbody tr:hover {
-            background: #f8fafc;
-        }
-
-        .status-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-        }
-
-        .status-activo {
-            background: #d1fae5;
-            color: #065f46;
-        }
-
-        .status-inactivo {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status-suspendido {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .btn-sm {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.8rem;
-        }
-
-        /* Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 20px;
-            padding: 2.5rem;
-            max-width: 600px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 32px 64px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal h3 {
-            color: #2d5016;
-            margin-bottom: 1.5rem;
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            color: #374151;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #4a7c59;
-            box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 1rem;
-            justify-content: flex-end;
-            margin-top: 2rem;
-        }
-
-        /* Loading */
-        .loading {
-            display: none;
-            text-align: center;
-            padding: 3rem;
-        }
-
-        .spinner {
-            width: 60px;
-            height: 60px;
-            border: 4px solid #e5e7eb;
-            border-top: 4px solid #4a7c59;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1.5rem;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        /* Pagination */
-        .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: 2rem;
-        }
-
-        .pagination button {
-            padding: 0.5rem 1rem;
-            border: 1px solid #e5e7eb;
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .pagination button:hover {
-            background: #f8fafc;
-        }
-
-        .pagination button.active {
-            background: #4a7c59;
-            color: white;
-            border-color: #4a7c59;
-        }
-
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .main-content {
-                padding: 1.5rem;
-            }
-            
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 1rem;
-            }
-
-            .user-info {
-                flex-direction: column;
-                text-align: center;
-            }
-
-            .main-content {
-                padding: 1rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .section-header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-container {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .search-input {
-                min-width: auto;
-            }
-
-            .table-container {
-                font-size: 0.9rem;
-            }
-
-            .modal-content {
-                padding: 1.5rem;
-                margin: 1rem;
-            }
-
-            .welcome-section {
-                padding: 2rem;
-            }
-
-            .welcome-section h2 {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header {
-                padding: 1rem;
-            }
-
-            .main-content {
-                padding: 0.5rem;
-            }
-
-            .welcome-section {
-                padding: 1.5rem;
-            }
-
-            .welcome-section h2 {
-                font-size: 1.5rem;
-            }
-
-            .socios-section {
-                padding: 1.5rem;
-            }
-
-            .table th, .table td {
-                padding: 0.5rem;
-            }
-
-            .actions {
-                flex-direction: column;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="css/dashboard.css">
 </head>
 <body>
     <!-- Header -->
@@ -624,6 +31,20 @@
         </div>
     </header>
 
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-item active" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <div class="nav-item" data-section="socios">
+                <i class="fas fa-users"></i>
+                Socios
+            </div>
+        </div>
+    </nav>
+
     <!-- Main Content -->
     <main class="main-content">
         <!-- Loading -->
@@ -632,85 +53,88 @@
             <p>Cargando dashboard...</p>
         </div>
 
-        <!-- Welcome Section -->
-        <section class="welcome-section" id="welcomeSection" style="display: none;">
-            <div class="welcome-icon">
-                <i class="fas fa-handshake"></i>
+        <!-- Dashboard Section -->
+        <section class="content-section active" id="dashboardSection">
+            <div class="welcome-section">
+                <div class="welcome-icon">
+                    <i class="fas fa-handshake"></i>
+                </div>
+                <h2 id="welcomeTitle">¡Bienvenido a tu Cooperativa!</h2>
+                <p id="welcomeMessage">Gestiona tu cooperativa de manera eficiente y moderna</p>
             </div>
-            <h2 id="welcomeTitle">¡Bienvenido a tu Cooperativa!</h2>
-            <p id="welcomeMessage">Gestiona tu cooperativa de manera eficiente y moderna</p>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number" id="totalMembers">0</div>
+                    <div class="stat-label">Miembros Activos</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-seedling"></i>
+                    </div>
+                    <div class="stat-number" id="totalCrops">0</div>
+                    <div class="stat-label">Cultivos Registrados</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-number" id="totalRevenue">$0</div>
+                    <div class="stat-label">Ingresos del Mes</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <div class="stat-number" id="pendingTasks">0</div>
+                    <div class="stat-label">Tareas Pendientes</div>
+                </div>
+            </div>
         </section>
 
-        <!-- Stats Grid -->
-        <div class="stats-grid" id="statsGrid" style="display: none;">
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-users"></i>
-                </div>
-                <div class="stat-number" id="totalMembers">0</div>
-                <div class="stat-label">Miembros Activos</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-seedling"></i>
-                </div>
-                <div class="stat-number" id="totalCrops">0</div>
-                <div class="stat-label">Cultivos Registrados</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-chart-line"></i>
-                </div>
-                <div class="stat-number" id="totalRevenue">$0</div>
-                <div class="stat-label">Ingresos del Mes</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-icon">
-                    <i class="fas fa-tasks"></i>
-                </div>
-                <div class="stat-number" id="pendingTasks">0</div>
-                <div class="stat-label">Tareas Pendientes</div>
-            </div>
-        </div>
-
         <!-- Socios Section -->
-        <section class="socios-section" id="sociosSection" style="display: none;">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <i class="fas fa-users"></i>
-                    Gestión de Socios
-                </h2>
-                <div class="search-container">
-                    <input type="text" id="searchInput" class="search-input" placeholder="Buscar socios...">
-                    <button class="btn btn-primary" id="addSocioBtn">
-                        <i class="fas fa-plus"></i> Agregar Socio
-                    </button>
+        <section class="content-section" id="sociosSection">
+            <div class="socios-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-users"></i>
+                        Gestión de Socios
+                    </h2>
+                    <div class="search-container">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Buscar socios...">
+                        <button class="btn btn-primary" id="addSocioBtn">
+                            <i class="fas fa-plus"></i> Agregar Socio
+                        </button>
+                    </div>
                 </div>
-            </div>
 
-            <div class="table-container">
-                <table class="table" id="sociosTable">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Cédula</th>
-                            <th>Teléfono</th>
-                            <th>Email</th>
-                            <th>Estado</th>
-                            <th>Aportes</th>
-                            <th>Deudas</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="sociosTableBody">
-                        <!-- Los datos se cargarán aquí -->
-                    </tbody>
-                </table>
-            </div>
+                <div class="table-container">
+                    <table class="table" id="sociosTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>Estado</th>
+                                <th>Aportes</th>
+                                <th>Deudas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="sociosTableBody">
+                            <!-- Los datos se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
 
-            <div class="pagination" id="pagination">
-                <!-- La paginación se generará aquí -->
+                <div class="pagination" id="pagination">
+                    <!-- La paginación se generará aquí -->
+                </div>
             </div>
         </section>
     </main>
@@ -800,332 +224,9 @@
         </div>
     </div>
 
-    <script>
-        let currentUser = null;
-        let currentPage = 1;
-        let totalPages = 1;
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            checkSession();
-            setupEventListeners();
-        });
-
-        async function checkSession() {
-            try {
-                const response = await fetch('php/verificar_sesion.php');
-                const data = await response.json();
-                
-                if (data.authenticated) {
-                    currentUser = data.user;
-                    loadDashboard();
-                } else {
-                    window.location.href = 'login.html';
-                }
-            } catch (error) {
-                console.error('Error checking session:', error);
-                window.location.href = 'login.html';
-            }
-        }
-
-        function loadDashboard() {
-            // Hide loading
-            document.getElementById('loading').style.display = 'none';
-            
-            // Show sections
-            document.getElementById('welcomeSection').style.display = 'block';
-            document.getElementById('statsGrid').style.display = 'grid';
-            document.getElementById('sociosSection').style.display = 'block';
-            
-            // Update user info
-            document.getElementById('userName').textContent = currentUser.nombre;
-            document.getElementById('userRole').textContent = getRoleDisplay(currentUser.rol);
-            
-            // Update welcome message
-            const hour = new Date().getHours();
-            let greeting = 'Buenos días';
-            if (hour >= 12 && hour < 18) greeting = 'Buenas tardes';
-            else if (hour >= 18) greeting = 'Buenas noches';
-            
-            document.getElementById('welcomeTitle').textContent = `${greeting}, ${currentUser.nombre}!`;
-            
-            // Load stats
-            loadStats();
-            
-            // Load socios
-            loadSocios();
-        }
-
-        function getRoleDisplay(role) {
-            const roles = {
-                'admin': 'Administrador',
-                'productor': 'Productor Agrícola',
-                'cliente': 'Cliente',
-                'contador': 'Contador'
-            };
-            return roles[role] || 'Miembro';
-        }
-
-        function loadStats() {
-            // Simulate loading stats
-            setTimeout(() => {
-                document.getElementById('totalMembers').textContent = '127';
-                document.getElementById('totalCrops').textContent = '45';
-                document.getElementById('totalRevenue').textContent = '$12,450';
-                document.getElementById('pendingTasks').textContent = '8';
-            }, 1000);
-        }
-
-        async function loadSocios(page = 1, search = '') {
-            try {
-                const params = new URLSearchParams({
-                    page: page,
-                    limit: 10,
-                    search: search
-                });
-                
-                const response = await fetch(`php/socios.php?${params}`);
-                const data = await response.json();
-                
-                if (data.success) {
-                    displaySocios(data.data);
-                    displayPagination(data.pagination);
-                    currentPage = data.pagination.current_page;
-                    totalPages = data.pagination.total_pages;
-                } else {
-                    console.error('Error loading socios:', data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        }
-
-        function displaySocios(socios) {
-            const tbody = document.getElementById('sociosTableBody');
-            tbody.innerHTML = '';
-            
-            socios.forEach(socio => {
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>${socio.id_socio}</td>
-                    <td>${socio.nombre}</td>
-                    <td>${socio.cedula}</td>
-                    <td>${socio.telefono || '-'}</td>
-                    <td>${socio.email || '-'}</td>
-                    <td><span class="status-badge status-${socio.estado}">${socio.estado}</span></td>
-                    <td>$${parseFloat(socio.aportes_totales).toLocaleString()}</td>
-                    <td>$${parseFloat(socio.deudas_pendientes).toLocaleString()}</td>
-                    <td>
-                        <div class="actions">
-                            <button class="btn btn-sm btn-secondary" onclick="editSocio(${socio.id_socio})">
-                                <i class="fas fa-edit"></i>
-                            </button>
-                            <button class="btn btn-sm btn-danger" onclick="deleteSocio(${socio.id_socio})">
-                                <i class="fas fa-trash"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                tbody.appendChild(row);
-            });
-        }
-
-        function displayPagination(pagination) {
-            const paginationDiv = document.getElementById('pagination');
-            paginationDiv.innerHTML = '';
-            
-            // Botón anterior
-            const prevBtn = document.createElement('button');
-            prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-            prevBtn.disabled = pagination.current_page === 1;
-            prevBtn.onclick = () => loadSocios(pagination.current_page - 1, document.getElementById('searchInput').value);
-            paginationDiv.appendChild(prevBtn);
-            
-            // Números de página
-            for (let i = 1; i <= pagination.total_pages; i++) {
-                if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
-                    const pageBtn = document.createElement('button');
-                    pageBtn.textContent = i;
-                    pageBtn.className = i === pagination.current_page ? 'active' : '';
-                    pageBtn.onclick = () => loadSocios(i, document.getElementById('searchInput').value);
-                    paginationDiv.appendChild(pageBtn);
-                } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
-                    const dots = document.createElement('span');
-                    dots.textContent = '...';
-                    dots.style.padding = '0.5rem';
-                    paginationDiv.appendChild(dots);
-                }
-            }
-            
-            // Botón siguiente
-            const nextBtn = document.createElement('button');
-            nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-            nextBtn.disabled = pagination.current_page === pagination.total_pages;
-            nextBtn.onclick = () => loadSocios(pagination.current_page + 1, document.getElementById('searchInput').value);
-            paginationDiv.appendChild(nextBtn);
-        }
-
-        function setupEventListeners() {
-            // Logout button
-            document.getElementById('logoutBtn').addEventListener('click', function() {
-                document.getElementById('logoutModal').style.display = 'flex';
-            });
-
-            // Modal buttons
-            document.getElementById('confirmLogout').addEventListener('click', async function() {
-                try {
-                    const response = await fetch('php/auth_logout.php', {
-                        method: 'POST'
-                    });
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        window.location.href = 'index.html';
-                    } else {
-                        alert('Error al cerrar sesión');
-                    }
-                } catch (error) {
-                    console.error('Error logging out:', error);
-                    window.location.href = 'index.html';
-                }
-            });
-
-            document.getElementById('cancelLogout').addEventListener('click', function() {
-                document.getElementById('logoutModal').style.display = 'none';
-            });
-
-            // Search functionality
-            document.getElementById('searchInput').addEventListener('input', function() {
-                const searchTerm = this.value;
-                loadSocios(1, searchTerm);
-            });
-
-            // Add socio button
-            document.getElementById('addSocioBtn').addEventListener('click', function() {
-                openSocioModal();
-            });
-
-            // Socio form
-            document.getElementById('socioForm').addEventListener('submit', async function(e) {
-                e.preventDefault();
-                await saveSocio();
-            });
-
-            // Cancel button
-            document.getElementById('cancelBtn').addEventListener('click', function() {
-                closeSocioModal();
-            });
-
-            // Close modal when clicking outside
-            document.getElementById('socioModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    closeSocioModal();
-                }
-            });
-        }
-
-        function openSocioModal(socio = null) {
-            const modal = document.getElementById('socioModal');
-            const form = document.getElementById('socioForm');
-            const title = document.getElementById('modalTitle');
-            
-            if (socio) {
-                title.textContent = 'Editar Socio';
-                // Fill form with socio data
-                Object.keys(socio).forEach(key => {
-                    const field = document.getElementById(key);
-                    if (field) {
-                        field.value = socio[key];
-                    }
-                });
-            } else {
-                title.textContent = 'Agregar Nuevo Socio';
-                form.reset();
-                document.getElementById('fecha_ingreso').value = new Date().toISOString().split('T')[0];
-            }
-            
-            modal.style.display = 'flex';
-        }
-
-        function closeSocioModal() {
-            document.getElementById('socioModal').style.display = 'none';
-        }
-
-        async function saveSocio() {
-            const form = document.getElementById('socioForm');
-            const formData = new FormData(form);
-            const socioId = document.getElementById('socioId').value;
-            
-            try {
-                const url = socioId ? 'php/socios.php' : 'php/socios.php';
-                const method = socioId ? 'PUT' : 'POST';
-                
-                const response = await fetch(url, {
-                    method: method,
-                    body: formData
-                });
-                
-                const data = await response.json();
-                
-                if (data.success) {
-                    closeSocioModal();
-                    loadSocios(currentPage, document.getElementById('searchInput').value);
-                    alert(data.message);
-                } else {
-                    alert(data.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error al guardar el socio');
-            }
-        }
-
-        function editSocio(id) {
-            // Find socio data and open modal
-            const table = document.getElementById('sociosTable');
-            const rows = table.querySelectorAll('tbody tr');
-            
-            for (let row of rows) {
-                const cells = row.querySelectorAll('td');
-                if (cells[0].textContent == id) {
-                    const socio = {
-                        id_socio: id,
-                        nombre: cells[1].textContent,
-                        cedula: cells[2].textContent,
-                        telefono: cells[3].textContent === '-' ? '' : cells[3].textContent,
-                        email: cells[4].textContent === '-' ? '' : cells[4].textContent,
-                        estado: cells[5].querySelector('.status-badge').textContent.trim()
-                    };
-                    openSocioModal(socio);
-                    break;
-                }
-            }
-        }
-
-        async function deleteSocio(id) {
-            if (confirm('¿Estás seguro de que deseas eliminar este socio?')) {
-                try {
-                    const formData = new FormData();
-                    formData.append('id_socio', id);
-                    
-                    const response = await fetch('php/socios.php', {
-                        method: 'DELETE',
-                        body: formData
-                    });
-                    
-                    const data = await response.json();
-                    
-                    if (data.success) {
-                        loadSocios(currentPage, document.getElementById('searchInput').value);
-                        alert(data.message);
-                    } else {
-                        alert(data.message);
-                    }
-                } catch (error) {
-                    console.error('Error:', error);
-                    alert('Error al eliminar el socio');
-                }
-            }
-        }
-    </script>
+    <script src="js/dashboard.js"></script>
 </body>
 </html>

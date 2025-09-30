@@ -1,380 +1,435 @@
 // JavaScript para Dashboard - Cooperativa Agrícola La Pintada
 
+let currentUser = null;
+let currentPage = 1;
+let totalPages = 1;
+
 document.addEventListener('DOMContentLoaded', function() {
-    // Elementos del DOM
-    const userNameElement = document.getElementById('userName');
-    const userRoleElement = document.getElementById('userRole');
-    const logoutBtn = document.getElementById('logoutBtn');
-    const logoutModal = document.getElementById('logoutModal');
-    const confirmLogoutBtn = document.getElementById('confirmLogout');
-    const cancelLogoutBtn = document.getElementById('cancelLogout');
+    checkSession();
+    setupEventListeners();
+});
 
-    // Verificar si el usuario está logueado
-    verificarSesion();
-
-    // Cargar información del usuario
-    cargarInformacionUsuario();
-
-    // Event listeners
-    logoutBtn.addEventListener('click', mostrarModalLogout);
-    confirmLogoutBtn.addEventListener('click', cerrarSesion);
-    cancelLogoutBtn.addEventListener('click', ocultarModalLogout);
-
-    // Cerrar modal al hacer clic fuera de él
-    logoutModal.addEventListener('click', function(e) {
-        if (e.target === logoutModal) {
-            ocultarModalLogout();
-        }
-    });
-
-    // Cerrar modal con tecla Escape
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && logoutModal.style.display === 'block') {
-            ocultarModalLogout();
-        }
-    });
-
-    // Función para verificar si hay sesión activa
-    function verificarSesion() {
-        // En una implementación real, esto verificaría con el servidor
-        // Por ahora, simulamos verificando si hay datos de usuario en sessionStorage
-        const userData = sessionStorage.getItem('userData');
+async function checkSession() {
+    try {
+        const response = await fetch('php/verificar_sesion.php');
+        const data = await response.json();
         
-        if (!userData) {
-            // No hay sesión, redirigir al login
-            mostrarMensajeYRedirigir('Sesión expirada. Redirigiendo al login...', 'login.html');
-            return;
-        }
-
-        try {
-            const user = JSON.parse(userData);
-            if (!user.id || !user.nombre) {
-                throw new Error('Datos de usuario inválidos');
+        if (data.authenticated) {
+            currentUser = data.user;
+            loadDashboard();
+        } else {
+            window.location.href = 'login.html';
             }
         } catch (error) {
-            console.error('Error parsing user data:', error);
-            sessionStorage.removeItem('userData');
-            mostrarMensajeYRedirigir('Error en los datos de sesión. Redirigiendo al login...', 'login.html');
-        }
+        console.error('Error checking session:', error);
+        window.location.href = 'login.html';
     }
+}
 
-    // Función para cargar información del usuario
-    function cargarInformacionUsuario() {
-        try {
-            const userData = sessionStorage.getItem('userData');
-            if (userData) {
-                const user = JSON.parse(userData);
-                
-                // Actualizar nombre de usuario
-                if (userNameElement && user.nombre) {
-                    userNameElement.textContent = user.nombre;
-                }
+function loadDashboard() {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('userName').textContent = currentUser.nombre;
+    document.getElementById('userRole').textContent = getRoleDisplay(currentUser.rol);
+    
+    const hour = new Date().getHours();
+    let greeting = 'Buenos días';
+    if (hour >= 12 && hour < 18) greeting = 'Buenas tardes';
+    else if (hour >= 18) greeting = 'Buenas noches';
+    
+    document.getElementById('welcomeTitle').textContent = `${greeting}, ${currentUser.nombre}!`;
+    loadStats();
+}
 
-                // Actualizar rol con iconos
-                if (userRoleElement && user.rol) {
-                    const roleIcons = {
-                        'admin': '👑 Administrador',
-                        'miembro': '🌾 Miembro',
-                        'empleado': '👨‍💼 Empleado',
-                        'invitado': '👥 Invitado'
-                    };
-                    userRoleElement.textContent = roleIcons[user.rol] || `📋 ${user.rol}`;
-                }
+function getRoleDisplay(role) {
+    const roles = {
+        'admin': 'Administrador',
+        'productor': 'Productor Agrícola',
+        'cliente': 'Cliente',
+        'contador': 'Contador'
+    };
+    return roles[role] || 'Miembro';
+}
 
-                // Personalizar saludo según la hora
-                personalizarSaludo();
-                
-                // Mostrar estadísticas del usuario (si las hay)
-                mostrarEstadisticasUsuario(user);
+function loadStats() {
+    setTimeout(() => {
+        document.getElementById('totalMembers').textContent = '127';
+        document.getElementById('totalCrops').textContent = '45';
+        document.getElementById('totalRevenue').textContent = '$12,450';
+        document.getElementById('pendingTasks').textContent = '8';
+    }, 1000);
+}
+
+async function loadSocios(page = 1, search = '') {
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            limit: 10,
+            search: search
+        });
+        
+        const response = await fetch(`php/socios.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displaySocios(data.data);
+            displayPagination(data.pagination);
+            currentPage = data.pagination.current_page;
+            totalPages = data.pagination.total_pages;
+        } else {
+            showToast('Error al cargar socios: ' + data.message, 'error');
             }
         } catch (error) {
-            console.error('Error cargando información del usuario:', error);
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    }
+}
+
+function displaySocios(socios) {
+    const tbody = document.getElementById('sociosTableBody');
+    tbody.innerHTML = '';
+    
+    socios.forEach(socio => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${socio.id_socio}</td>
+            <td>${socio.nombre}</td>
+            <td>${socio.cedula}</td>
+            <td>${socio.telefono || '-'}</td>
+            <td>${socio.email || '-'}</td>
+            <td><span class="status-badge status-${socio.estado}">${socio.estado}</span></td>
+            <td>$${parseFloat(socio.aportes_totales).toLocaleString()}</td>
+            <td>$${parseFloat(socio.deudas_pendientes).toLocaleString()}</td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-secondary" onclick="editSocio(${socio.id_socio})" title="Editar socio">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteSocio(${socio.id_socio}, '${socio.nombre}')" title="Eliminar socio">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function displayPagination(pagination) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => loadSocios(pagination.current_page - 1, document.getElementById('searchInput').value);
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === pagination.current_page ? 'active' : '';
+            pageBtn.onclick = () => loadSocios(i, document.getElementById('searchInput').value);
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
         }
     }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => loadSocios(pagination.current_page + 1, document.getElementById('searchInput').value);
+    paginationDiv.appendChild(nextBtn);
+}
 
-    // Función para personalizar saludo según la hora
-    function personalizarSaludo() {
-        const hora = new Date().getHours();
-        const welcomeCard = document.querySelector('.welcome-card h2');
-        
-        if (welcomeCard) {
-            let saludo = '';
-            let emoji = '';
+function setupEventListeners() {
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.dataset.section;
+            showSection(section);
             
-            if (hora >= 5 && hora < 12) {
-                saludo = '¡Buenos días y bienvenido';
-                emoji = '🌅';
-            } else if (hora >= 12 && hora < 18) {
-                saludo = '¡Buenas tardes y bienvenido';
-                emoji = '☀️';
-            } else {
-                saludo = '¡Buenas noches y bienvenido';
-                emoji = '🌙';
-            }
-            
-            welcomeCard.innerHTML = `${emoji} ${saludo} a tu Cooperativa!`;
-        }
-    }
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 
-    // Función para mostrar estadísticas del usuario
-    function mostrarEstadisticasUsuario(user) {
-        // Aquí podrías agregar más información específica del usuario
-        // Por ejemplo, último login, estadísticas de actividad, etc.
-        
-        // Actualizar último acceso si está disponible
-        if (user.ultimo_acceso) {
-            const lastLoginElement = document.getElementById('lastLogin');
-            if (lastLoginElement) {
-                const fecha = new Date(user.ultimo_acceso);
-                lastLoginElement.textContent = `Último acceso: ${formatearFecha(fecha)}`;
-            }
-        }
-    }
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'flex';
+    });
 
-    // Función para formatear fechas
-    function formatearFecha(fecha) {
-        const opciones = {
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit'
-        };
-        return fecha.toLocaleDateString('es-ES', opciones);
-    }
-
-    // Función para mostrar modal de logout
-    function mostrarModalLogout() {
-        logoutModal.style.display = 'block';
-        confirmLogoutBtn.focus(); // Enfocar el botón de confirmar
-    }
-
-    // Función para ocultar modal de logout
-    function ocultarModalLogout() {
-        logoutModal.style.display = 'none';
-    }
-
-    // Función para cerrar sesión
-    async function cerrarSesion() {
+    document.getElementById('confirmLogout').addEventListener('click', async function() {
         try {
-            // Mostrar loading en el botón
-            const originalText = confirmLogoutBtn.textContent;
-            confirmLogoutBtn.innerHTML = '<span class="loading"></span> Cerrando...';
-            confirmLogoutBtn.disabled = true;
-
-            // Enviar petición al servidor para cerrar sesión
             const response = await fetch('php/logout.php', {
-                method: 'POST',
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.href = 'index.html';
+            } else {
+                showToast('Error al cerrar sesión', 'error');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+            window.location.href = 'index.html';
+        }
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'none';
+    });
+
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        loadSocios(1, searchTerm);
+    });
+
+    document.getElementById('addSocioBtn').addEventListener('click', function() {
+        openSocioModal();
+    });
+
+    document.getElementById('socioForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await saveSocio();
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        closeSocioModal();
+    });
+
+    document.getElementById('socioModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeSocioModal();
+        }
+    });
+}
+
+function showSection(sectionName) {
+    document.querySelectorAll('.content-section').forEach(section => {
+        section.classList.remove('active');
+    });
+    
+    document.getElementById(sectionName + 'Section').classList.add('active');
+    
+    if (sectionName === 'socios') {
+        loadSocios();
+    }
+}
+
+function openSocioModal(socio = null) {
+    const modal = document.getElementById('socioModal');
+    const form = document.getElementById('socioForm');
+    const title = document.getElementById('modalTitle');
+    
+    if (socio) {
+        title.textContent = 'Editar Socio';
+        console.log('Estableciendo datos en el formulario:', socio);
+        
+        Object.keys(socio).forEach(key => {
+            let fieldId = key;
+            
+            // Mapear id_socio a socioId para el HTML
+            if (key === 'id_socio') {
+                fieldId = 'socioId';
+            }
+            
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = socio[key];
+                console.log(`Campo ${key} (${fieldId}) establecido con valor:`, socio[key]);
+            } else {
+                console.log(`Campo ${key} (${fieldId}) no encontrado en el formulario`);
+            }
+        });
+        
+        // Verificar que el campo id_socio esté establecido
+        const idField = document.getElementById('socioId');
+        console.log('Campo socioId encontrado:', idField);
+        console.log('Valor del campo socioId:', idField ? idField.value : 'NO ENCONTRADO');
+    } else {
+        title.textContent = 'Agregar Nuevo Socio';
+        form.reset();
+        document.getElementById('fecha_ingreso').value = new Date().toISOString().split('T')[0];
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeSocioModal() {
+    document.getElementById('socioModal').style.display = 'none';
+}
+
+async function saveSocio() {
+    const form = document.getElementById('socioForm');
+    const socioId = document.getElementById('socioId').value;
+    
+    try {
+        const url = 'php/socios.php';
+        
+        if (socioId) {
+            // ACTUALIZAR: Usar PUT con URL-encoded
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+            
+            console.log('Updating socio with ID:', socioId);
+            console.log('Params being sent:', params.toString());
+            
+            const response = await fetch(url, {
+                method: 'PUT',
                 headers: {
-                    'X-Requested-With': 'XMLHttpRequest'
-                }
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
             });
 
             const data = await response.json();
 
-            // Limpiar datos de sesión del cliente
-            sessionStorage.removeItem('userData');
-            localStorage.removeItem('userData'); // Por si se usa localStorage
-
-            // Mostrar mensaje y redirigir
-            mostrarMensajeYRedirigir('Sesión cerrada exitosamente. Hasta pronto!', 'login.html');
-
-        } catch (error) {
-            console.error('Error cerrando sesión:', error);
-            
-            // Incluso si hay error en el servidor, limpiar datos locales
-            sessionStorage.removeItem('userData');
-            localStorage.removeItem('userData');
-            
-            mostrarMensajeYRedirigir('Sesión cerrada. Redirigiendo...', 'login.html');
-        }
-    }
-
-    // Función para mostrar mensaje temporal y redirigir
-    function mostrarMensajeYRedirigir(mensaje, url, delay = 2000) {
-        // Crear elemento de mensaje
-        const messageDiv = document.createElement('div');
-        messageDiv.style.cssText = `
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: linear-gradient(45deg, #4a7c59, #8bc34a);
-            color: white;
-            padding: 1rem 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            z-index: 9999;
-            font-weight: 600;
-            text-align: center;
-            animation: slideDown 0.3s ease;
-        `;
-        messageDiv.textContent = mensaje;
-
-        // Agregar animación CSS
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes slideDown {
-                from {
-                    opacity: 0;
-                    transform: translateX(-50%) translateY(-20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateX(-50%) translateY(0);
-                }
+            if (data.success) {
+                closeSocioModal();
+                loadSocios(currentPage, document.getElementById('searchInput').value);
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
             }
-        `;
-        document.head.appendChild(style);
-        document.body.appendChild(messageDiv);
-
-        // Redirigir después del delay
-        setTimeout(() => {
-            window.location.href = url;
-        }, delay);
-    }
-
-    // Función para animar las tarjetas al hacer scroll
-    function animarTarjetasAlScroll() {
-        const tarjetas = document.querySelectorAll('.service-card, .news-card');
-        
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animation = 'slideInUp 0.6s ease forwards';
-                }
+        } else {
+            // CREAR: Usar POST con FormData
+            const formData = new FormData(form);
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
             });
-        }, {
-            threshold: 0.1
-        });
-
-        tarjetas.forEach(tarjeta => {
-            observer.observe(tarjeta);
-        });
-
-        // Agregar estilos de animación
-        const animationStyle = document.createElement('style');
-        animationStyle.textContent = `
-            @keyframes slideInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(30px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeSocioModal();
+                loadSocios(currentPage, document.getElementById('searchInput').value);
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
             }
-        `;
-        document.head.appendChild(animationStyle);
-    }
-
-    // Inicializar animaciones
-    animarTarjetasAlScroll();
-
-    // Función para manejar la activación de servicios (para futuras funcionalidades)
-    function configurarBotonesServicios() {
-        const serviceBtns = document.querySelectorAll('.service-btn:not(:disabled)');
-        
-        serviceBtns.forEach(btn => {
-            btn.addEventListener('click', function() {
-                const serviceCard = this.closest('.service-card');
-                const serviceName = serviceCard.querySelector('h3').textContent;
-                
-                mostrarNotificacion(`${serviceName} estará disponible próximamente`, 'info');
-            });
-        });
-    }
-
-    // Función para mostrar notificaciones temporales
-    function mostrarNotificacion(mensaje, tipo = 'info') {
-        const notification = document.createElement('div');
-        const colores = {
-            'info': '#2196F3',
-            'success': '#4CAF50',
-            'warning': '#FF9800',
-            'error': '#f44336'
-        };
-
-        notification.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${colores[tipo]};
-            color: white;
-            padding: 1rem 1.5rem;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 9999;
-            animation: slideInRight 0.3s ease;
-            max-width: 300px;
-        `;
-        notification.textContent = mensaje;
-
-        document.body.appendChild(notification);
-
-        // Auto-remover después de 3 segundos
-        setTimeout(() => {
-            notification.style.animation = 'slideOutRight 0.3s ease';
-            setTimeout(() => {
-                if (notification.parentNode) {
-                    notification.parentNode.removeChild(notification);
-                }
-            }, 300);
-        }, 3000);
-
-        // Agregar estilos de animación si no existen
-        if (!document.querySelector('#notification-styles')) {
-            const style = document.createElement('style');
-            style.id = 'notification-styles';
-            style.textContent = `
-                @keyframes slideInRight {
-                    from {
-                        opacity: 0;
-                        transform: translateX(100%);
-                    }
-                    to {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
-                }
-                @keyframes slideOutRight {
-                    from {
-                        opacity: 1;
-                        transform: translateX(0);
-                    }
-                    to {
-                        opacity: 0;
-                        transform: translateX(100%);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
         }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar el socio', 'error');
     }
+}
 
-    // Configurar botones de servicios
-    configurarBotonesServicios();
+async function editSocio(id) {
+    try {
+        console.log('Editando socio con ID:', id);
+        
+        // Obtener datos completos del socio desde la base de datos
+        const response = await fetch(`php/socios.php?id_socio=${id}`);
+        const data = await response.json();
+        
+        console.log('Datos recibidos del servidor:', data);
+        
+        if (data.success && data.data) {
+            const socio = data.data;
+            console.log('Datos del socio a editar:', socio);
+            openSocioModal(socio);
+        } else {
+            showToast('Error al cargar los datos del socio', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar los datos del socio', 'error');
+    }
+}
 
-    // Actualizar hora cada minuto para el saludo personalizado
-    setInterval(personalizarSaludo, 60000);
-
-    // Mensaje de bienvenida al cargar completamente
-    window.addEventListener('load', function() {
-        setTimeout(() => {
-            mostrarNotificacion('¡Dashboard cargado exitosamente!', 'success');
-        }, 500);
+function confirmDeleteSocio(id, nombre) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Socio?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar al socio <strong>"${nombre}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
     });
-});
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deleteSocio(id);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
 
-// Función para manejar errores globales
-window.addEventListener('error', function(e) {
-    console.error('Error en el dashboard:', e.error);
-});
+async function deleteSocio(id) {
+    try {
+        // Para DELETE, necesitamos enviar los datos como URL-encoded
+        const params = new URLSearchParams();
+        params.append('id_socio', id);
+        
+        const response = await fetch('php/socios.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadSocios(currentPage, document.getElementById('searchInput').value);
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar el socio', 'error');
+    }
+}
 
-// Función para prevenir pérdida de datos en caso de cierre accidental
-window.addEventListener('beforeunload', function(e) {
-    // Solo mostrar advertencia si hay datos importantes sin guardar
-    // Por ahora, no implementamos esta funcionalidad
-    return;
-});
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type}`;
+    toast.textContent = message;
+    
+    document.getElementById('toastContainer').appendChild(toast);
+    
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+        setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 300);
+    }, 3000);
+}
