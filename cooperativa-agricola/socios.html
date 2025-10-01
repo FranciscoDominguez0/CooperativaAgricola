@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Cooperativa Agrícola La Pintada</title>
+    <title>Gestión de Socios - Cooperativa Agrícola La Pintada</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -35,11 +35,11 @@
     <!-- Navigation -->
     <nav class="nav-container">
         <div class="nav-content">
-            <div class="nav-item active" data-section="dashboard">
+            <div class="nav-item" data-section="dashboard">
                 <i class="fas fa-home"></i>
                 Dashboard
             </div>
-            <div class="nav-item" data-section="socios">
+            <div class="nav-item active" data-section="socios">
                 <i class="fas fa-users"></i>
                 Socios
             </div>
@@ -51,68 +51,27 @@
         <!-- Loading -->
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Cargando dashboard...</p>
+            <p>Cargando socios...</p>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;" id="debugInfo">Verificando sesión...</p>
         </div>
 
-        <!-- Dashboard Section -->
-        <section class="content-section active" id="dashboardSection">
-            <div class="welcome-section">
-                <div class="welcome-icon">
-                    <i class="fas fa-handshake"></i>
-                </div>
-                <h2 id="welcomeTitle">¡Bienvenido a tu Cooperativa!</h2>
-                <p id="welcomeMessage">Gestiona tu cooperativa de manera eficiente y moderna</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
-                    </div>
-                    <div class="stat-number" id="totalMembers">0</div>
-                    <div class="stat-label">Miembros Activos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-seedling"></i>
-                    </div>
-                    <div class="stat-number" id="totalCrops">0</div>
-                    <div class="stat-label">Cultivos Registrados</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-number" id="totalRevenue">$0</div>
-                    <div class="stat-label">Ingresos del Mes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <div class="stat-number" id="pendingTasks">0</div>
-                    <div class="stat-label">Tareas Pendientes</div>
-                </div>
-            </div>
-        </section>
-
         <!-- Socios Section -->
-        <section class="content-section" id="sociosSection">
+        <section class="content-section active" id="sociosSection">
             <div class="socios-section">
-                <div class="section-header">
+                <div class="section-header animate-fade-in-up">
                     <h2 class="section-title">
                         <i class="fas fa-users"></i>
                         Gestión de Socios
                     </h2>
-                    <div class="search-container">
-                        <input type="text" id="searchInput" class="search-input" placeholder="Buscar socios...">
-                        <button class="btn btn-primary" id="addSocioBtn">
-                            <i class="fas fa-plus"></i> Agregar Socio
-                        </button>
+                    <div class="search-container stagger-animation">
+                        <input type="text" id="searchInput" class="search-input smooth-transition" placeholder="Buscar socios...">
+                            <button class="btn btn-primary btn-animate hover-lift" id="addSocioBtn">
+                                <i class="fas fa-plus"></i> Agregar Socio
+                            </button>
                     </div>
                 </div>
 
-                <div class="table-container">
+                <div class="table-container animate-slide-in-right">
                     <table class="table" id="sociosTable">
                         <thead>
                             <tr>
@@ -133,7 +92,7 @@
                     </table>
                 </div>
 
-                <div class="pagination" id="pagination">
+                <div class="pagination animate-fade-in-up" id="pagination">
                     <!-- La paginación se generará aquí -->
                 </div>
             </div>
@@ -142,7 +101,7 @@
 
     <!-- Modal para agregar/editar socio -->
     <div class="modal" id="socioModal">
-        <div class="modal-content">
+        <div class="modal-content modal-enter">
             <h3 id="modalTitle">Agregar Nuevo Socio</h3>
             <form id="socioForm">
                 <input type="hidden" id="socioId" name="id_socio">
@@ -205,9 +164,9 @@
                     <textarea id="observaciones" name="observaciones" class="form-control" rows="3"></textarea>
                 </div>
 
-                <div class="modal-buttons">
-                    <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
-                    <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
+                <div class="modal-buttons stagger-animation">
+                    <button type="button" class="btn btn-secondary btn-animate hover-lift" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-animate hover-lift" id="saveBtn">Guardar</button>
                 </div>
             </form>
         </div>
@@ -226,8 +185,8 @@
     </div>
 
     <!-- Toast Container -->
-    <div id="toastContainer"></div>
+    <div id="toastContainer" class="toast-container"></div>
 
-    <script src="js/dashboard.js"></script>
+    <script src="js/socios.js"></script>
 </body>
 </html>

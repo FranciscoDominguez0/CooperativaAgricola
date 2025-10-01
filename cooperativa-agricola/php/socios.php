@@ -76,6 +76,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Crear nuevo socio
+    // Debug: Log what we're receiving
+    error_log("POST Data received: " . print_r($_POST, true));
+    
     try {
         $pdo = conectarDB();
         
@@ -89,6 +92,18 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $aportes_totales = (float)($_POST['aportes_totales'] ?? 0);
         $deudas_pendientes = (float)($_POST['deudas_pendientes'] ?? 0);
         $observaciones = trim($_POST['observaciones'] ?? '');
+        
+        // IMPORTANTE: Ignorar completamente id_socio en POST (siempre crear nuevo)
+        if (isset($_POST['id_socio'])) {
+            error_log("WARNING: id_socio recibido en POST, será ignorado para crear nuevo socio");
+            unset($_POST['id_socio']);
+        }
+        
+        // VERIFICACIÓN ADICIONAL: Asegurar que no hay id_socio en POST
+        if (array_key_exists('id_socio', $_POST)) {
+            error_log("CRITICAL: id_socio encontrado en POST, removiendo completamente");
+            unset($_POST['id_socio']);
+        }
         
         // Validaciones
         if (empty($nombre) || empty($cedula)) {
@@ -108,6 +123,10 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'POST') {
             echo json_encode(['success' => false, 'message' => 'Ya existe un socio con esta cédula']);
             exit();
         }
+        
+        // LOG FINAL: Verificar que no hay id_socio antes de insertar
+        error_log("FINAL CHECK: id_socio en POST: " . (isset($_POST['id_socio']) ? $_POST['id_socio'] : 'NOT SET'));
+        error_log("FINAL CHECK: Creando NUEVO socio con cédula: " . $cedula);
         
         // Insertar socio
         $stmt = $pdo->prepare("
