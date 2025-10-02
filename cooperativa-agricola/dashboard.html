@@ -6,111 +6,132 @@
     <title>Dashboard - Cooperativa Agrícola La Pintada</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/creative-messages.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
             <div class="logo">
                 <div class="logo-icon">
                     <i class="fas fa-seedling"></i>
                 </div>
-                <h1>Cooperativa Agrícola La Pintada</h1>
-            </div>
-            <div class="user-info">
-                <div class="user-details">
-                    <div class="user-name" id="userName">Usuario</div>
-                    <div class="user-role" id="userRole">Miembro</div>
-                </div>
-                <button class="logout-btn" id="logoutBtn">
-                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
-                </button>
+                <h1>Cooperativa La Pintada</h1>
             </div>
         </div>
-    </header>
-
-    <!-- Navigation -->
-    <nav class="nav-container">
-        <div class="nav-content">
+        
+        <nav class="sidebar-nav">
             <div class="nav-item active" data-section="dashboard">
                 <i class="fas fa-home"></i>
-                Dashboard
+                <span>Dashboard</span>
             </div>
             <div class="nav-item" data-section="socios">
                 <i class="fas fa-users"></i>
-                Socios
+                <span>Socios</span>
             </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>LOG OUT</span>
+            </button>
         </div>
-    </nav>
+    </aside>
 
-    <!-- Main Content -->
-    <main class="main-content">
-        <!-- Loading -->
-        <div class="loading" id="loading">
-            <div class="spinner"></div>
-            <p>Cargando dashboard...</p>
-        </div>
-
-        <!-- Dashboard Section -->
-        <section class="content-section active" id="dashboardSection">
-            <div class="welcome-section">
-                <div class="welcome-icon">
-                    <i class="fas fa-handshake"></i>
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="search-container">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar..." class="search-input">
                 </div>
-                <h2 id="welcomeTitle">¡Bienvenido a tu Cooperativa!</h2>
-                <p id="welcomeMessage">Gestiona tu cooperativa de manera eficiente y moderna</p>
-            </div>
-
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-users"></i>
+                <div class="user-profile">
+                    <div class="user-avatar">
+                        <i class="fas fa-user"></i>
                     </div>
-                    <div class="stat-number" id="totalMembers">0</div>
-                    <div class="stat-label">Miembros Activos</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-seedling"></i>
+                    <div class="user-details">
+                        <div class="user-name" id="userName">Usuario</div>
+                        <div class="user-role" id="userRole">Miembro</div>
                     </div>
-                    <div class="stat-number" id="totalCrops">0</div>
-                    <div class="stat-label">Cultivos Registrados</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <div class="stat-number" id="totalRevenue">$0</div>
-                    <div class="stat-label">Ingresos del Mes</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon">
-                        <i class="fas fa-tasks"></i>
-                    </div>
-                    <div class="stat-number" id="pendingTasks">0</div>
-                    <div class="stat-label">Tareas Pendientes</div>
                 </div>
             </div>
-        </section>
+        </header>
 
-        <!-- Socios Section -->
-        <section class="content-section" id="sociosSection">
-            <div class="socios-section">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        <i class="fas fa-users"></i>
-                        Gestión de Socios
-                    </h2>
-                    <div class="search-container">
-                        <input type="text" id="searchInput" class="search-input" placeholder="Buscar socios...">
-                        <button class="btn btn-primary" id="addSocioBtn">
-                            <i class="fas fa-plus"></i> Agregar Socio
-                        </button>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Cargando dashboard...</p>
+            </div>
+
+            <!-- Dashboard Section -->
+            <section class="content-section active" id="dashboardSection">
+                <div class="dashboard-header">
+                    <h2 id="welcomeTitle">¡Bienvenido a tu Cooperativa!</h2>
+                    <p id="welcomeMessage">Gestiona tu cooperativa de manera eficiente y moderna</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalMembers">0</div>
+                            <div class="stat-label">Miembros Activos</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalCrops">0</div>
+                            <div class="stat-label">Cultivos Registrados</div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-dark">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalRevenue">$0</div>
+                            <div class="stat-label">Ingresos del Mes</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="pendingTasks">0</div>
+                            <div class="stat-label">Tareas Pendientes</div>
+                        </div>
                     </div>
                 </div>
+            </section>
+
+            <!-- Socios Section -->
+            <section class="content-section" id="sociosSection">
+                <div class="socios-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-users"></i>
+                            Gestión de Socios
+                        </h2>
+                        <div class="section-actions">
+                            <input type="text" id="searchInput" class="search-input" placeholder="Buscar socios...">
+                            <button class="btn btn-primary" id="addSocioBtn">
+                                <i class="fas fa-plus"></i> Agregar Socio
+                            </button>
+                        </div>
+                    </div>
 
                 <div class="table-container">
                     <table class="table" id="sociosTable">
@@ -133,12 +154,13 @@
                     </table>
                 </div>
 
-                <div class="pagination" id="pagination">
-                    <!-- La paginación se generará aquí -->
+                    <div class="pagination" id="pagination">
+                        <!-- La paginación se generará aquí -->
+                    </div>
                 </div>
-            </div>
-        </section>
-    </main>
+            </section>
+        </main>
+    </div>
 
     <!-- Modal para agregar/editar socio -->
     <div class="modal" id="socioModal">
