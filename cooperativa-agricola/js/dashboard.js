@@ -101,7 +101,7 @@ function displaySocios(socios) {
             <td>$${parseFloat(socio.deudas_pendientes).toLocaleString()}</td>
             <td>
                 <div class="actions">
-                    <button class="btn btn-sm btn-secondary" onclick="editSocio(${socio.id_socio})" title="Editar socio">
+                    <button class="btn btn-sm btn-edit" onclick="editSocio(${socio.id_socio})" title="Editar socio">
                         <i class="fas fa-edit"></i>
                     </button>
                     <button class="btn btn-sm btn-danger" onclick="confirmDeleteSocio(${socio.id_socio}, '${socio.nombre}')" title="Eliminar socio">
@@ -281,6 +281,8 @@ function openSocioModal(socio = null) {
     } else {
         title.textContent = 'Agregar Nuevo Socio';
         form.reset();
+        // Ensure the hidden ID field is cleared for new records
+        document.getElementById('socioId').value = '';
         document.getElementById('fecha_ingreso').value = new Date().toISOString().split('T')[0];
     }
     
@@ -503,14 +505,12 @@ function displayInsumos(insumos) {
             <td>${insumo.nombre_insumo}</td>
             <td><span class="type-badge type-${insumo.tipo}">${getTipoDisplay(insumo.tipo)}</span></td>
             <td>${parseInt(insumo.cantidad_disponible).toLocaleString()}</td>
-            <td>${parseInt(insumo.cantidad_minima).toLocaleString()}</td>
             <td>$${parseFloat(insumo.precio_unitario).toLocaleString()}</td>
             <td>${insumo.proveedor || '-'}</td>
-            <td>${insumo.ubicacion_almacen || '-'}</td>
             <td><span class="status-badge status-${insumo.estado}">${getEstadoDisplay(insumo.estado)}</span></td>
             <td>
                 <div class="actions">
-                    <button class="btn btn-sm btn-secondary" onclick="editInsumo(${insumo.id_insumo})" title="Editar insumo">
+                    <button class="btn btn-sm btn-edit" onclick="editInsumo(${insumo.id_insumo})" title="Editar insumo">
                         <i class="fas fa-edit"></i>
                     </button>
                     <button class="btn btn-sm btn-danger" onclick="confirmDeleteInsumo(${insumo.id_insumo}, '${insumo.nombre_insumo}')" title="Eliminar insumo">
@@ -608,6 +608,8 @@ function openInsumoModal(insumo = null) {
     } else {
         title.textContent = 'Agregar Nuevo Insumo';
         form.reset();
+        // Ensure the hidden ID field is cleared for new records
+        document.getElementById('insumoId').value = '';
         document.getElementById('fecha_registro').value = new Date().toISOString().split('T')[0];
     }
     
