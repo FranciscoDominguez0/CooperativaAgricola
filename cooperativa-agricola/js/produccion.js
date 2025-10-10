@@ -175,11 +175,11 @@ function getRoleDisplay(role) {
 }
 
 async function loadSocios() {
-    try {
-        const response = await fetch('php/socios.php');
-        const data = await response.json();
-        
-        if (data.success) {
+        try {
+            const response = await fetch('php/socios.php');
+            const data = await response.json();
+            
+            if (data.success) {
             sociosList = data.data;
             populateSociosDropdown();
         }
@@ -193,9 +193,9 @@ function populateSociosDropdown() {
     select.innerHTML = '<option value="">Seleccionar socio</option>';
     
     sociosList.forEach(socio => {
-        const option = document.createElement('option');
-        option.value = socio.id_socio;
-        option.textContent = socio.nombre;
+                        const option = document.createElement('option');
+                        option.value = socio.id_socio;
+                        option.textContent = socio.nombre;
         select.appendChild(option);
     });
 }
@@ -207,8 +207,8 @@ async function loadStatistics() {
         
         if (data.success) {
             updateStatistics(data.statistics);
-        }
-    } catch (error) {
+            }
+        } catch (error) {
         console.error('Error al cargar estadísticas:', error);
     }
 }
@@ -226,61 +226,61 @@ async function loadProduccion(page = 1, search = '') {
         console.log('Cargando producción...', { page, search });
         updateDebugInfo('Cargando datos de producción...');
         
-        const params = new URLSearchParams({
+            const params = new URLSearchParams({
             page: page,
-            limit: 10,
+                limit: 10,
             search: search
-        });
+            });
         
         console.log('Parámetros de búsqueda:', params.toString());
-        
-        const response = await fetch(`php/produccion.php?${params}`);
+            
+            const response = await fetch(`php/produccion.php?${params}`);
         console.log('Respuesta del servidor:', response.status);
         updateDebugInfo(`Servidor respondió: ${response.status}`);
         
-        const data = await response.json();
+            const data = await response.json();
         console.log('Datos recibidos:', data);
-        
-        if (data.success) {
+            
+            if (data.success) {
             console.log('Producción cargada exitosamente:', data.data);
             updateDebugInfo(`Producción cargada: ${data.data.length} registros`);
             displayProduccion(data.data);
             displayPagination(data.pagination);
             currentPage = data.pagination.current_page;
             totalPages = data.pagination.total_pages;
-        } else {
+            } else {
             console.error('Error del servidor:', data.message);
             updateDebugInfo('Error: ' + data.message);
             showToast('Error al cargar producción: ' + data.message, 'error');
-        }
-    } catch (error) {
+            }
+        } catch (error) {
         console.error('Error al cargar producción:', error);
         updateDebugInfo('Error de conexión: ' + error.message);
         showToast('Error de conexión al cargar producción', 'error');
+        }
     }
-}
 
 function displayProduccion(produccion) {
-    const tbody = document.getElementById('produccionTableBody');
-    tbody.innerHTML = '';
-    
+        const tbody = document.getElementById('produccionTableBody');
+        tbody.innerHTML = '';
+
     if (produccion.length === 0) {
-        tbody.innerHTML = `
-            <tr>
+            tbody.innerHTML = `
+                <tr>
                 <td colspan="9" class="no-data">
                     <div class="no-data-content">
                         <i class="fas fa-seedling"></i>
                         <p>No hay registros de producción</p>
                         <small>Comienza registrando la primera cosecha</small>
                     </div>
-                </td>
-            </tr>
-        `;
-        return;
-    }
-    
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
     produccion.forEach((item, index) => {
-        const row = document.createElement('tr');
+            const row = document.createElement('tr');
         row.className = 'table-row-enter';
         row.style.setProperty('--row-index', index);
         
@@ -289,7 +289,7 @@ function displayProduccion(produccion) {
         const observacionesDisplay = observaciones.length > 50 ? 
             observaciones.substring(0, 50) + '...' : observaciones;
         
-        row.innerHTML = `
+            row.innerHTML = `
             <td>${item.id_produccion}</td>
             <td>${item.nombre_socio || '-'}</td>
             <td>${item.cultivo}</td>
@@ -298,20 +298,20 @@ function displayProduccion(produccion) {
             <td>${formatDate(item.fecha_recoleccion)}</td>
             <td><span class="quality-badge quality-${item.calidad}">${getCalidadDisplay(item.calidad)}</span></td>
             <td title="${observaciones}">${observacionesDisplay}</td>
-            <td>
-                <div class="actions">
+                <td>
+                    <div class="actions">
                     <button class="btn btn-sm btn-secondary btn-animate hover-scale micro-bounce" onclick="editProduccion(${item.id_produccion})" title="Editar producción">
-                        <i class="fas fa-edit"></i>
-                    </button>
+                            <i class="fas fa-edit"></i>
+                        </button>
                     <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="confirmDeleteProduccion(${item.id_produccion}, '${item.cultivo}')" title="Eliminar producción">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    });
-}
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
 
 function getCalidadDisplay(calidad) {
     const calidades = {
@@ -324,10 +324,10 @@ function getCalidadDisplay(calidad) {
 }
 
 function formatDate(dateString) {
-    if (!dateString) return '-';
-    const date = new Date(dateString);
-    return date.toLocaleDateString('es-ES');
-}
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES');
+    }
 
 function displayPagination(pagination) {
     const paginationDiv = document.getElementById('pagination');
@@ -423,12 +423,7 @@ function setupEventListeners() {
         document.getElementById('logoutModal').style.display = 'none';
     });
 
-    // Búsqueda de producción
-    document.getElementById('searchInput').addEventListener('input', function() {
-        const searchTerm = this.value;
-        animateSearch();
-        loadProduccion(1, searchTerm);
-    });
+    // Búsqueda de producción - removed as requested
 
     // Agregar producción
     document.getElementById('addProduccionBtn').addEventListener('click', function() {
@@ -454,13 +449,13 @@ function setupEventListeners() {
 }
 
 function openProduccionModal(produccion = null) {
-    const modal = document.getElementById('produccionModal');
-    const form = document.getElementById('produccionForm');
+        const modal = document.getElementById('produccionModal');
+        const form = document.getElementById('produccionForm');
     const title = document.getElementById('modalTitle');
-    
-    if (produccion) {
+        
+        if (produccion) {
         // MODO EDICIÓN - Editar producción existente
-        title.textContent = 'Editar Producción';
+            title.textContent = 'Editar Producción';
         console.log('MODO EDICIÓN - Estableciendo datos en el formulario:', produccion);
         
         // Limpiar formulario primero
@@ -488,13 +483,13 @@ function openProduccionModal(produccion = null) {
         const idField = document.getElementById('produccionId');
         console.log('Campo produccionId encontrado:', idField);
         console.log('Valor del campo produccionId:', idField ? idField.value : 'NO ENCONTRADO');
-    } else {
+        } else {
         // MODO CREACIÓN - Agregar nueva producción
-        title.textContent = 'Registrar Nueva Producción';
+            title.textContent = 'Registrar Nueva Producción';
         console.log('MODO CREACIÓN - Limpiando formulario para nueva producción');
         
         // Limpiar completamente el formulario
-        form.reset();
+            form.reset();
         
         // FORZAR limpieza del campo ID - CRÍTICO
         const idField = document.getElementById('produccionId');
@@ -568,7 +563,7 @@ function closeProduccionModal() {
 }
 
 async function saveProduccion() {
-    const form = document.getElementById('produccionForm');
+        const form = document.getElementById('produccionForm');
     const produccionId = document.getElementById('produccionId').value;
     
     // VERIFICACIÓN ESTRICTA - Si hay ID es actualización, si no hay ID es creación
@@ -578,9 +573,9 @@ async function saveProduccion() {
     console.log('ProduccionId value:', produccionId);
     console.log('Is Update:', isUpdate);
     console.log('Acción:', isUpdate ? 'ACTUALIZAR producción existente' : 'CREAR nueva producción');
-    
-    try {
-        const url = 'php/produccion.php';
+        
+        try {
+            const url = 'php/produccion.php';
         
         if (isUpdate) {
             // ACTUALIZAR: Usar PUT con URL-encoded
@@ -600,12 +595,12 @@ async function saveProduccion() {
                 },
                 body: params
             });
-
+            
             const data = await response.json();
-
+            
             if (data.success) {
                 closeProduccionModal();
-                loadProduccion(currentPage, document.getElementById('searchInput').value);
+                loadProduccion(currentPage);
                 loadStatistics(); // Recargar estadísticas
                 showToast('✏️ Producción actualizada exitosamente', 'update');
             } else {
@@ -641,7 +636,7 @@ async function saveProduccion() {
             
             if (data.success) {
                 closeProduccionModal();
-                loadProduccion(currentPage, document.getElementById('searchInput').value);
+                loadProduccion(currentPage);
                 loadStatistics(); // Recargar estadísticas
                 showToast('🌱 Nueva producción registrada exitosamente', 'create');
             } else {
@@ -668,10 +663,10 @@ async function editProduccion(id) {
             const produccion = data.data;
             console.log('Datos de la producción a editar:', produccion);
             openProduccionModal(produccion);
-        } else {
+            } else {
             showToast('Error al cargar los datos de la producción', 'error');
-        }
-    } catch (error) {
+            }
+        } catch (error) {
         console.error('Error:', error);
         showToast('Error al cargar los datos de la producción', 'error');
     }
@@ -751,7 +746,7 @@ async function deleteProduccion(id) {
         if (data.success) {
             // Recargar datos después de la animación
             setTimeout(() => {
-                loadProduccion(currentPage, document.getElementById('searchInput').value);
+                loadProduccion(currentPage);
                 loadStatistics(); // Recargar estadísticas
             }, 300);
             showToast('🗑️ Producción eliminada exitosamente', 'delete');
@@ -765,10 +760,10 @@ async function deleteProduccion(id) {
 }
 
 function showToast(message, type) {
-    const toast = document.createElement('div');
+        const toast = document.createElement('div');
     toast.className = `toast ${type} toast-enter`;
-    toast.textContent = message;
-    
+        toast.textContent = message;
+        
     // Agregar barra de progreso
     const progressBar = document.createElement('div');
     progressBar.className = 'toast-progress';

@@ -234,10 +234,6 @@ function setupEventListeners() {
     });
 
     // Event listeners para producción
-    document.getElementById('searchProduccionInput').addEventListener('input', function() {
-        const searchTerm = this.value;
-        loadProduccion(1, searchTerm);
-    });
 
     document.getElementById('addProduccionBtn').addEventListener('click', function() {
         openProduccionModal();
@@ -956,7 +952,7 @@ function displayProduccionPagination(pagination) {
     const prevBtn = document.createElement('button');
     prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
     prevBtn.disabled = pagination.current_page === 1;
-    prevBtn.onclick = () => loadProduccion(pagination.current_page - 1, document.getElementById('searchProduccionInput').value);
+    prevBtn.onclick = () => loadProduccion(pagination.current_page - 1);
     paginationDiv.appendChild(prevBtn);
     
     for (let i = 1; i <= pagination.total_pages; i++) {
@@ -964,7 +960,7 @@ function displayProduccionPagination(pagination) {
             const pageBtn = document.createElement('button');
             pageBtn.textContent = i;
             pageBtn.className = i === pagination.current_page ? 'active' : '';
-            pageBtn.onclick = () => loadProduccion(i, document.getElementById('searchProduccionInput').value);
+            pageBtn.onclick = () => loadProduccion(i);
             paginationDiv.appendChild(pageBtn);
         } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
             const dots = document.createElement('span');
@@ -977,7 +973,7 @@ function displayProduccionPagination(pagination) {
     const nextBtn = document.createElement('button');
     nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
     nextBtn.disabled = pagination.current_page === pagination.total_pages;
-    nextBtn.onclick = () => loadProduccion(pagination.current_page + 1, document.getElementById('searchProduccionInput').value);
+    nextBtn.onclick = () => loadProduccion(pagination.current_page + 1);
     paginationDiv.appendChild(nextBtn);
 }
 
@@ -1053,7 +1049,7 @@ async function saveProduccion() {
 
             if (data.success) {
                 closeProduccionModal();
-                loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
+                loadProduccion(currentProduccionPage);
                 loadProduccionStatistics();
                 showToast('Producción actualizada exitosamente', 'success');
             } else {
@@ -1078,7 +1074,7 @@ async function saveProduccion() {
             
             if (data.success) {
                 closeProduccionModal();
-                loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
+                loadProduccion(currentProduccionPage);
                 loadProduccionStatistics();
                 showToast('Nueva producción registrada exitosamente', 'success');
             } else {
@@ -1169,7 +1165,7 @@ async function deleteProduccion(id) {
         const data = await response.json();
         
         if (data.success) {
-            loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
+            loadProduccion(currentProduccionPage);
             loadProduccionStatistics();
             showToast(data.message, 'success');
         } else {
