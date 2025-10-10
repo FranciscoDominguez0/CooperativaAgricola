@@ -35,6 +35,10 @@
                 <i class="fas fa-seedling"></i>
                 <span>Insumos</span>
             </div>
+            <div class="nav-item" data-section="produccion">
+                <i class="fas fa-basket"></i>
+                <span>Producción</span>
+            </div>
         </nav>
         
         <div class="sidebar-footer">
@@ -205,6 +209,95 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Producción Section -->
+            <section class="content-section" id="produccionSection">
+                <div class="produccion-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-basket"></i>
+                            Gestión de Producción
+                        </h2>
+                        <p class="section-subtitle">Control y registro de la producción agrícola</p>
+                        <div class="section-actions">
+                            <input type="text" id="searchProduccionInput" class="search-input" placeholder="Buscar producción...">
+                            <button class="btn btn-primary" id="addProduccionBtn">
+                                <i class="fas fa-plus"></i> Registrar Producción
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid" id="produccionStatsGrid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="totalProduccion">0</div>
+                                <div class="stat-label">Producción Total</div>
+                                <div class="stat-unit" id="totalProduccionUnit">quintales</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-seedling"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="cultivosActivos">0</div>
+                                <div class="stat-label">Cultivos Activos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card-dark">
+                            <div class="stat-icon">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="productoresActivos">0</div>
+                                <div class="stat-label">Productores Activos</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-star"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="calidadPremium">0%</div>
+                                <div class="stat-label">Calidad Premium</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Registro de Producción</h3>
+                            <p>Historial de cosechas registradas por socio</p>
+                        </div>
+                        <table class="table" id="produccionTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Socio</th>
+                                    <th>Cultivo</th>
+                                    <th>Variedad</th>
+                                    <th>Cantidad</th>
+                                    <th>Fecha Recolección</th>
+                                    <th>Calidad</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produccionTableBody">
+                                <!-- Los datos se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="produccionPagination">
+                        <!-- La paginación se generará aquí -->
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -358,6 +451,93 @@
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-secondary" id="cancelInsumoBtn">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="saveInsumoBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar producción -->
+    <div class="modal" id="produccionModal">
+        <div class="modal-content">
+            <h3 id="produccionModalTitle">Registrar Nueva Producción</h3>
+            <form id="produccionForm">
+                <input type="hidden" id="produccionId" name="id_produccion">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_socio">Socio *</label>
+                        <select id="id_socio" name="id_socio" class="form-control" required>
+                            <option value="">Seleccionar socio</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cultivo">Cultivo *</label>
+                        <input type="text" id="cultivo" name="cultivo" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="variedad">Variedad</label>
+                        <input type="text" id="variedad" name="variedad" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad *</label>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="unidad">Unidad *</label>
+                        <select id="unidad" name="unidad" class="form-control" required>
+                            <option value="quintales">Quintales</option>
+                            <option value="toneladas">Toneladas</option>
+                            <option value="libras">Libras</option>
+                            <option value="sacos">Sacos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="area_cultivada">Área Cultivada (hectáreas)</label>
+                        <input type="number" id="area_cultivada" name="area_cultivada" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_siembra">Fecha de Siembra</label>
+                        <input type="date" id="fecha_siembra" name="fecha_siembra" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_recoleccion">Fecha de Recolección *</label>
+                        <input type="date" id="fecha_recoleccion" name="fecha_recoleccion" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="calidad">Calidad *</label>
+                        <select id="calidad" name="calidad" class="form-control" required>
+                            <option value="premium">Premium</option>
+                            <option value="buena">Buena</option>
+                            <option value="regular">Regular</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_estimado">Precio Estimado</label>
+                        <input type="number" id="precio_estimado" name="precio_estimado" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancelProduccionBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveProduccionBtn">Guardar</button>
                 </div>
             </form>
         </div>

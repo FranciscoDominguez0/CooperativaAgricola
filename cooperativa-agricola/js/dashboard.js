@@ -232,6 +232,31 @@ function setupEventListeners() {
             closeInsumoModal();
         }
     });
+
+    // Event listeners para producción
+    document.getElementById('searchProduccionInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        loadProduccion(1, searchTerm);
+    });
+
+    document.getElementById('addProduccionBtn').addEventListener('click', function() {
+        openProduccionModal();
+    });
+
+    document.getElementById('produccionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await saveProduccion();
+    });
+
+    document.getElementById('cancelProduccionBtn').addEventListener('click', function() {
+        closeProduccionModal();
+    });
+
+    document.getElementById('produccionModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeProduccionModal();
+        }
+    });
 }
 
 function showSection(sectionName) {
@@ -245,6 +270,9 @@ function showSection(sectionName) {
         loadSocios();
     } else if (sectionName === 'insumos') {
         loadInsumos();
+    } else if (sectionName === 'produccion') {
+        loadProduccion();
+        loadProduccionStatistics();
     }
 }
 
@@ -773,5 +801,382 @@ async function deleteInsumo(id) {
     } catch (error) {
         console.error('Error:', error);
         showToast('Error al eliminar el insumo', 'error');
+    }
+}
+
+// ===== FUNCIONES DE PRODUCCIÓN =====
+
+let sociosList = [];
+let currentProduccionPage = 1;
+let totalProduccionPages = 1;
+
+async function loadProduccionStatistics() {
+    try {
+        const response = await fetch('php/produccion.php?action=statistics');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateProduccionStatistics(data.statistics);
+        }
+    } catch (error) {
+        console.error('Error al cargar estadísticas de producción:', error);
+    }
+}
+
+function updateProduccionStatistics(stats) {
+    document.getElementById('totalProduccion').textContent = stats.total_produccion || '0';
+    document.getElementById('totalProduccionUnit').textContent = stats.unidad_principal || 'quintales';
+    document.getElementById('cultivosActivos').textContent = stats.cultivos_activos || '0';
+    document.getElementById('productoresActivos').textContent = stats.productores_activos || '0';
+    document.getElementById('calidadPremium').textContent = (stats.calidad_premium || '0') + '%';
+}
+
+async function loadSociosForProduccion() {
+    try {
+        const response = await fetch('php/socios.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            sociosList = data.data;
+            populateSociosDropdown();
+        }
+    } catch (error) {
+        console.error('Error al cargar socios:', error);
+    }
+}
+
+function populateSociosDropdown() {
+    const select = document.getElementById('id_socio');
+    select.innerHTML = '<option value="">Seleccionar socio</option>';
+    
+    sociosList.forEach(socio => {
+        const option = document.createElement('option');
+        option.value = socio.id_socio;
+        option.textContent = socio.nombre;
+        select.appendChild(option);
+    });
+}
+
+async function loadProduccion(page = 1, search = '') {
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            limit: 10,
+            search: search
+        });
+        
+        const response = await fetch(`php/produccion.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayProduccion(data.data);
+            displayProduccionPagination(data.pagination);
+            currentProduccionPage = data.pagination.current_page;
+            totalProduccionPages = data.pagination.total_pages;
+        } else {
+            showToast('Error al cargar producción: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    }
+}
+
+function displayProduccion(produccion) {
+    const tbody = document.getElementById('produccionTableBody');
+    tbody.innerHTML = '';
+    
+    if (produccion.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="9" class="no-data">
+                    <div class="no-data-content">
+                        <i class="fas fa-seedling"></i>
+                        <p>No hay registros de producción</p>
+                        <small>Comienza registrando la primera cosecha</small>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    produccion.forEach(item => {
+        const row = document.createElement('tr');
+        
+        // Truncar observaciones si son muy largas
+        const observaciones = item.observaciones || '';
+        const observacionesDisplay = observaciones.length > 50 ? 
+            observaciones.substring(0, 50) + '...' : observaciones;
+        
+        row.innerHTML = `
+            <td>${item.id_produccion}</td>
+            <td>${item.nombre_socio || '-'}</td>
+            <td>${item.cultivo}</td>
+            <td>${item.variedad || '-'}</td>
+            <td>${parseFloat(item.cantidad).toLocaleString()} ${item.unidad}</td>
+            <td>${formatDate(item.fecha_recoleccion)}</td>
+            <td><span class="quality-badge quality-${item.calidad}">${getCalidadDisplay(item.calidad)}</span></td>
+            <td title="${observaciones}">${observacionesDisplay}</td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-edit" onclick="editProduccion(${item.id_produccion})" title="Editar producción">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteProduccion(${item.id_produccion}, '${item.cultivo}')" title="Eliminar producción">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getCalidadDisplay(calidad) {
+    const calidades = {
+        'premium': 'Premium',
+        'buena': 'Buena',
+        'regular': 'Regular',
+        'baja': 'Baja'
+    };
+    return calidades[calidad] || calidad;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES');
+}
+
+function displayProduccionPagination(pagination) {
+    const paginationDiv = document.getElementById('produccionPagination');
+    paginationDiv.innerHTML = '';
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => loadProduccion(pagination.current_page - 1, document.getElementById('searchProduccionInput').value);
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === pagination.current_page ? 'active' : '';
+            pageBtn.onclick = () => loadProduccion(i, document.getElementById('searchProduccionInput').value);
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => loadProduccion(pagination.current_page + 1, document.getElementById('searchProduccionInput').value);
+    paginationDiv.appendChild(nextBtn);
+}
+
+function openProduccionModal(produccion = null) {
+    const modal = document.getElementById('produccionModal');
+    const form = document.getElementById('produccionForm');
+    const title = document.getElementById('produccionModalTitle');
+    
+    if (produccion) {
+        title.textContent = 'Editar Producción';
+        console.log('Estableciendo datos en el formulario:', produccion);
+        
+        Object.keys(produccion).forEach(key => {
+            let fieldId = key;
+            
+            if (key === 'id_produccion') {
+                fieldId = 'produccionId';
+            }
+            
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = produccion[key];
+                console.log(`Campo ${key} (${fieldId}) establecido con valor:`, produccion[key]);
+            }
+        });
+    } else {
+        title.textContent = 'Registrar Nueva Producción';
+        form.reset();
+        document.getElementById('produccionId').value = '';
+        document.getElementById('fecha_recoleccion').value = new Date().toISOString().split('T')[0];
+        document.getElementById('calidad').value = 'buena';
+        document.getElementById('unidad').value = 'quintales';
+    }
+    
+    // Cargar socios si no están cargados
+    if (sociosList.length === 0) {
+        loadSociosForProduccion();
+    } else {
+        populateSociosDropdown();
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeProduccionModal() {
+    document.getElementById('produccionModal').style.display = 'none';
+}
+
+async function saveProduccion() {
+    const form = document.getElementById('produccionForm');
+    const produccionId = document.getElementById('produccionId').value;
+    const isUpdate = produccionId && produccionId.trim() !== '';
+    
+    try {
+        const url = 'php/produccion.php';
+        
+        if (isUpdate) {
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                closeProduccionModal();
+                loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
+                loadProduccionStatistics();
+                showToast('Producción actualizada exitosamente', 'success');
+            } else {
+                showToast('Error al actualizar producción: ' + data.message, 'error');
+            }
+        } else {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_produccion' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeProduccionModal();
+                loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
+                loadProduccionStatistics();
+                showToast('Nueva producción registrada exitosamente', 'success');
+            } else {
+                showToast('Error al registrar producción: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar la producción', 'error');
+    }
+}
+
+async function editProduccion(id) {
+    try {
+        const response = await fetch(`php/produccion.php?id_produccion=${id}`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            const produccion = data.data;
+            openProduccionModal(produccion);
+        } else {
+            showToast('Error al cargar los datos de la producción', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar los datos de la producción', 'error');
+    }
+}
+
+function confirmDeleteProduccion(id, cultivo) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Producción?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar la producción de <strong>"${cultivo}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deleteProduccion(id);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
+
+async function deleteProduccion(id) {
+    try {
+        const params = new URLSearchParams();
+        params.append('id_produccion', id);
+        
+        const response = await fetch('php/produccion.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
+            loadProduccionStatistics();
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar la producción', 'error');
     }
 }

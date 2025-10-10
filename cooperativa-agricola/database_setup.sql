@@ -67,6 +67,25 @@ INSERT IGNORE INTO socios (nombre, cedula, telefono, direccion, email, fecha_ing
 ('Ana Gutiérrez Torres', '55667788', '3005566778', 'Finca La Esperanza, La Pintada', 'ana.gutierrez@email.com', '2024-01-30', 'inactivo', 100000.00, 25000.00, 'Temporalmente inactivo por motivos familiares'),
 ('Roberto Castro Jiménez', '99887766', '3009988776', 'Calle 20 #5-10, La Pintada', 'roberto.castro@email.com', '2024-04-05', 'activo', 300000.00, 0.00, 'Mayor aportante del año');
 
+-- Crear tabla de producción
+CREATE TABLE produccion (
+    id_produccion INT AUTO_INCREMENT PRIMARY KEY,
+    id_socio INT NOT NULL,
+    cultivo VARCHAR(50) NOT NULL,
+    variedad VARCHAR(100),
+    cantidad DECIMAL(10,2) NOT NULL,
+    unidad ENUM('quintales', 'toneladas', 'libras', 'sacos') DEFAULT 'quintales',
+    area_cultivada DECIMAL(8,2),
+    fecha_siembra DATE,
+    fecha_recoleccion DATE NOT NULL,
+    calidad ENUM('premium', 'buena', 'regular', 'baja') DEFAULT 'buena',
+    precio_estimado DECIMAL(8,2),
+    observaciones TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_socio) REFERENCES socios(id_socio) ON DELETE CASCADE
+);
+
 -- Insertar algunos insumos de ejemplo
 INSERT IGNORE INTO insumos (nombre_insumo, tipo, descripcion, cantidad_disponible, cantidad_minima, precio_unitario, proveedor, fecha_registro, ubicacion_almacen, estado) VALUES
 ('Semillas de Café Caturra', 'semillas', 'Semillas de café de alta calidad para siembra', 50, 10, 15000.00, 'AgroSemillas S.A.S', '2024-01-15', 'Almacén A - Estante 1', 'disponible'),
@@ -77,5 +96,16 @@ INSERT IGNORE INTO insumos (nombre_insumo, tipo, descripcion, cantidad_disponibl
 ('Semillas de Maíz Híbrido', 'semillas', 'Semillas de maíz de alto rendimiento', 25, 5, 12000.00, 'Semillas del Campo', '2024-03-15', 'Almacén A - Estante 2', 'disponible'),
 ('Fungicida Cobre', 'pesticidas', 'Fungicida para control de enfermedades', 10, 2, 18000.00, 'Agroquímicos del Sur', '2024-02-20', 'Almacén C - Estante 1', 'disponible'),
 ('Machete Agrícola', 'herramientas', 'Machete para limpieza de cultivos', 20, 5, 35000.00, 'Herramientas Agrícolas Ltda', '2024-03-10', 'Almacén D - Estante 2', 'disponible');
+
+-- Insertar algunos registros de producción de ejemplo
+INSERT IGNORE INTO produccion (id_socio, cultivo, variedad, cantidad, unidad, area_cultivada, fecha_siembra, fecha_recoleccion, calidad, precio_estimado, observaciones) VALUES
+(1, 'Café', 'Caturra', 25.50, 'quintales', 2.5, '2024-01-15', '2024-06-20', 'premium', 850000.00, 'Cosecha de excelente calidad, granos grandes y uniformes'),
+(2, 'Café', 'Bourbon', 18.75, 'quintales', 1.8, '2024-02-01', '2024-07-15', 'buena', 650000.00, 'Buena producción, algunos granos con defectos menores'),
+(3, 'Maíz', 'Híbrido', 45.00, 'quintales', 3.2, '2024-03-10', '2024-08-25', 'regular', 320000.00, 'Cosecha promedio, afectada por lluvias excesivas'),
+(1, 'Plátano', 'Dominico', 12.30, 'quintales', 1.5, '2024-01-20', '2024-05-30', 'buena', 180000.00, 'Plátanos de buen tamaño y sabor'),
+(4, 'Yuca', 'Común', 8.75, 'quintales', 1.2, '2024-02-15', '2024-07-10', 'regular', 95000.00, 'Producción menor a la esperada'),
+(2, 'Café', 'Geisha', 5.25, 'quintales', 0.8, '2024-01-10', '2024-06-05', 'premium', 450000.00, 'Café especial de alta calidad, granos seleccionados'),
+(3, 'Frijol', 'Cargamanto', 15.60, 'quintales', 2.0, '2024-03-05', '2024-08-15', 'buena', 280000.00, 'Frijoles de buena calidad, sin plagas'),
+(1, 'Tomate', 'Chonto', 22.40, 'quintales', 1.8, '2024-02-20', '2024-06-30', 'regular', 340000.00, 'Tomates de tamaño mediano, algunos con grietas');
 
 -- Comentario: La contraseña por defecto es "password" - cambiar después del primer login
