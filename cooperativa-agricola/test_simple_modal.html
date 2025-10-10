@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple Modal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .btn:hover {
+            background: #0056b3;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .form-row .form-group {
+            flex: 1;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background: #545b62;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Simple Modal</h1>
+    
+    <button class="btn" id="addVentaBtn">
+        Registrar Venta
+    </button>
+    
+    <div class="modal" id="ventaModal">
+        <div class="modal-content">
+            <h3>Registrar Nueva Venta</h3>
+            <form id="ventaForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="socioSelect">Socio *</label>
+                        <select id="socioSelect" name="id_socio" class="form-control" required>
+                            <option value="">Seleccionar socio</option>
+                            <option value="1">Socio 1</option>
+                            <option value="2">Socio 2</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="producto">Producto *</label>
+                        <input type="text" id="producto" name="producto" class="form-control" placeholder="Nombre del producto" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad *</label>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_unitario">Precio Unitario *</label>
+                        <input type="number" id="precio_unitario" name="precio_unitario" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cliente">Cliente *</label>
+                        <input type="text" id="cliente" name="cliente" class="form-control" placeholder="Nombre del cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_venta">Fecha de Venta *</label>
+                        <input type="date" id="fecha_venta" name="fecha_venta" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" class="form-control" rows="3" placeholder="Notas adicionales..."></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancelVentaBtn">Cancelar</button>
+                    <button type="submit" class="btn" id="saveVentaBtn">Guardar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Función para abrir modal
+        function openVentaModal() {
+            console.log('Abriendo modal...');
+            const modal = document.getElementById('ventaModal');
+            console.log('Modal encontrado:', modal);
+            
+            if (modal) {
+                modal.style.display = 'flex';
+                console.log('Modal mostrado');
+            } else {
+                console.error('Modal no encontrado');
+            }
+        }
+
+        // Función para cerrar modal
+        function closeVentaModal() {
+            console.log('Cerrando modal...');
+            const modal = document.getElementById('ventaModal');
+            if (modal) {
+                modal.style.display = 'none';
+                console.log('Modal ocultado');
+            }
+        }
+
+        // Event listeners
+        document.getElementById('addVentaBtn').addEventListener('click', function() {
+            console.log('Botón clickeado');
+            openVentaModal();
+        });
+
+        document.getElementById('cancelVentaBtn').addEventListener('click', function() {
+            console.log('Cancelar clickeado');
+            closeVentaModal();
+        });
+
+        document.getElementById('ventaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Formulario enviado');
+            alert('Venta guardada (simulado)');
+            closeVentaModal();
+        });
+
+        document.getElementById('ventaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                console.log('Clic fuera del modal');
+                closeVentaModal();
+            }
+        });
+
+        // Establecer fecha actual
+        document.getElementById('fecha_venta').value = new Date().toISOString().split('T')[0];
+    </script>
+</body>
+</html>

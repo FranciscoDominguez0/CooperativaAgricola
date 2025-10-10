@@ -253,6 +253,26 @@ function setupEventListeners() {
             closeProduccionModal();
         }
     });
+
+    // Event listeners para ventas
+    document.getElementById('addVentaBtn').addEventListener('click', function() {
+        openVentaModal();
+    });
+
+    document.getElementById('ventaForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await saveVenta();
+    });
+
+    document.getElementById('cancelVentaBtn').addEventListener('click', function() {
+        closeVentaModal();
+    });
+
+    document.getElementById('ventaModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeVentaModal();
+        }
+    });
 }
 
 function showSection(sectionName) {
@@ -269,6 +289,10 @@ function showSection(sectionName) {
     } else if (sectionName === 'produccion') {
         loadProduccion();
         loadProduccionStatistics();
+    } else if (sectionName === 'ventas') {
+        loadVentas();
+        loadVentasStatistics();
+        loadSociosForVentas();
     }
 }
 
@@ -1194,6 +1218,338 @@ function showMessages() {
     // Aquí podrías abrir un modal con los mensajes
     // o navegar a una página de mensajes
     console.log('Mostrando mensajes...');
+}
+
+// ===== FUNCIONES DE VENTAS =====
+
+let currentVentasPage = 1;
+let totalVentasPages = 1;
+
+async function loadVentasStatistics() {
+    try {
+        const response = await fetch('php/ventas.php?action=statistics');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateVentasStatistics(data.statistics);
+        }
+    } catch (error) {
+        console.error('Error al cargar estadísticas de ventas:', error);
+    }
+}
+
+function updateVentasStatistics(stats) {
+    const ventasTotales = parseFloat(stats.ventas_totales || 0);
+    const formattedTotal = `$${ventasTotales.toLocaleString()}`;
+    
+    const ventasTotalesElement = document.getElementById('ventasTotales');
+    ventasTotalesElement.textContent = formattedTotal;
+    
+    // Detectar si el número es muy largo y aplicar clase especial
+    if (formattedTotal.length > 12) {
+        ventasTotalesElement.classList.add('long-number');
+    } else {
+        ventasTotalesElement.classList.remove('long-number');
+    }
+    
+    document.getElementById('ventasPendientes').textContent = stats.ventas_pendientes || '0';
+    document.getElementById('ventasPagadas').textContent = stats.ventas_pagadas || '0';
+    document.getElementById('clientesActivos').textContent = stats.clientes_activos || '0';
+}
+
+async function loadSociosForVentas() {
+    try {
+        const response = await fetch('php/socios.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            sociosList = data.data;
+            populateSociosDropdownForVentas();
+        }
+    } catch (error) {
+        console.error('Error cargando socios para ventas:', error);
+    }
+}
+
+function populateSociosDropdownForVentas() {
+    const select = document.getElementById('socioSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Seleccionar socio</option>';
+    
+    sociosList.forEach(socio => {
+        const option = document.createElement('option');
+        option.value = socio.id_socio;
+        option.textContent = socio.nombre;
+        select.appendChild(option);
+    });
+}
+
+async function loadVentas(page = 1, search = '') {
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            limit: 10,
+            search: search
+        });
+        
+        const response = await fetch(`php/ventas.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayVentas(data.data);
+            displayVentasPagination(data.pagination);
+            currentVentasPage = data.pagination.current_page;
+            totalVentasPages = data.pagination.total_pages;
+        } else {
+            showToast('Error al cargar ventas: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    }
+}
+
+function displayVentas(ventas) {
+    const tbody = document.getElementById('ventasTableBody');
+    tbody.innerHTML = '';
+    
+    if (ventas.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="no-data">
+                    <div class="no-data-content">
+                        <i class="fas fa-shopping-cart"></i>
+                        <p>No hay registros de ventas</p>
+                        <small>Comienza registrando la primera venta</small>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    ventas.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'table-row-enter';
+        row.style.setProperty('--row-index', index);
+        
+        row.innerHTML = `
+            <td>${item.id_venta}</td>
+            <td>${item.nombre_socio || '-'}</td>
+            <td>${item.producto}</td>
+            <td>${parseFloat(item.cantidad).toLocaleString()}</td>
+            <td>$${parseFloat(item.precio_unitario).toLocaleString()}</td>
+            <td>$${parseFloat(item.total).toLocaleString()}</td>
+            <td>${item.cliente}</td>
+            <td>${formatDate(item.fecha_venta)}</td>
+            <td><span class="status-badge status-${item.estado}">${getEstadoDisplay(item.estado)}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-edit" onclick="editVenta(${item.id_venta})" title="Editar venta">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteVenta(${item.id_venta}, '${item.producto}')" title="Eliminar venta">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getEstadoDisplay(estado) {
+    const estados = {
+        'pendiente': 'Pendiente',
+        'entregado': 'Entregado',
+        'pagado': 'Pagado',
+        'cancelado': 'Cancelado'
+    };
+    return estados[estado] || estado;
+}
+
+function displayVentasPagination(pagination) {
+    const paginationDiv = document.getElementById('ventasPagination');
+    paginationDiv.innerHTML = '';
+    
+    if (pagination.total_pages <= 1) return;
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Anterior';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => loadVentas(pagination.current_page - 1);
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === pagination.current_page ? 'active' : '';
+            pageBtn.onclick = () => loadVentas(i);
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Siguiente';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => loadVentas(pagination.current_page + 1);
+    paginationDiv.appendChild(nextBtn);
+}
+
+function openVentaModal(venta = null) {
+    const modal = document.getElementById('ventaModal');
+    const form = document.getElementById('ventaForm');
+    const title = document.getElementById('ventaModalTitle');
+    
+    if (venta) {
+        title.textContent = 'Editar Venta';
+        
+        // Establecer valores específicos
+        document.getElementById('ventaId').value = venta.id_venta || '';
+        document.getElementById('socioSelect').value = venta.id_socio || '';
+        document.getElementById('producto').value = venta.producto || '';
+        document.getElementById('cantidad').value = venta.cantidad || '';
+        document.getElementById('precio_unitario').value = venta.precio_unitario || '';
+        document.getElementById('cliente').value = venta.cliente || '';
+        document.getElementById('fecha_venta').value = venta.fecha_venta || '';
+        document.getElementById('fecha_entrega').value = venta.fecha_entrega || '';
+        document.getElementById('estado').value = venta.estado || 'pendiente';
+        document.getElementById('metodo_pago').value = venta.metodo_pago || 'efectivo';
+        document.getElementById('direccion_entrega').value = venta.direccion_entrega || '';
+        document.getElementById('observaciones').value = venta.observaciones || '';
+    } else {
+        title.textContent = 'Registrar Nueva Venta';
+        form.reset();
+        document.getElementById('ventaId').value = '';
+        document.getElementById('fecha_venta').value = new Date().toISOString().split('T')[0];
+        document.getElementById('estado').value = 'pendiente';
+        document.getElementById('metodo_pago').value = 'efectivo';
+    }
+    
+    // Cargar socios si no están cargados
+    if (sociosList.length === 0) {
+        loadSociosForVentas();
+    } else {
+        populateSociosDropdownForVentas();
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeVentaModal() {
+    document.getElementById('ventaModal').style.display = 'none';
+}
+
+async function saveVenta() {
+    const form = document.getElementById('ventaForm');
+    const ventaId = document.getElementById('ventaId').value;
+    
+    try {
+        if (ventaId) {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_venta' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch(`php/ventas.php?action=update&id=${ventaId}`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeVentaModal();
+                loadVentas(currentVentasPage);
+                loadVentasStatistics();
+                showToast('Venta actualizada exitosamente', 'success');
+            } else {
+                showToast('Error al actualizar venta: ' + data.message, 'error');
+            }
+        } else {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_venta' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch('php/ventas.php?action=create', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeVentaModal();
+                loadVentas(currentVentasPage);
+                loadVentasStatistics();
+                showToast('Nueva venta registrada exitosamente', 'success');
+            } else {
+                showToast('Error al registrar venta: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar la venta', 'error');
+    }
+}
+
+function editVenta(ventaId) {
+    fetch(`php/ventas.php?action=get&id=${ventaId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                openVentaModal(data.data);
+            } else {
+                showToast('Error al cargar venta: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error al cargar venta', 'error');
+        });
+}
+
+function confirmDeleteVenta(ventaId, producto) {
+    if (confirm(`¿Estás seguro de que quieres eliminar la venta de "${producto}"?`)) {
+        deleteVenta(ventaId);
+    }
+}
+
+async function deleteVenta(ventaId) {
+    try {
+        const response = await fetch(`php/ventas.php?action=delete&id=${ventaId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadVentas(currentVentasPage);
+            loadVentasStatistics();
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar la venta', 'error');
+    }
 }
 
 // Event listeners para los botones del header

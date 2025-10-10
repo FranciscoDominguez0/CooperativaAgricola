@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modal Ventas</title>
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background: white;
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 8px;
+        }
+        .btn {
+            padding: 10px 20px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Modal Ventas</h1>
+    
+    <button class="btn" id="testBtn">Abrir Modal</button>
+    
+    <div class="modal" id="ventaModal">
+        <div class="modal-content">
+            <h3>Test Modal</h3>
+            <p>Este es un modal de prueba</p>
+            <button class="btn" onclick="closeModal()">Cerrar</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('testBtn').addEventListener('click', function() {
+            console.log('Botón clickeado');
+            const modal = document.getElementById('ventaModal');
+            console.log('Modal encontrado:', modal);
+            modal.style.display = 'flex';
+            console.log('Modal mostrado');
+        });
+        
+        function closeModal() {
+            document.getElementById('ventaModal').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Base de Datos - Ventas</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffebee; color: #c62828; }
+        .success { background: #e8f5e8; color: #2e7d32; }
+    </style>
+</head>
+<body>
+    <h1>Test de Base de Datos - Ventas</h1>
+    
+    <button onclick="testConnection()">Probar Conexión</button>
+    <button onclick="testVentas()">Probar Ventas</button>
+    <button onclick="testStatistics()">Probar Estadísticas</button>
+    
+    <div id="results"></div>
+
+    <script>
+        async function testConnection() {
+            try {
+                const response = await fetch('php/test_ventas.php');
+                const data = await response.json();
+                
+                const div = document.createElement('div');
+                div.className = data.success ? 'result success' : 'result error';
+                div.innerHTML = `<h3>Test de Conexión</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                document.getElementById('results').appendChild(div);
+            } catch (error) {
+                const div = document.createElement('div');
+                div.className = 'result error';
+                div.innerHTML = `<h3>Error de Conexión</h3><p>${error.message}</p>`;
+                document.getElementById('results').appendChild(div);
+            }
+        }
+
+        async function testVentas() {
+            try {
+                const response = await fetch('php/ventas.php?action=list&page=1');
+                const data = await response.json();
+                
+                const div = document.createElement('div');
+                div.className = data.success ? 'result success' : 'result error';
+                div.innerHTML = `<h3>Test de Ventas</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                document.getElementById('results').appendChild(div);
+            } catch (error) {
+                const div = document.createElement('div');
+                div.className = 'result error';
+                div.innerHTML = `<h3>Error de Ventas</h3><p>${error.message}</p>`;
+                document.getElementById('results').appendChild(div);
+            }
+        }
+
+        async function testStatistics() {
+            try {
+                const response = await fetch('php/ventas.php?action=statistics');
+                const data = await response.json();
+                
+                const div = document.createElement('div');
+                div.className = data.success ? 'result success' : 'result error';
+                div.innerHTML = `<h3>Test de Estadísticas</h3><pre>${JSON.stringify(data, null, 2)}</pre>`;
+                document.getElementById('results').appendChild(div);
+            } catch (error) {
+                const div = document.createElement('div');
+                div.className = 'result error';
+                div.innerHTML = `<h3>Error de Estadísticas</h3><p>${error.message}</p>`;
+                document.getElementById('results').appendChild(div);
+            }
+        }
+    </script>
+</body>
+</html>

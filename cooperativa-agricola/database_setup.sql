@@ -108,4 +108,35 @@ INSERT IGNORE INTO produccion (id_socio, cultivo, variedad, cantidad, unidad, ar
 (3, 'Frijol', 'Cargamanto', 15.60, 'quintales', 2.0, '2024-03-05', '2024-08-15', 'buena', 280000.00, 'Frijoles de buena calidad, sin plagas'),
 (1, 'Tomate', 'Chonto', 22.40, 'quintales', 1.8, '2024-02-20', '2024-06-30', 'regular', 340000.00, 'Tomates de tamaño mediano, algunos con grietas');
 
+-- Crear tabla de ventas
+CREATE TABLE ventas (
+    id_venta INT AUTO_INCREMENT PRIMARY KEY,
+    id_socio INT NOT NULL,
+    producto VARCHAR(50) NOT NULL,
+    cantidad DECIMAL(10,2) NOT NULL,
+    precio_unitario DECIMAL(8,2) NOT NULL,
+    total DECIMAL(10,2) GENERATED ALWAYS AS (cantidad * precio_unitario) STORED,
+    cliente VARCHAR(100) NOT NULL,
+    direccion_entrega TEXT,
+    fecha_venta DATE NOT NULL,
+    fecha_entrega DATE,
+    estado ENUM('pendiente', 'entregado', 'pagado', 'cancelado') DEFAULT 'pendiente',
+    metodo_pago ENUM('efectivo', 'transferencia', 'cheque', 'credito') DEFAULT 'efectivo',
+    observaciones TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_socio) REFERENCES socios(id_socio) ON DELETE CASCADE
+);
+
+-- Insertar algunos registros de ventas de ejemplo
+INSERT IGNORE INTO ventas (id_socio, producto, cantidad, precio_unitario, cliente, direccion_entrega, fecha_venta, fecha_entrega, estado, metodo_pago, observaciones) VALUES
+(1, 'Café Caturra', 15.50, 35000.00, 'Café del Valle S.A.S', 'Calle 25 #15-30, Medellín', '2024-06-25', '2024-06-28', 'pagado', 'transferencia', 'Venta de café premium, cliente satisfecho'),
+(2, 'Café Bourbon', 12.25, 32000.00, 'Distribuidora Agrícola Ltda', 'Carrera 10 #20-45, Bogotá', '2024-07-10', '2024-07-12', 'entregado', 'cheque', 'Entrega puntual, producto de buena calidad'),
+(3, 'Maíz Híbrido', 25.00, 18000.00, 'Almacén El Granero', 'Vereda La Esperanza, La Pintada', '2024-08-30', '2024-09-02', 'pendiente', 'efectivo', 'Venta local, cliente conocido'),
+(1, 'Plátano Dominico', 8.75, 12000.00, 'Frutas y Verduras del Campo', 'Mercado Central, La Pintada', '2024-06-15', '2024-06-16', 'pagado', 'efectivo', 'Venta directa en mercado'),
+(4, 'Yuca Común', 5.25, 8000.00, 'Restaurante El Fogón', 'Calle 5 #10-20, La Pintada', '2024-07-20', '2024-07-22', 'entregado', 'transferencia', 'Cliente regular, siempre paga a tiempo'),
+(2, 'Café Geisha', 3.50, 85000.00, 'Café Especial La Tostadora', 'Carrera 7 #25-30, Medellín', '2024-06-10', '2024-06-12', 'pagado', 'transferencia', 'Café especial de alta calidad'),
+(3, 'Frijol Cargamanto', 10.30, 15000.00, 'Comercializadora Agrícola', 'Calle 15 #8-12, La Pintada', '2024-08-25', '2024-08-27', 'entregado', 'cheque', 'Frijoles de excelente calidad'),
+(1, 'Tomate Chonto', 18.75, 12000.00, 'Verduras Frescas S.A.S', 'Carrera 3 #15-25, La Pintada', '2024-07-05', '2024-07-07', 'pagado', 'efectivo', 'Tomates frescos, cliente muy satisfecho');
+
 -- Comentario: La contraseña por defecto es "password" - cambiar después del primer login
