@@ -1422,7 +1422,7 @@ body {
     font-weight: 500;
 }
 
-/* Tabla de ventas más compacta */
+/* Tabla de ventas igual a producción */
 .ventas-section .table th {
     background: #f8f9fa;
     color: #495057;

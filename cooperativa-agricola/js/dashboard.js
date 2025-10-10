@@ -1317,7 +1317,7 @@ function displayVentas(ventas) {
     if (ventas.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="10" class="no-data">
+                <td colspan="9" class="no-data">
                     <div class="no-data-content">
                         <i class="fas fa-shopping-cart"></i>
                         <p>No hay registros de ventas</p>
@@ -1338,11 +1338,10 @@ function displayVentas(ventas) {
             <td>${item.id_venta}</td>
             <td>${item.nombre_socio || '-'}</td>
             <td>${item.producto}</td>
+            <td>${item.cliente}</td>
             <td>${parseFloat(item.cantidad).toLocaleString()}</td>
             <td>$${parseFloat(item.precio_unitario).toLocaleString()}</td>
             <td>$${parseFloat(item.total).toLocaleString()}</td>
-            <td>${item.cliente}</td>
-            <td>${formatDate(item.fecha_venta)}</td>
             <td><span class="status-badge status-${item.estado}">${getEstadoDisplay(item.estado)}</span></td>
             <td>
                 <div class="actions">
