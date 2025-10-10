@@ -265,17 +265,17 @@ function displayProduccion(produccion) {
         tbody.innerHTML = '';
 
     if (produccion.length === 0) {
-            tbody.innerHTML = `
-                <tr>
-                <td colspan="9" class="no-data">
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="no-data">
                     <div class="no-data-content">
                         <i class="fas fa-seedling"></i>
                         <p>No hay registros de producción</p>
                         <small>Comienza registrando la primera cosecha</small>
                     </div>
-                    </td>
-                </tr>
-            `;
+                </td>
+            </tr>
+        `;
             return;
         }
 
@@ -289,7 +289,7 @@ function displayProduccion(produccion) {
         const observacionesDisplay = observaciones.length > 50 ? 
             observaciones.substring(0, 50) + '...' : observaciones;
         
-            row.innerHTML = `
+        row.innerHTML = `
             <td>${item.id_produccion}</td>
             <td>${item.nombre_socio || '-'}</td>
             <td>${item.cultivo}</td>
@@ -297,18 +297,17 @@ function displayProduccion(produccion) {
             <td>${parseFloat(item.cantidad).toLocaleString()} ${item.unidad}</td>
             <td>${formatDate(item.fecha_recoleccion)}</td>
             <td><span class="quality-badge quality-${item.calidad}">${getCalidadDisplay(item.calidad)}</span></td>
-            <td title="${observaciones}">${observacionesDisplay}</td>
-                <td>
-                    <div class="actions">
+            <td>
+                <div class="actions">
                     <button class="btn btn-sm btn-secondary btn-animate hover-scale micro-bounce" onclick="editProduccion(${item.id_produccion})" title="Editar producción">
-                            <i class="fas fa-edit"></i>
-                        </button>
+                        <i class="fas fa-edit"></i>
+                    </button>
                     <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="confirmDeleteProduccion(${item.id_produccion}, '${item.cultivo}')" title="Eliminar producción">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </td>
-            `;
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
             tbody.appendChild(row);
         });
     }

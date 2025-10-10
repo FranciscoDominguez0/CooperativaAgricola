@@ -1105,23 +1105,32 @@ body {
     font-weight: 500;
 }
 
-/* Mejorar la tabla de producción */
+/* Tabla de producción más compacta */
 .produccion-section .table th {
-    background: linear-gradient(135deg, #1a3a2e, #2d5016);
-    color: white;
+    background: #f8f9fa;
+    color: #495057;
     font-weight: 600;
-    padding: 1rem 0.75rem;
+    padding: 0.75rem 0.5rem;
     text-align: left;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #dee2e6;
 }
 
 .produccion-section .table td {
-    padding: 1rem 0.75rem;
+    padding: 0.75rem 0.5rem;
     vertical-align: middle;
-    border-bottom: 1px solid rgba(212, 255, 0, 0.05);
+    border-bottom: 1px solid #dee2e6;
+    font-size: 0.9rem;
 }
 
 .produccion-section .table tr:hover {
-    background: rgba(212, 255, 0, 0.03);
+    background: #f8f9fa;
+}
+
+.produccion-section .table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0;
 }
 
 /* Responsive para móviles */

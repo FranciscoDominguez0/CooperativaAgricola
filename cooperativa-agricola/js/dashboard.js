@@ -885,7 +885,7 @@ function displayProduccion(produccion) {
     if (produccion.length === 0) {
         tbody.innerHTML = `
             <tr>
-                <td colspan="9" class="no-data">
+                <td colspan="8" class="no-data">
                     <div class="no-data-content">
                         <i class="fas fa-seedling"></i>
                         <p>No hay registros de producción</p>
@@ -913,7 +913,6 @@ function displayProduccion(produccion) {
             <td>${parseFloat(item.cantidad).toLocaleString()} ${item.unidad}</td>
             <td>${formatDate(item.fecha_recoleccion)}</td>
             <td><span class="quality-badge quality-${item.calidad}">${getCalidadDisplay(item.calidad)}</span></td>
-            <td title="${observaciones}">${observacionesDisplay}</td>
             <td>
                 <div class="actions">
                     <button class="btn btn-sm btn-edit" onclick="editProduccion(${item.id_produccion})" title="Editar producción">
