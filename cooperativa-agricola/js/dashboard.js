@@ -1175,3 +1175,37 @@ async function deleteProduccion(id) {
         showToast('Error al eliminar la producción', 'error');
     }
 }
+
+// ===== FUNCIONES DEL HEADER =====
+
+// Función para mostrar notificaciones
+function showNotifications() {
+    showToast('🔔 Tienes 3 notificaciones nuevas', 'info');
+    
+    // Aquí podrías abrir un modal con las notificaciones
+    // o navegar a una página de notificaciones
+    console.log('Mostrando notificaciones...');
+}
+
+// Función para mostrar mensajes
+function showMessages() {
+    showToast('💬 Tienes 2 mensajes sin leer', 'info');
+    
+    // Aquí podrías abrir un modal con los mensajes
+    // o navegar a una página de mensajes
+    console.log('Mostrando mensajes...');
+}
+
+// Event listeners para los botones del header
+document.addEventListener('DOMContentLoaded', function() {
+    const notificationsBtn = document.getElementById('notificationsBtn');
+    const messagesBtn = document.getElementById('messagesBtn');
+    
+    if (notificationsBtn) {
+        notificationsBtn.addEventListener('click', showNotifications);
+    }
+    
+    if (messagesBtn) {
+        messagesBtn.addEventListener('click', showMessages);
+    }
+});
