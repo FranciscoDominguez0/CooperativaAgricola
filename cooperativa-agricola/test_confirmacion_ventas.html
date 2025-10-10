@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Confirmación Ventas</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <h1>Test Confirmación de Eliminación</h1>
+    
+    <button class="btn btn-danger" onclick="testConfirmDelete()">
+        <i class="fas fa-trash"></i> Probar Eliminar Venta
+    </button>
+    
+    <script>
+        function testConfirmDelete() {
+            const ventaId = 1;
+            const producto = "Café Premium";
+            confirmDeleteVenta(ventaId, producto);
+        }
+
+        function confirmDeleteVenta(ventaId, producto) {
+            const confirmationModal = document.createElement('div');
+            confirmationModal.className = 'confirmation-modal';
+            confirmationModal.id = 'confirmationModal';
+            
+            confirmationModal.innerHTML = `
+                <div class="confirmation-content">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-exclamation-triangle"></i>
+                    </div>
+                    <h3 class="confirmation-title">¿Eliminar Venta?</h3>
+                    <p class="confirmation-message">
+                        ¿Estás seguro de que deseas eliminar la venta de <strong>"${producto}"</strong>?<br>
+                        Esta acción no se puede deshacer y se perderán todos los datos asociados.
+                    </p>
+                    <div class="confirmation-buttons">
+                        <button class="btn btn-secondary" id="cancelDeleteBtn">
+                            <i class="fas fa-times"></i> Cancelar
+                        </button>
+                        <button class="btn btn-danger" id="confirmDeleteBtn">
+                            <i class="fas fa-trash"></i> Sí, Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(confirmationModal);
+            confirmationModal.style.display = 'flex';
+            
+            document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+                console.log('Cancelar eliminación');
+                confirmationModal.remove();
+            });
+            
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                console.log('Confirmar eliminación de venta ID:', ventaId);
+                alert('Venta eliminada (simulado)');
+                confirmationModal.remove();
+            });
+            
+            confirmationModal.addEventListener('click', function(e) {
+                if (e.target === confirmationModal) {
+                    console.log('Clic fuera del modal');
+                    confirmationModal.remove();
+                }
+            });
+        }
+    </script>
+</body>
+</html>

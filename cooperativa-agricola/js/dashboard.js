@@ -1526,9 +1526,48 @@ function editVenta(ventaId) {
 }
 
 function confirmDeleteVenta(ventaId, producto) {
-    if (confirm(`¿Estás seguro de que quieres eliminar la venta de "${producto}"?`)) {
-        deleteVenta(ventaId);
-    }
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Venta?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar la venta de <strong>"${producto}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deleteVenta(ventaId);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
 }
 
 async function deleteVenta(ventaId) {
