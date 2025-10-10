@@ -499,6 +499,56 @@ body {
     color: #991b1b;
 }
 
+/* Type badges for insumos */
+.type-badge {
+    padding: 0.25rem 0.6rem;
+    border-radius: 15px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.type-semillas {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.type-fertilizantes {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.type-pesticidas {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.type-herramientas {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.type-maquinaria {
+    background: #e9d5ff;
+    color: #7c3aed;
+}
+
+/* Status badges for insumos */
+.status-disponible {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-agotado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.status-descontinuado {
+    background: #fef3c7;
+    color: #92400e;
+}
+
 .actions {
     display: flex;
     gap: 0.4rem;

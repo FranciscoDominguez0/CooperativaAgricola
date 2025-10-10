@@ -192,6 +192,16 @@ function setupEventListeners() {
         openSocioModal();
     });
 
+    // Event listeners para insumos
+    document.getElementById('searchInsumosInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        loadInsumos(1, searchTerm);
+    });
+
+    document.getElementById('addInsumoBtn').addEventListener('click', function() {
+        openInsumoModal();
+    });
+
     document.getElementById('socioForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         await saveSocio();
@@ -206,6 +216,22 @@ function setupEventListeners() {
             closeSocioModal();
         }
     });
+
+    // Event listeners para formulario de insumos
+    document.getElementById('insumoForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await saveInsumo();
+    });
+
+    document.getElementById('cancelInsumoBtn').addEventListener('click', function() {
+        closeInsumoModal();
+    });
+
+    document.getElementById('insumoModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeInsumoModal();
+        }
+    });
 }
 
 function showSection(sectionName) {
@@ -217,6 +243,8 @@ function showSection(sectionName) {
     
     if (sectionName === 'socios') {
         loadSocios();
+    } else if (sectionName === 'insumos') {
+        loadInsumos();
     }
 }
 
@@ -432,4 +460,316 @@ function showToast(message, type) {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
+}
+
+// ===== FUNCIONES DE INSUMOS =====
+
+let currentInsumosPage = 1;
+let totalInsumosPages = 1;
+
+async function loadInsumos(page = 1, search = '') {
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            limit: 10,
+            search: search
+        });
+        
+        const response = await fetch(`php/insumos.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayInsumos(data.data);
+            displayInsumosPagination(data.pagination);
+            currentInsumosPage = data.pagination.current_page;
+            totalInsumosPages = data.pagination.total_pages;
+        } else {
+            showToast('Error al cargar insumos: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    }
+}
+
+function displayInsumos(insumos) {
+    const tbody = document.getElementById('insumosTableBody');
+    tbody.innerHTML = '';
+    
+    insumos.forEach(insumo => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${insumo.id_insumo}</td>
+            <td>${insumo.nombre_insumo}</td>
+            <td><span class="type-badge type-${insumo.tipo}">${getTipoDisplay(insumo.tipo)}</span></td>
+            <td>${parseInt(insumo.cantidad_disponible).toLocaleString()}</td>
+            <td>${parseInt(insumo.cantidad_minima).toLocaleString()}</td>
+            <td>$${parseFloat(insumo.precio_unitario).toLocaleString()}</td>
+            <td>${insumo.proveedor || '-'}</td>
+            <td>${insumo.ubicacion_almacen || '-'}</td>
+            <td><span class="status-badge status-${insumo.estado}">${getEstadoDisplay(insumo.estado)}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-secondary" onclick="editInsumo(${insumo.id_insumo})" title="Editar insumo">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteInsumo(${insumo.id_insumo}, '${insumo.nombre_insumo}')" title="Eliminar insumo">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getTipoDisplay(tipo) {
+    const tipos = {
+        'semillas': 'Semillas',
+        'fertilizantes': 'Fertilizantes',
+        'pesticidas': 'Pesticidas',
+        'herramientas': 'Herramientas',
+        'maquinaria': 'Maquinaria'
+    };
+    return tipos[tipo] || tipo;
+}
+
+function getEstadoDisplay(estado) {
+    const estados = {
+        'disponible': 'Disponible',
+        'agotado': 'Agotado',
+        'descontinuado': 'Descontinuado'
+    };
+    return estados[estado] || estado;
+}
+
+function displayInsumosPagination(pagination) {
+    const paginationDiv = document.getElementById('insumosPagination');
+    paginationDiv.innerHTML = '';
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => loadInsumos(pagination.current_page - 1, document.getElementById('searchInsumosInput').value);
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === pagination.current_page ? 'active' : '';
+            pageBtn.onclick = () => loadInsumos(i, document.getElementById('searchInsumosInput').value);
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => loadInsumos(pagination.current_page + 1, document.getElementById('searchInsumosInput').value);
+    paginationDiv.appendChild(nextBtn);
+}
+
+function openInsumoModal(insumo = null) {
+    const modal = document.getElementById('insumoModal');
+    const form = document.getElementById('insumoForm');
+    const title = document.getElementById('insumoModalTitle');
+    
+    if (insumo) {
+        title.textContent = 'Editar Insumo';
+        console.log('Estableciendo datos en el formulario:', insumo);
+        
+        Object.keys(insumo).forEach(key => {
+            let fieldId = key;
+            
+            // Mapear id_insumo a insumoId para el HTML
+            if (key === 'id_insumo') {
+                fieldId = 'insumoId';
+            }
+            
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = insumo[key];
+                console.log(`Campo ${key} (${fieldId}) establecido con valor:`, insumo[key]);
+            } else {
+                console.log(`Campo ${key} (${fieldId}) no encontrado en el formulario`);
+            }
+        });
+        
+        // Verificar que el campo id_insumo esté establecido
+        const idField = document.getElementById('insumoId');
+        console.log('Campo insumoId encontrado:', idField);
+        console.log('Valor del campo insumoId:', idField ? idField.value : 'NO ENCONTRADO');
+    } else {
+        title.textContent = 'Agregar Nuevo Insumo';
+        form.reset();
+        document.getElementById('fecha_registro').value = new Date().toISOString().split('T')[0];
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closeInsumoModal() {
+    document.getElementById('insumoModal').style.display = 'none';
+}
+
+async function saveInsumo() {
+    const form = document.getElementById('insumoForm');
+    const insumoId = document.getElementById('insumoId').value;
+    
+    try {
+        const url = 'php/insumos.php';
+        
+        if (insumoId) {
+            // ACTUALIZAR: Usar PUT con URL-encoded
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+            
+            console.log('Updating insumo with ID:', insumoId);
+            console.log('Params being sent:', params.toString());
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                closeInsumoModal();
+                loadInsumos(currentInsumosPage, document.getElementById('searchInsumosInput').value);
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        } else {
+            // CREAR: Usar POST con FormData
+            const formData = new FormData(form);
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeInsumoModal();
+                loadInsumos(currentInsumosPage, document.getElementById('searchInsumosInput').value);
+                showToast(data.message, 'success');
+            } else {
+                showToast(data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar el insumo', 'error');
+    }
+}
+
+async function editInsumo(id) {
+    try {
+        console.log('Editando insumo con ID:', id);
+        
+        // Obtener datos completos del insumo desde la base de datos
+        const response = await fetch(`php/insumos.php?id_insumo=${id}`);
+        const data = await response.json();
+        
+        console.log('Datos recibidos del servidor:', data);
+        
+        if (data.success && data.data) {
+            const insumo = data.data;
+            console.log('Datos del insumo a editar:', insumo);
+            openInsumoModal(insumo);
+        } else {
+            showToast('Error al cargar los datos del insumo', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar los datos del insumo', 'error');
+    }
+}
+
+function confirmDeleteInsumo(id, nombre) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Insumo?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar el insumo <strong>"${nombre}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deleteInsumo(id);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
+
+async function deleteInsumo(id) {
+    try {
+        // Para DELETE, necesitamos enviar los datos como URL-encoded
+        const params = new URLSearchParams();
+        params.append('id_insumo', id);
+        
+        const response = await fetch('php/insumos.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadInsumos(currentInsumosPage, document.getElementById('searchInsumosInput').value);
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar el insumo', 'error');
+    }
 }

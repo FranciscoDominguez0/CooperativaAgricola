@@ -31,6 +31,10 @@
                 <i class="fas fa-users"></i>
                 <span>Socios</span>
             </div>
+            <div class="nav-item" data-section="insumos">
+                <i class="fas fa-seedling"></i>
+                <span>Insumos</span>
+            </div>
         </nav>
         
         <div class="sidebar-footer">
@@ -159,6 +163,50 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Insumos Section -->
+            <section class="content-section" id="insumosSection">
+                <div class="insumos-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-seedling"></i>
+                            Gestión de Insumos
+                        </h2>
+                        <div class="section-actions">
+                            <input type="text" id="searchInsumosInput" class="search-input" placeholder="Buscar insumos...">
+                            <button class="btn btn-primary" id="addInsumoBtn">
+                                <i class="fas fa-plus"></i> Agregar Insumo
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="insumosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Cant. Disponible</th>
+                                    <th>Cant. Mínima</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Proveedor</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="insumosTableBody">
+                                <!-- Los datos se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="insumosPagination">
+                        <!-- La paginación se generará aquí -->
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -230,6 +278,88 @@
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="saveBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar insumo -->
+    <div class="modal" id="insumoModal">
+        <div class="modal-content">
+            <h3 id="insumoModalTitle">Agregar Nuevo Insumo</h3>
+            <form id="insumoForm">
+                <input type="hidden" id="insumoId" name="id_insumo">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre_insumo">Nombre del Insumo *</label>
+                        <input type="text" id="nombre_insumo" name="nombre_insumo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Insumo *</label>
+                        <select id="tipo" name="tipo" class="form-control" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="semillas">Semillas</option>
+                            <option value="fertilizantes">Fertilizantes</option>
+                            <option value="pesticidas">Pesticidas</option>
+                            <option value="herramientas">Herramientas</option>
+                            <option value="maquinaria">Maquinaria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidad_disponible">Cantidad Disponible</label>
+                        <input type="number" id="cantidad_disponible" name="cantidad_disponible" class="form-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad_minima">Cantidad Mínima</label>
+                        <input type="number" id="cantidad_minima" name="cantidad_minima" class="form-control" min="0" value="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="precio_unitario">Precio Unitario *</label>
+                        <input type="number" id="precio_unitario" name="precio_unitario" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="proveedor">Proveedor</label>
+                        <input type="text" id="proveedor" name="proveedor" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_registro">Fecha de Registro *</label>
+                        <input type="date" id="fecha_registro" name="fecha_registro" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ubicacion_almacen">Ubicación en Almacén</label>
+                        <input type="text" id="ubicacion_almacen" name="ubicacion_almacen" class="form-control" placeholder="Ej: Almacén A - Estante 1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" class="form-control">
+                            <option value="disponible">Disponible</option>
+                            <option value="agotado">Agotado</option>
+                            <option value="descontinuado">Descontinuado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancelInsumoBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveInsumoBtn">Guardar</button>
                 </div>
             </form>
         </div>

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Insumos - Cooperativa Agrícola La Pintada</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/creative-messages.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1>Cooperativa Agrícola La Pintada</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Usuario</div>
+                    <div class="user-role" id="userRole">Miembro</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <div class="nav-item" data-section="socios">
+                <i class="fas fa-users"></i>
+                Socios
+            </div>
+            <div class="nav-item active" data-section="insumos">
+                <i class="fas fa-seedling"></i>
+                Insumos
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Cargando insumos...</p>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;" id="debugInfo">Verificando sesión...</p>
+        </div>
+
+        <!-- Insumos Section -->
+        <section class="content-section active" id="insumosSection">
+            <div class="insumos-section">
+                <div class="section-header animate-fade-in-up">
+                    <h2 class="section-title">
+                        <i class="fas fa-seedling"></i>
+                        Gestión de Insumos
+                    </h2>
+                    <div class="search-container stagger-animation">
+                        <input type="text" id="searchInsumosInput" class="search-input smooth-transition" placeholder="Buscar insumos...">
+                        <button class="btn btn-primary btn-animate hover-lift" id="addInsumoBtn">
+                            <i class="fas fa-plus"></i> Agregar Insumo
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-container animate-slide-in-right">
+                        <table class="table" id="insumosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Tipo</th>
+                                    <th>Cant. Disponible</th>
+                                    <th>Cant. Mínima</th>
+                                    <th>Precio Unitario</th>
+                                    <th>Proveedor</th>
+                                    <th>Ubicación</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                        <tbody id="insumosTableBody">
+                            <!-- Los datos se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination animate-fade-in-up" id="insumosPagination">
+                    <!-- La paginación se generará aquí -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para agregar/editar insumo -->
+    <div class="modal" id="insumoModal">
+        <div class="modal-content modal-enter">
+            <h3 id="insumoModalTitle">Agregar Nuevo Insumo</h3>
+            <form id="insumoForm">
+                <input type="hidden" id="insumoId" name="id_insumo">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="nombre_insumo">Nombre del Insumo *</label>
+                        <input type="text" id="nombre_insumo" name="nombre_insumo" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tipo">Tipo de Insumo *</label>
+                        <select id="tipo" name="tipo" class="form-control" required>
+                            <option value="">Seleccionar tipo</option>
+                            <option value="semillas">Semillas</option>
+                            <option value="fertilizantes">Fertilizantes</option>
+                            <option value="pesticidas">Pesticidas</option>
+                            <option value="herramientas">Herramientas</option>
+                            <option value="maquinaria">Maquinaria</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidad_disponible">Cantidad Disponible</label>
+                        <input type="number" id="cantidad_disponible" name="cantidad_disponible" class="form-control" min="0" value="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad_minima">Cantidad Mínima</label>
+                        <input type="number" id="cantidad_minima" name="cantidad_minima" class="form-control" min="0" value="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="precio_unitario">Precio Unitario *</label>
+                        <input type="number" id="precio_unitario" name="precio_unitario" class="form-control" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="proveedor">Proveedor</label>
+                        <input type="text" id="proveedor" name="proveedor" class="form-control">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_registro">Fecha de Registro *</label>
+                        <input type="date" id="fecha_registro" name="fecha_registro" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="ubicacion_almacen">Ubicación en Almacén</label>
+                        <input type="text" id="ubicacion_almacen" name="ubicacion_almacen" class="form-control" placeholder="Ej: Almacén A - Estante 1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" class="form-control">
+                            <option value="disponible">Disponible</option>
+                            <option value="agotado">Agotado</option>
+                            <option value="descontinuado">Descontinuado</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="descripcion">Descripción</label>
+                    <textarea id="descripcion" name="descripcion" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="modal-buttons stagger-animation">
+                    <button type="button" class="btn btn-secondary btn-animate hover-lift" id="cancelInsumoBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-animate hover-lift" id="saveInsumoBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <h3>¿Cerrar Sesión?</h3>
+            <p>¿Estás seguro de que deseas cerrar tu sesión?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="confirmLogout">Sí, Cerrar Sesión</button>
+                <button class="btn btn-secondary" id="cancelLogout">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="js/insumos.js"></script>
+</body>
+</html>
