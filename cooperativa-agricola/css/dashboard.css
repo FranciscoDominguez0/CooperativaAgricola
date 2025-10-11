@@ -460,11 +460,25 @@ body {
     background: white;
     margin-bottom: 1rem;
     max-width: 100%;
+    font-size: 0.9rem; /* Tamaño estándar para todas las tablas */
 }
 
 .table {
     width: 100%;
     border-collapse: collapse;
+    font-size: 0.9rem; /* Tamaño estándar para todas las tablas */
+}
+
+/* Forzar tamaño de fuente consistente en todas las tablas */
+.table th,
+.table td,
+.produccion-section .table th,
+.produccion-section .table td,
+.ventas-section .table th,
+.ventas-section .table td,
+.pagos-section .table th,
+.pagos-section .table td {
+    font-size: 0.9rem !important;
 }
 
 .table th {
@@ -474,7 +488,7 @@ body {
     padding: 0.75rem;
     text-align: left;
     border-bottom: 2px solid #e5e7eb;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     white-space: nowrap;
 }
 
@@ -495,7 +509,7 @@ body {
 .table td {
     padding: 0.75rem;
     border-bottom: 1px solid #f1f5f9;
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     vertical-align: middle;
 }
 
@@ -578,14 +592,34 @@ body {
 
 .actions {
     display: flex;
-    gap: 0.4rem;
-    flex-wrap: wrap;
+    flex-direction: column;
+    gap: 0.3rem;
+    align-items: center;
+    min-width: 80px;
+    max-width: 100px;
 }
 
 .btn-sm {
     padding: 0.4rem 0.6rem;
     font-size: 0.7rem;
-    min-width: auto;
+    min-width: 60px;
+    width: 100%;
+    text-align: center;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.btn-sm:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn-sm i {
+    font-size: 0.7rem;
 }
 
 /* Modal */
@@ -907,11 +941,12 @@ body {
     }
     
     .table-container {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
     }
     
     .table th, .table td {
         padding: 0.5rem;
+        font-size: 0.85rem;
     }
     
     .modal-content {
@@ -942,7 +977,7 @@ body {
     
     .table th, .table td {
         padding: 0.4rem 0.3rem;
-        font-size: 0.7rem;
+        font-size: 0.8rem;
     }
     
     .actions {
@@ -1173,7 +1208,7 @@ body {
     .produccion-section .table th,
     .produccion-section .table td {
         padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
     }
 }
 
@@ -1503,6 +1538,295 @@ body {
     .ventas-section .table th,
     .ventas-section .table td {
         padding: 0.75rem 0.5rem;
-        font-size: 0.85rem;
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== ESTILOS PARA MÓDULO DE PAGOS ===== */
+
+.pagos-section {
+    padding: 0;
+}
+
+.pagos-section .section-header {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(212, 255, 0, 0.1);
+}
+
+.pagos-section .section-actions {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.pagos-section .stats-grid {
+    margin-bottom: 2.5rem;
+    gap: 1.5rem;
+}
+
+.pagos-section .table-container {
+    margin-top: 1.5rem;
+}
+
+.pagos-section .table-header {
+    margin-bottom: 1.5rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(212, 255, 0, 0.1);
+}
+
+.pagos-section .table-header h3 {
+    margin-bottom: 0.5rem;
+    color: #1f2937;
+    font-weight: 600;
+}
+
+.pagos-section .table-header p {
+    color: #6b7280;
+    font-size: 0.9rem;
+}
+
+.pagos-section .table {
+    margin-top: 1rem;
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 0;
+    font-size: 0.9rem;
+}
+
+.pagos-section .pagination {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(212, 255, 0, 0.1);
+}
+
+/* Mejorar espaciado de las tarjetas de estadísticas */
+.pagos-section .stat-card {
+    padding: 1.5rem;
+    margin-bottom: 0;
+    overflow: hidden;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.pagos-section .stat-content {
+    gap: 0.5rem;
+}
+
+.pagos-section .stat-number {
+    font-size: 1.6rem;
+    font-weight: 700;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    max-width: 100%;
+    line-height: 1.1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Para números muy largos, reducir más el tamaño */
+.pagos-section .stat-number.long-number {
+    font-size: 1.2rem;
+    line-height: 1;
+}
+
+.pagos-section .stat-label {
+    font-size: 0.9rem;
+    font-weight: 500;
+}
+
+/* Tabla de pagos igual a producción */
+.pagos-section .table th {
+    background: #f8f9fa;
+    color: #495057;
+    font-weight: 600;
+    padding: 0.75rem 0.5rem;
+    text-align: left;
+    font-size: 0.9rem;
+    border-bottom: 2px solid #dee2e6;
+}
+
+.pagos-section .table td {
+    padding: 0.75rem 0.5rem;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+    font-size: 0.9rem;
+}
+
+.pagos-section .table tr:hover {
+    background: #f8f9fa;
+}
+
+/* Mejoras específicas para la tabla de pagos */
+.pagos-section .table th:last-child,
+.pagos-section .table td:last-child {
+    width: 100px;
+    min-width: 100px;
+    text-align: center;
+    position: sticky;
+    right: 0;
+    background: white;
+    border-left: 2px solid #e5e7eb;
+}
+
+.pagos-section .table tr:hover td:last-child {
+    background: #f8f9fa;
+}
+
+/* Estilos para la columna de acciones en pagos */
+.pagos-section .actions {
+    flex-direction: column;
+    gap: 0.25rem;
+    align-items: stretch;
+    width: 100%;
+    max-height: 80px;
+    overflow-y: auto;
+    padding: 0.2rem;
+}
+
+.pagos-section .actions::-webkit-scrollbar {
+    width: 4px;
+}
+
+.pagos-section .actions::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 2px;
+}
+
+.pagos-section .actions::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+}
+
+.pagos-section .actions::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+.pagos-section .btn-sm {
+    padding: 0.3rem 0.5rem;
+    font-size: 0.65rem;
+    min-width: 50px;
+    width: 100%;
+    border-radius: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pagos-section .btn-sm i {
+    font-size: 0.6rem;
+    margin-right: 0.2rem;
+}
+
+/* Badges de tipo para pagos */
+.tipo-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.tipo-aporte_mensual {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.tipo-aporte_extraordinario {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.tipo-pago_venta {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.tipo-prestamo {
+    background: #fce7f3;
+    color: #be185d;
+}
+
+.tipo-devolucion {
+    background: #f3e8ff;
+    color: #7c3aed;
+}
+
+/* Badges de estado para pagos */
+.pagos-section .status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+}
+
+.pagos-section .status-pendiente {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.pagos-section .status-confirmado {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.pagos-section .status-rechazado {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .pagos-section .section-header {
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+    }
+    
+    .pagos-section .stats-grid {
+        margin-bottom: 2rem;
+        gap: 1rem;
+    }
+    
+    .pagos-section .stat-card {
+        padding: 1rem;
+    }
+    
+    .pagos-section .table-container {
+        overflow-x: auto;
+    }
+    
+    .pagos-section .table th,
+    .pagos-section .table td {
+        padding: 0.75rem 0.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .pagos-section .actions {
+        max-height: 60px;
+        gap: 0.2rem;
+    }
+    
+    .pagos-section .btn-sm {
+        padding: 0.25rem 0.4rem;
+        font-size: 0.6rem;
+        min-width: 45px;
+    }
+    
+    .pagos-section .btn-sm i {
+        font-size: 0.55rem;
+        margin-right: 0.15rem;
     }
 }

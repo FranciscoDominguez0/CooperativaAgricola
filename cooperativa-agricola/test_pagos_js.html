@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Pagos JavaScript</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #results { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>🔧 Test del Módulo de Pagos - JavaScript</h1>
+    
+    <div class="test-section">
+        <h2>1. Probar Conexión a la API</h2>
+        <button onclick="testAPI()">Probar API de Pagos</button>
+        <div id="api-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>2. Probar Estadísticas</h2>
+        <button onclick="testStatistics()">Probar Estadísticas</button>
+        <div id="stats-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>3. Probar Lista de Pagos</h2>
+        <button onclick="testListPagos()">Probar Lista de Pagos</button>
+        <div id="list-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>4. Probar Carga de Socios</h2>
+        <button onclick="testSocios()">Probar Carga de Socios</button>
+        <div id="socios-result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>5. Simular Carga Completa</h2>
+        <button onclick="testCompleteLoad()">Probar Carga Completa</button>
+        <div id="complete-result"></div>
+    </div>
+
+    <script>
+        // Función para mostrar resultados
+        function showResult(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            element.innerHTML = `<div class="${type}">${message}</div>`;
+        }
+
+        // Test 1: Probar API básica
+        async function testAPI() {
+            try {
+                const response = await fetch('php/pagos.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('api-result', `✅ API funcionando. Datos recibidos: ${data.data ? data.data.length : 0} registros`, 'success');
+                } else {
+                    showResult('api-result', `❌ Error en API: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('api-result', `❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 2: Probar estadísticas
+        async function testStatistics() {
+            try {
+                const response = await fetch('php/pagos.php?action=statistics');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const stats = data.statistics;
+                    showResult('stats-result', `
+                        ✅ Estadísticas funcionando:<br>
+                        💰 Ingresos totales: $${parseFloat(stats.ingresos_totales || 0).toLocaleString()}<br>
+                        ⏳ Pagos pendientes: ${stats.pagos_pendientes || 0}<br>
+                        ✅ Pagos confirmados: ${stats.pagos_confirmados || 0}<br>
+                        📅 Aportes mensuales: ${stats.aportes_mensuales || 0}
+                    `, 'success');
+                } else {
+                    showResult('stats-result', `❌ Error en estadísticas: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('stats-result', `❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 3: Probar lista de pagos
+        async function testListPagos() {
+            try {
+                const response = await fetch('php/pagos.php?page=1&limit=10');
+                const data = await response.json();
+                
+                if (data.success) {
+                    let html = `✅ Lista de pagos funcionando:<br>`;
+                    html += `📊 Total de registros: ${data.data.length}<br>`;
+                    html += `📄 Páginas totales: ${data.pagination.total_pages}<br>`;
+                    
+                    if (data.data.length > 0) {
+                        html += `<br><strong>Primeros registros:</strong><br>`;
+                        html += `<table border="1" style="border-collapse: collapse; width: 100%;">`;
+                        html += `<tr><th>ID</th><th>Socio</th><th>Tipo</th><th>Monto</th><th>Estado</th></tr>`;
+                        
+                        data.data.slice(0, 3).forEach(pago => {
+                            html += `<tr>`;
+                            html += `<td>${pago.id_pago}</td>`;
+                            html += `<td>${pago.nombre_socio || '-'}</td>`;
+                            html += `<td>${pago.tipo}</td>`;
+                            html += `<td>$${parseFloat(pago.monto).toLocaleString()}</td>`;
+                            html += `<td>${pago.estado}</td>`;
+                            html += `</tr>`;
+                        });
+                        html += `</table>`;
+                    } else {
+                        html += `⚠️ No hay datos en la tabla`;
+                    }
+                    
+                    showResult('list-result', html, 'success');
+                } else {
+                    showResult('list-result', `❌ Error en lista: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('list-result', `❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 4: Probar carga de socios
+        async function testSocios() {
+            try {
+                const response = await fetch('php/socios.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showResult('socios-result', `✅ Socios cargados: ${data.data.length} registros`, 'success');
+                } else {
+                    showResult('socios-result', `❌ Error cargando socios: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showResult('socios-result', `❌ Error de conexión: ${error.message}`, 'error');
+            }
+        }
+
+        // Test 5: Simular carga completa
+        async function testCompleteLoad() {
+            let results = [];
+            
+            try {
+                // Test estadísticas
+                const statsResponse = await fetch('php/pagos.php?action=statistics');
+                const statsData = await statsResponse.json();
+                results.push(`📊 Estadísticas: ${statsData.success ? '✅' : '❌'}`);
+                
+                // Test lista
+                const listResponse = await fetch('php/pagos.php?page=1&limit=10');
+                const listData = await listResponse.json();
+                results.push(`📋 Lista: ${listData.success ? '✅' : '❌'} (${listData.data ? listData.data.length : 0} registros)`);
+                
+                // Test socios
+                const sociosResponse = await fetch('php/socios.php');
+                const sociosData = await sociosResponse.json();
+                results.push(`👥 Socios: ${sociosData.success ? '✅' : '❌'} (${sociosData.data ? sociosData.data.length : 0} registros)`);
+                
+                showResult('complete-result', `
+                    <strong>Resultado de la carga completa:</strong><br>
+                    ${results.join('<br>')}<br><br>
+                    ${statsData.success && listData.success && sociosData.success ? 
+                        '🎉 ¡Todo funcionando correctamente! El módulo de pagos debería cargar sin problemas.' : 
+                        '⚠️ Hay problemas que necesitan ser corregidos.'}
+                `, statsData.success && listData.success && sociosData.success ? 'success' : 'error');
+                
+            } catch (error) {
+                showResult('complete-result', `❌ Error en la carga completa: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -293,6 +293,10 @@ function showSection(sectionName) {
         loadVentas();
         loadVentasStatistics();
         loadSociosForVentas();
+    } else if (sectionName === 'pagos') {
+        loadPagos();
+        loadPagosStatistics();
+        loadSociosForPagos();
     }
 }
 
@@ -1602,4 +1606,403 @@ document.addEventListener('DOMContentLoaded', function() {
     if (messagesBtn) {
         messagesBtn.addEventListener('click', showMessages);
     }
+
+    // Event listeners para pagos
+    document.getElementById('addPagoBtn').addEventListener('click', function() {
+        openPagoModal();
+    });
+
+    document.getElementById('pagoForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await savePago();
+    });
+
+    document.getElementById('cancelPagoBtn').addEventListener('click', function() {
+        closePagoModal();
+    });
+
+    document.getElementById('pagoModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePagoModal();
+        }
+    });
 });
+
+// ===== FUNCIONES DE PAGOS =====
+
+let currentPagosPage = 1;
+let totalPagosPages = 1;
+let sociosListPagos = [];
+
+async function loadPagosStatistics() {
+    try {
+        const response = await fetch('php/pagos.php?action=statistics');
+        const data = await response.json();
+        
+        if (data.success) {
+            updatePagosStatistics(data.statistics);
+        }
+    } catch (error) {
+        console.error('Error al cargar estadísticas de pagos:', error);
+    }
+}
+
+function updatePagosStatistics(stats) {
+    const ingresosTotales = parseFloat(stats.ingresos_totales || 0);
+    const formattedTotal = `$${ingresosTotales.toLocaleString()}`;
+    
+    const ingresosTotalesElement = document.getElementById('ingresosTotales');
+    ingresosTotalesElement.textContent = formattedTotal;
+    
+    // Detectar si el número es muy largo y aplicar clase especial
+    if (formattedTotal.length > 12) {
+        ingresosTotalesElement.classList.add('long-number');
+    } else {
+        ingresosTotalesElement.classList.remove('long-number');
+    }
+    
+    document.getElementById('pagosPendientes').textContent = stats.pagos_pendientes || '0';
+    document.getElementById('pagosConfirmados').textContent = stats.pagos_confirmados || '0';
+    document.getElementById('aportesMensuales').textContent = stats.aportes_mensuales || '0';
+}
+
+async function loadSociosForPagos() {
+    try {
+        const response = await fetch('php/socios.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            sociosListPagos = data.data;
+            populateSociosDropdownForPagos();
+        }
+    } catch (error) {
+        console.error('Error cargando socios para pagos:', error);
+    }
+}
+
+function populateSociosDropdownForPagos() {
+    const select = document.getElementById('pagoSocioSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Seleccionar socio</option>';
+    
+    sociosListPagos.forEach(socio => {
+        const option = document.createElement('option');
+        option.value = socio.id_socio;
+        option.textContent = socio.nombre;
+        select.appendChild(option);
+    });
+}
+
+async function loadPagos(page = 1, search = '') {
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            limit: 10,
+            search: search
+        });
+        
+        const response = await fetch(`php/pagos.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayPagos(data.data);
+            displayPagosPagination(data.pagination);
+            currentPagosPage = data.pagination.current_page;
+            totalPagosPages = data.pagination.total_pages;
+        } else {
+            showToast('Error al cargar pagos: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    }
+}
+
+function displayPagos(pagos) {
+    const tbody = document.getElementById('pagosTableBody');
+    tbody.innerHTML = '';
+    
+    if (pagos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="no-data">
+                    <div class="no-data-content">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <p>No hay registros de pagos</p>
+                        <small>Comienza registrando el primer pago</small>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    pagos.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'table-row-enter';
+        row.style.setProperty('--row-index', index);
+        
+        row.innerHTML = `
+            <td>${item.id_pago}</td>
+            <td>${item.nombre_socio || '-'}</td>
+            <td><span class="tipo-badge tipo-${item.tipo}">${getTipoDisplay(item.tipo)}</span></td>
+            <td>${item.descripcion || '-'}</td>
+            <td>$${parseFloat(item.monto).toLocaleString()}</td>
+            <td>${formatDate(item.fecha_pago)}</td>
+            <td><span class="status-badge status-${item.estado}">${getEstadoDisplayPagos(item.estado)}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-edit" onclick="editPago(${item.id_pago})" title="Editar pago">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeletePago(${item.id_pago}, '${item.descripcion || item.tipo}')" title="Eliminar pago">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getTipoDisplay(tipo) {
+    const tipos = {
+        'aporte_mensual': 'Aporte Mensual',
+        'aporte_extraordinario': 'Aporte Extraordinario',
+        'pago_venta': 'Pago de Venta',
+        'prestamo': 'Préstamo',
+        'devolucion': 'Devolución'
+    };
+    return tipos[tipo] || tipo;
+}
+
+function getEstadoDisplayPagos(estado) {
+    const estados = {
+        'pendiente': 'Pendiente',
+        'confirmado': 'Confirmado',
+        'rechazado': 'Rechazado'
+    };
+    return estados[estado] || estado;
+}
+
+function displayPagosPagination(pagination) {
+    const paginationDiv = document.getElementById('pagosPagination');
+    paginationDiv.innerHTML = '';
+    
+    if (pagination.total_pages <= 1) return;
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Anterior';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => loadPagos(pagination.current_page - 1);
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === pagination.current_page ? 'active' : '';
+            pageBtn.onclick = () => loadPagos(i);
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Siguiente';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => loadPagos(pagination.current_page + 1);
+    paginationDiv.appendChild(nextBtn);
+}
+
+function openPagoModal(pago = null) {
+    const modal = document.getElementById('pagoModal');
+    const form = document.getElementById('pagoForm');
+    const title = document.getElementById('pagoModalTitle');
+    
+    if (pago) {
+        title.textContent = 'Editar Pago';
+        
+        // Establecer valores específicos
+        document.getElementById('pagoId').value = pago.id_pago || '';
+        document.getElementById('pagoSocioSelect').value = pago.id_socio || '';
+        document.getElementById('tipo').value = pago.tipo || '';
+        document.getElementById('monto').value = pago.monto || '';
+        document.getElementById('fecha_pago').value = pago.fecha_pago || '';
+        document.getElementById('metodo_pago').value = pago.metodo_pago || 'efectivo';
+        document.getElementById('estado').value = pago.estado || 'pendiente';
+        document.getElementById('numero_comprobante').value = pago.numero_comprobante || '';
+        document.getElementById('id_venta').value = pago.id_venta || '';
+        document.getElementById('descripcion').value = pago.descripcion || '';
+        document.getElementById('observaciones').value = pago.observaciones || '';
+    } else {
+        title.textContent = 'Registrar Nuevo Pago';
+        form.reset();
+        document.getElementById('pagoId').value = '';
+        document.getElementById('fecha_pago').value = new Date().toISOString().split('T')[0];
+        document.getElementById('estado').value = 'pendiente';
+        document.getElementById('metodo_pago').value = 'efectivo';
+    }
+    
+    // Cargar socios si no están cargados
+    if (sociosListPagos.length === 0) {
+        loadSociosForPagos();
+    } else {
+        populateSociosDropdownForPagos();
+    }
+    
+    modal.style.display = 'flex';
+}
+
+function closePagoModal() {
+    document.getElementById('pagoModal').style.display = 'none';
+}
+
+async function savePago() {
+    const form = document.getElementById('pagoForm');
+    const pagoId = document.getElementById('pagoId').value;
+    
+    try {
+        if (pagoId) {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_pago' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch(`php/pagos.php?action=update&id=${pagoId}`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closePagoModal();
+                loadPagos(currentPagosPage);
+                loadPagosStatistics();
+                showToast('Pago actualizado exitosamente', 'success');
+            } else {
+                showToast('Error al actualizar pago: ' + data.message, 'error');
+            }
+        } else {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_pago' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch('php/pagos.php?action=create', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closePagoModal();
+                loadPagos(currentPagosPage);
+                loadPagosStatistics();
+                showToast('Nuevo pago registrado exitosamente', 'success');
+            } else {
+                showToast('Error al registrar pago: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar el pago', 'error');
+    }
+}
+
+function editPago(pagoId) {
+    fetch(`php/pagos.php?action=get&id=${pagoId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                openPagoModal(data.data);
+            } else {
+                showToast('Error al cargar pago: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showToast('Error al cargar pago', 'error');
+        });
+}
+
+function confirmDeletePago(pagoId, descripcion) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Pago?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar el pago de <strong>"${descripcion}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deletePago(pagoId);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
+
+async function deletePago(pagoId) {
+    try {
+        const response = await fetch(`php/pagos.php?action=delete&id=${pagoId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadPagos(currentPagosPage);
+            loadPagosStatistics();
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar el pago', 'error');
+    }
+}
