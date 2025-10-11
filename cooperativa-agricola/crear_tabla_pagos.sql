@@ -35,3 +35,4 @@ INSERT IGNORE INTO pagos (id_socio, id_venta, monto, tipo, descripcion, estado, 
 -- Verificar que la tabla se creó correctamente
 SELECT 'Tabla pagos creada exitosamente' as mensaje;
 SELECT COUNT(*) as total_pagos FROM pagos;
+

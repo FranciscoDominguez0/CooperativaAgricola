@@ -85,3 +85,4 @@ Después de seguir estos pasos, deberías poder:
 - `create_pagos_table.sql` - Script para crear las tablas
 
 Si sigues teniendo problemas, revisa los archivos de prueba para identificar el error específico.
+

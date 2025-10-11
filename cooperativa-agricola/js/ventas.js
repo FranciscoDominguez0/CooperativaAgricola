@@ -290,23 +290,31 @@ function setupEventListeners() {
 // ===== MODAL =====
 
 // Abrir modal de venta
-function openVentaModal(ventaId = null) {
+async function openVentaModal(ventaId = null) {
     const modal = document.getElementById('ventaModal');
     const form = document.getElementById('ventaForm');
     const modalTitle = document.getElementById('modalTitle');
     
     if (ventaId) {
+        console.log('🔄 Abriendo modal para EDITAR venta ID:', ventaId);
         modalTitle.textContent = 'Editar Venta';
-        loadVentaData(ventaId);
+        
+        // Mostrar modal primero
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        
+        // Luego cargar los datos
+        await loadVentaData(ventaId);
     } else {
+        console.log('🔄 Abriendo modal para CREAR nueva venta');
         modalTitle.textContent = 'Registrar Nueva Venta';
         form.reset();
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('fecha_venta').value = today;
+        
+        modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
-    
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
 }
 
 // Cerrar modal
@@ -322,27 +330,196 @@ function closeVentaModal() {
 // Cargar datos de venta para editar
 async function loadVentaData(ventaId) {
     try {
+        console.log('🔄 Cargando datos de venta ID:', ventaId);
         const response = await fetch(`php/ventas.php?action=get&id=${ventaId}`);
         const data = await response.json();
         
+        console.log('📡 Respuesta completa del servidor:', data);
+        
         if (data.success) {
-            const venta = data.venta;
-            document.getElementById('socioSelect').value = venta.id_socio;
-            document.getElementById('producto').value = venta.producto;
-            document.getElementById('cantidad').value = venta.cantidad;
-            document.getElementById('precio_unitario').value = venta.precio_unitario;
-            document.getElementById('cliente').value = venta.cliente;
-            document.getElementById('fecha_venta').value = venta.fecha_venta;
-            document.getElementById('fecha_entrega').value = venta.fecha_entrega || '';
-            document.getElementById('estado').value = venta.estado;
-            document.getElementById('metodo_pago').value = venta.metodo_pago;
-            document.getElementById('direccion_entrega').value = venta.direccion_entrega || '';
-            document.getElementById('observaciones').value = venta.observaciones || '';
+            const venta = data.data;
+            console.log('📦 Datos de la venta recibidos:', venta);
+            console.log('🔍 Valores específicos:');
+            console.log('  - id_venta:', venta.id_venta, '(tipo:', typeof venta.id_venta, ')');
+            console.log('  - cantidad:', venta.cantidad, '(tipo:', typeof venta.cantidad, ')');
+            console.log('  - precio_unitario:', venta.precio_unitario, '(tipo:', typeof venta.precio_unitario, ')');
+            console.log('  - producto:', venta.producto);
+            console.log('  - cliente:', venta.cliente);
+            
+            // Esperar más tiempo para asegurar que el DOM esté completamente listo
+            await new Promise(resolve => setTimeout(resolve, 200));
+            
+            // Usar la nueva función robusta para llenar campos
+            await llenarCamposVenta(venta);
+            
+        } else {
+            console.error('❌ Error:', data.message);
+            showToast('Error cargando datos: ' + data.message, 'error');
         }
     } catch (error) {
-        console.error('Error cargando datos de venta:', error);
+        console.error('❌ Error cargando datos de venta:', error);
         showToast('Error cargando datos', 'error');
     }
+}
+
+// Nueva función robusta para llenar campos de venta
+async function llenarCamposVenta(venta) {
+    console.log('🔄 LLENANDO CAMPOS DE VENTA');
+    
+    // Función auxiliar para establecer valor de forma robusta
+    function setFieldValue(fieldId, value, fieldName) {
+        const field = document.getElementById(fieldId);
+        if (!field) {
+            console.error(`❌ Campo ${fieldName} (${fieldId}) no encontrado`);
+            return false;
+        }
+        
+        console.log(`📝 Estableciendo ${fieldName}:`, value);
+        
+        // Múltiples métodos para asegurar que el valor se establezca
+        field.value = value;
+        field.setAttribute('value', value);
+        field.defaultValue = value;
+        
+        // Para campos de tipo number, asegurar que se muestre correctamente
+        if (field.type === 'number') {
+            field.step = '0.01';
+            field.min = '0';
+        }
+        
+        // Disparar eventos para notificar cambios
+        field.dispatchEvent(new Event('input', { bubbles: true }));
+        field.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Verificar que se estableció correctamente
+        const finalValue = field.value;
+        console.log(`✅ ${fieldName} establecido:`, finalValue);
+        
+        return finalValue === String(value);
+    }
+    
+    // Llenar todos los campos
+    const campos = [
+        { id: 'id_venta', value: venta.id_venta || '', name: 'ID Venta' },
+        { id: 'socioSelect', value: venta.id_socio || '', name: 'Socio' },
+        { id: 'producto', value: venta.producto || '', name: 'Producto' },
+        { id: 'cantidad', value: venta.cantidad || '', name: 'Cantidad' },
+        { id: 'precio_unitario', value: venta.precio_unitario || '', name: 'Precio Unitario' },
+        { id: 'cliente', value: venta.cliente || '', name: 'Cliente' },
+        { id: 'fecha_venta', value: venta.fecha_venta || '', name: 'Fecha Venta' },
+        { id: 'fecha_entrega', value: venta.fecha_entrega || '', name: 'Fecha Entrega' },
+        { id: 'estado', value: venta.estado || 'pendiente', name: 'Estado' },
+        { id: 'metodo_pago', value: venta.metodo_pago || 'efectivo', name: 'Método Pago' },
+        { id: 'direccion_entrega', value: venta.direccion_entrega || '', name: 'Dirección' },
+        { id: 'observaciones', value: venta.observaciones || '', name: 'Observaciones' }
+    ];
+    
+    // Llenar cada campo
+    for (const campo of campos) {
+        setFieldValue(campo.id, campo.value, campo.name);
+    }
+    
+    // Verificación especial para campos problemáticos
+    console.log('🔍 VERIFICACIÓN ESPECIAL:');
+    const cantidadField = document.getElementById('cantidad');
+    const precioField = document.getElementById('precio_unitario');
+    
+    console.log('  - Cantidad final:', cantidadField?.value);
+    console.log('  - Precio final:', precioField?.value);
+    
+    // Solución específica para campos numéricos problemáticos
+    if (cantidadField && venta.cantidad) {
+        console.log('🔧 SOLUCIÓN ESPECÍFICA PARA CANTIDAD');
+        console.log('  - Valor original:', venta.cantidad);
+        console.log('  - Tipo:', typeof venta.cantidad);
+        
+        // Limpiar el campo completamente
+        cantidadField.value = '';
+        cantidadField.removeAttribute('value');
+        cantidadField.removeAttribute('placeholder');
+        
+        // Esperar un momento
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Establecer el valor de múltiples formas
+        const cantidadValue = parseFloat(venta.cantidad);
+        console.log('  - Valor parseado:', cantidadValue);
+        
+        cantidadField.value = cantidadValue;
+        cantidadField.setAttribute('value', cantidadValue);
+        cantidadField.defaultValue = cantidadValue;
+        
+        // Forzar actualización del DOM
+        cantidadField.dispatchEvent(new Event('input', { bubbles: true }));
+        cantidadField.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Verificar resultado
+        console.log('  - Valor final cantidad:', cantidadField.value);
+    }
+    
+    if (precioField && venta.precio_unitario) {
+        console.log('🔧 SOLUCIÓN ESPECÍFICA PARA PRECIO');
+        console.log('  - Valor original:', venta.precio_unitario);
+        console.log('  - Tipo:', typeof venta.precio_unitario);
+        
+        // Limpiar el campo completamente
+        precioField.value = '';
+        precioField.removeAttribute('value');
+        precioField.removeAttribute('placeholder');
+        
+        // Esperar un momento
+        await new Promise(resolve => setTimeout(resolve, 50));
+        
+        // Establecer el valor de múltiples formas
+        const precioValue = parseFloat(venta.precio_unitario);
+        console.log('  - Valor parseado:', precioValue);
+        
+        precioField.value = precioValue;
+        precioField.setAttribute('value', precioValue);
+        precioField.defaultValue = precioValue;
+        
+        // Forzar actualización del DOM
+        precioField.dispatchEvent(new Event('input', { bubbles: true }));
+        precioField.dispatchEvent(new Event('change', { bubbles: true }));
+        
+        // Verificar resultado
+        console.log('  - Valor final precio:', precioField.value);
+    }
+    
+    // Verificación final absoluta
+    console.log('🔍 VERIFICACIÓN FINAL ABSOLUTA:');
+    const cantidadFinal = document.getElementById('cantidad')?.value;
+    const precioFinal = document.getElementById('precio_unitario')?.value;
+    
+    console.log('  - Cantidad final:', cantidadFinal);
+    console.log('  - Precio final:', precioFinal);
+    
+    // Si aún están vacíos, usar método de fuerza bruta
+    if (cantidadFinal === '' || cantidadFinal === '0' || cantidadFinal === '0.00') {
+        console.log('🚨 FORZANDO CANTIDAD CON MÉTODO DE FUERZA BRUTA');
+        const cantidadField = document.getElementById('cantidad');
+        if (cantidadField && venta.cantidad) {
+            cantidadField.value = '';
+            setTimeout(() => {
+                cantidadField.value = venta.cantidad;
+                cantidadField.dispatchEvent(new Event('input', { bubbles: true }));
+            }, 100);
+        }
+    }
+    
+    if (precioFinal === '' || precioFinal === '0' || precioFinal === '0.00') {
+        console.log('🚨 FORZANDO PRECIO CON MÉTODO DE FUERZA BRUTA');
+        const precioField = document.getElementById('precio_unitario');
+        if (precioField && venta.precio_unitario) {
+            precioField.value = '';
+            setTimeout(() => {
+                precioField.value = venta.precio_unitario;
+                precioField.dispatchEvent(new Event('input', { bubbles: true }));
+            }, 100);
+        }
+    }
+    
+    console.log('✅ Llenado de campos completado');
 }
 
 // Calcular total automáticamente
@@ -371,9 +548,13 @@ async function saveVenta() {
         return;
     }
     
-    const ventaId = formData.get('id_venta');
+    const ventaId = document.getElementById('id_venta').value;
+    console.log('💾 Guardando venta. ID:', ventaId);
+    
     const url = ventaId ? `php/ventas.php?action=update&id=${ventaId}` : 'php/ventas.php?action=create';
-    const method = ventaId ? 'PUT' : 'POST';
+    const method = ventaId ? 'POST' : 'POST'; // Ambos usan POST según el PHP
+    
+    console.log('📡 URL:', url, 'Método:', method);
     
     try {
         const response = await fetch(url, {
@@ -382,6 +563,7 @@ async function saveVenta() {
         });
         
         const data = await response.json();
+        console.log('📡 Respuesta:', data);
         
         if (data.success) {
             showToast(data.message, 'success');
@@ -392,7 +574,7 @@ async function saveVenta() {
             showToast(data.message, 'error');
         }
     } catch (error) {
-        console.error('Error:', error);
+        console.error('❌ Error:', error);
         showToast('Error al guardar la venta', 'error');
     }
 }

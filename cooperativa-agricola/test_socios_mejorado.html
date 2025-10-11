@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Tabla de Socios Mejorada</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #d4ff00;
+        }
+        .feature h3 {
+            color: #1a3a2e;
+            margin-bottom: 8px;
+        }
+        .feature p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>👥 Test - Tabla de Socios Mejorada</h1>
+            <p>Nueva presentación visual con mejor organización de datos</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📊 Datos Estructurados</h3>
+                <p>Información del socio organizada con nombre y dirección</p>
+            </div>
+            <div class="feature">
+                <h3>📞 Enlaces de Contacto</h3>
+                <p>Teléfonos y emails clicables para contacto directo</p>
+            </div>
+            <div class="feature">
+                <h3>💰 Montos Visuales</h3>
+                <p>Aportes y deudas con colores y iconos distintivos</p>
+            </div>
+            <div class="feature">
+                <h3>👁️ Vista Detallada</h3>
+                <p>Modal con información completa del socio</p>
+            </div>
+        </div>
+        
+        <div class="table-container">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Cédula</th>
+                        <th>Teléfono</th>
+                        <th>Email</th>
+                        <th>Estado</th>
+                        <th>Aportes</th>
+                        <th>Deudas</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="socio-id">1</span></td>
+                        <td>
+                            <div class="socio-info">
+                                <div class="socio-nombre">Juan Carlos Pérez</div>
+                                <div class="socio-direccion">Calle 123, Barrio Centro</div>
+                            </div>
+                        </td>
+                        <td><span class="cedula-info">12345678</span></td>
+                        <td>
+                            <a href="tel:555-0101" class="contact-link" title="Llamar">
+                                <i class="fas fa-phone"></i> 555-0101
+                            </a>
+                        </td>
+                        <td>
+                            <a href="mailto:juan@email.com" class="contact-link" title="Enviar email">
+                                <i class="fas fa-envelope"></i> juan@email.com
+                            </a>
+                        </td>
+                        <td><span class="status-badge status-activo">Activo</span></td>
+                        <td>
+                            <span class="amount positive has-amount">
+                                <i class="fas fa-arrow-up"></i> $2,500
+                            </span>
+                        </td>
+                        <td>
+                            <span class="amount negative no-debt">
+                                <i class="fas fa-arrow-down"></i> $0
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar socio 1')" title="Editar socio">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles socio 1')" title="Ver detalles">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar socio 1')" title="Eliminar socio">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="socio-id">2</span></td>
+                        <td>
+                            <div class="socio-info">
+                                <div class="socio-nombre">María Elena García</div>
+                                <div class="socio-direccion">Avenida Principal 456</div>
+                            </div>
+                        </td>
+                        <td><span class="cedula-info">87654321</span></td>
+                        <td>
+                            <a href="tel:555-0202" class="contact-link" title="Llamar">
+                                <i class="fas fa-phone"></i> 555-0202
+                            </a>
+                        </td>
+                        <td>
+                            <a href="mailto:maria@email.com" class="contact-link" title="Enviar email">
+                                <i class="fas fa-envelope"></i> maria@email.com
+                            </a>
+                        </td>
+                        <td><span class="status-badge status-activo">Activo</span></td>
+                        <td>
+                            <span class="amount positive has-amount">
+                                <i class="fas fa-arrow-up"></i> $1,800
+                            </span>
+                        </td>
+                        <td>
+                            <span class="amount negative has-debt">
+                                <i class="fas fa-arrow-down"></i> $500
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar socio 2')" title="Editar socio">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles socio 2')" title="Ver detalles">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar socio 2')" title="Eliminar socio">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="socio-id">3</span></td>
+                        <td>
+                            <div class="socio-info">
+                                <div class="socio-nombre">Carlos Alberto López</div>
+                            </div>
+                        </td>
+                        <td><span class="cedula-info">11223344</span></td>
+                        <td>
+                            <span class="no-data">Sin teléfono</span>
+                        </td>
+                        <td>
+                            <span class="no-data">Sin email</span>
+                        </td>
+                        <td><span class="status-badge status-inactivo">Inactivo</span></td>
+                        <td>
+                            <span class="amount positive no-amount">
+                                <i class="fas fa-arrow-up"></i> $0
+                            </span>
+                        </td>
+                        <td>
+                            <span class="amount negative has-debt">
+                                <i class="fas fa-arrow-down"></i> $1,200
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar socio 3')" title="Editar socio">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles socio 3')" title="Ver detalles">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar socio 3')" title="Eliminar socio">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><span class="socio-id">4</span></td>
+                        <td>
+                            <div class="socio-info">
+                                <div class="socio-nombre">Ana Patricia Martínez</div>
+                                <div class="socio-direccion">Carrera 789, Sector Norte</div>
+                            </div>
+                        </td>
+                        <td><span class="cedula-info">55667788</span></td>
+                        <td>
+                            <a href="tel:555-0303" class="contact-link" title="Llamar">
+                                <i class="fas fa-phone"></i> 555-0303
+                            </a>
+                        </td>
+                        <td>
+                            <a href="mailto:ana@email.com" class="contact-link" title="Enviar email">
+                                <i class="fas fa-envelope"></i> ana@email.com
+                            </a>
+                        </td>
+                        <td><span class="status-badge status-suspendido">Suspendido</span></td>
+                        <td>
+                            <span class="amount positive has-amount">
+                                <i class="fas fa-arrow-up"></i> $3,200
+                            </span>
+                        </td>
+                        <td>
+                            <span class="amount negative no-debt">
+                                <i class="fas fa-arrow-down"></i> $0
+                            </span>
+                        </td>
+                        <td>
+                            <div class="actions">
+                                <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar socio 4')" title="Editar socio">
+                                    <i class="fas fa-edit"></i> Editar
+                                </button>
+                                <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles socio 4')" title="Ver detalles">
+                                    <i class="fas fa-eye"></i> Ver
+                                </button>
+                                <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar socio 4')" title="Eliminar socio">
+                                    <i class="fas fa-trash"></i> Eliminar
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">✅ Mejoras Implementadas:</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Información estructurada:</strong> Nombre y dirección en columna organizada</li>
+                <li><strong>Enlaces de contacto:</strong> Teléfonos y emails clicables con iconos</li>
+                <li><strong>Montos visuales:</strong> Aportes y deudas con colores distintivos</li>
+                <li><strong>Estados mejorados:</strong> Badges con colores apropiados</li>
+                <li><strong>Acciones expandidas:</strong> Botón "Ver" para detalles completos</li>
+                <li><strong>Datos faltantes:</strong> Indicadores claros para información no disponible</li>
+                <li><strong>Responsive:</strong> Se adapta a diferentes tamaños de pantalla</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">🔍 Funcionalidades Nuevas:</h4>
+            <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                <strong>Modal de detalles:</strong> Al hacer clic en "Ver" se abre un modal con información completa del socio, incluyendo datos financieros y personales organizados en secciones.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

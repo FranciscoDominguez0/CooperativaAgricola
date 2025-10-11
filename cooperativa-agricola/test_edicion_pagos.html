@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Edición de Pagos Corregida</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .fix-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+        }
+        .fix-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .problem {
+            background: #fef2f2;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #ef4444;
+            margin: 10px 0;
+        }
+        .solution {
+            background: #f0fdf4;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #10b981;
+            margin: 10px 0;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .test-steps {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin: 20px 0;
+        }
+        .test-steps h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        .test-steps ol {
+            color: #92400e;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔧 Test - Edición de Pagos Corregida</h1>
+            <p>Problema resuelto: Los campos no se llenaban al editar pagos</p>
+        </div>
+        
+        <div class="fix-section">
+            <h3>🐛 Problema Identificado</h3>
+            <div class="problem">
+                <strong>Error:</strong> Al editar un pago, los campos de socio, tipo y descripción aparecían vacíos o con valores por defecto.
+                <br><br>
+                <strong>Causa:</strong> La función <code>form.reset()</code> se ejecutaba DESPUÉS de establecer los valores, limpiando todos los campos.
+            </div>
+        </div>
+        
+        <div class="fix-section">
+            <h3>✅ Solución Implementada</h3>
+            <div class="solution">
+                <strong>Cambio principal:</strong> Eliminé <code>form.reset()</code> de la función de edición.
+                <br><br>
+                <strong>Mejoras adicionales:</strong>
+                <ul>
+                    <li>Logs detallados para debugging</li>
+                    <li>Manejo correcto del dropdown de ventas</li>
+                    <li>Verificación de todos los campos</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="fix-section">
+            <h3>🔧 Código Corregido</h3>
+            <div class="code-block">
+// ANTES (PROBLEMÁTICO):
+title.textContent = 'Editar Pago';
+form.reset(); // ❌ Esto limpiaba los campos
+document.getElementById('pagoId').value = pago.id_pago || '';
+// ... resto de campos
+
+// DESPUÉS (CORREGIDO):
+title.textContent = 'Editar Pago';
+// NO limpiar formulario - establecer valores directamente
+console.log('📦 Datos del pago a editar:', pago);
+document.getElementById('pagoId').value = pago.id_pago || '';
+// ... resto de campos
+            </div>
+        </div>
+        
+        <div class="test-steps">
+            <h3>🧪 Pasos para Verificar la Corrección</h3>
+            <ol>
+                <li><strong>Abre la página de pagos:</strong> <code>http://localhost/cooperativa-agricola/pagos.html</code></li>
+                <li><strong>Abre la consola del navegador:</strong> F12 → pestaña Console</li>
+                <li><strong>Haz clic en editar (✏️) de cualquier pago</strong></li>
+                <li><strong>Verifica en consola:</strong> Debe aparecer:
+                    <div class="code-block">
+🔄 LLENANDO MODAL CON DATOS
+📦 Datos del pago a editar: {id_pago: 1, id_socio: 5, tipo: "aporte_mensual", ...}
+👤 Configurando socio ID: 5
+✅ Socio seleccionado: Juan Pérez
+📋 Tipo establecido: aporte_mensual
+📝 Campos llenados:
+  - Socio: 5 (Juan Pérez)
+  - Tipo: aporte_mensual
+  - Descripción: Pago mensual de enero
+  - Observaciones: Todo en orden
+✅ Modal mostrado con datos del pago
+                    </div>
+                </li>
+                <li><strong>Verifica en el formulario:</strong>
+                    <ul>
+                        <li>✅ El socio debe estar seleccionado</li>
+                        <li>✅ El tipo debe estar seleccionado</li>
+                        <li>✅ La descripción debe tener el texto completo</li>
+                        <li>✅ Las observaciones deben tener el texto completo</li>
+                        <li>✅ El monto debe estar lleno</li>
+                        <li>✅ La fecha debe estar lleno</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #ecfdf5; border-radius: 8px; border-left: 4px solid #10b981;">
+            <h3 style="color: #065f46; margin-bottom: 15px;">✅ Campos que Ahora se Llenan Correctamente:</h3>
+            <ul style="color: #065f46; line-height: 1.8;">
+                <li><strong>Socio:</strong> Dropdown con el socio correcto seleccionado</li>
+                <li><strong>Tipo:</strong> Select con el tipo de pago correcto</li>
+                <li><strong>Descripción:</strong> Textarea con el texto completo</li>
+                <li><strong>Observaciones:</strong> Textarea con el texto completo</li>
+                <li><strong>Monto:</strong> Input con el valor correcto</li>
+                <li><strong>Fecha:</strong> Input con la fecha correcta</li>
+                <li><strong>Método de pago:</strong> Select con el método correcto</li>
+                <li><strong>Estado:</strong> Select con el estado correcto</li>
+                <li><strong>Número de comprobante:</strong> Input con el número correcto</li>
+                <li><strong>Venta relacionada:</strong> Dropdown con la venta correcta (si existe)</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">🔍 Debugging:</h4>
+            <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                Si todavía hay problemas, revisa la consola para ver los logs detallados. Los logs mostrarán exactamente qué datos se están recibiendo y cómo se están estableciendo en cada campo.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

@@ -118,3 +118,4 @@ echo "<li>Ejecuta el archivo <code>crear_base_datos.sql</code> en phpMyAdmin</li
 echo "<li>Prueba el módulo de pagos en <code>dashboard.html</code></li>";
 echo "</ol>";
 ?>
+

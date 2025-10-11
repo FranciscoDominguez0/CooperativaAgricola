@@ -89,3 +89,4 @@ SELECT 'Base de datos y tablas creadas exitosamente' as mensaje;
 SELECT COUNT(*) as total_socios FROM socios;
 SELECT COUNT(*) as total_ventas FROM ventas;
 SELECT COUNT(*) as total_pagos FROM pagos;
+
