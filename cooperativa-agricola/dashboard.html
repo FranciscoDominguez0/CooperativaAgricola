@@ -9,6 +9,8 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/creative-messages.css">
+    <link rel="stylesheet" href="css/reportes.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Sidebar -->
@@ -46,6 +48,10 @@
             <div class="nav-item" data-section="pagos">
                 <i class="fas fa-money-bill-wave"></i>
                 <span>Pagos</span>
+            </div>
+            <div class="nav-item" data-section="reportes">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reportes</span>
             </div>
         </nav>
         
@@ -487,6 +493,82 @@
 
                     <div class="pagination" id="pagosPagination">
                         <!-- La paginación se generará aquí -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Reportes Section -->
+            <section class="content-section" id="reportesSection">
+                <div class="reportes-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-pie"></i>
+                            Reportes y Estadísticas
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="goToReportsBtn">
+                                <i class="fas fa-external-link-alt"></i> Ir a Reportes Completos
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="reportes-preview">
+                        <div class="preview-cards">
+                            <div class="preview-card">
+                                <div class="preview-icon">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                                <div class="preview-content">
+                                    <h3>Ventas Mensuales</h3>
+                                    <div class="preview-value" id="previewSales">$28,000</div>
+                                    <div class="preview-change positive">+12.5%</div>
+                                </div>
+                            </div>
+
+                            <div class="preview-card">
+                                <div class="preview-icon">
+                                    <i class="fas fa-hand-holding-usd"></i>
+                                </div>
+                                <div class="preview-content">
+                                    <h3>Aportes Recaudados</h3>
+                                    <div class="preview-value" id="previewContributions">$16,800</div>
+                                    <div class="preview-subtitle">124 miembros activos</div>
+                                </div>
+                            </div>
+
+                            <div class="preview-card">
+                                <div class="preview-icon">
+                                    <i class="fas fa-boxes"></i>
+                                </div>
+                                <div class="preview-content">
+                                    <h3>Valor de Inventario</h3>
+                                    <div class="preview-value" id="previewInventory">$11,369</div>
+                                    <div class="preview-subtitle">305 artículos</div>
+                                </div>
+                            </div>
+
+                            <div class="preview-card">
+                                <div class="preview-icon">
+                                    <i class="fas fa-percentage"></i>
+                                </div>
+                                <div class="preview-content">
+                                    <h3>Margen Bruto</h3>
+                                    <div class="preview-value" id="previewMargin">62.5%</div>
+                                    <div class="preview-subtitle">Rentabilidad</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="preview-charts">
+                            <div class="preview-chart">
+                                <h4><i class="fas fa-chart-bar"></i> Evolución Financiera</h4>
+                                <canvas id="previewFinancialChart"></canvas>
+                            </div>
+                            <div class="preview-chart">
+                                <h4><i class="fas fa-pie-chart"></i> Inventario por Tipo</h4>
+                                <canvas id="previewInventoryChart"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </section>

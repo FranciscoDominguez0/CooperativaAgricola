@@ -297,6 +297,8 @@ function showSection(sectionName) {
         loadPagos();
         loadPagosStatistics();
         loadSociosForPagos();
+    } else if (sectionName === 'reportes') {
+        loadReportesPreview();
     }
 }
 
@@ -1626,6 +1628,11 @@ document.addEventListener('DOMContentLoaded', function() {
             closePagoModal();
         }
     });
+
+    // Event listener para ir a reportes completos
+    document.getElementById('goToReportsBtn').addEventListener('click', function() {
+        window.location.href = 'reportes.html';
+    });
 });
 
 // ===== FUNCIONES DE PAGOS =====
@@ -2005,4 +2012,124 @@ async function deletePago(pagoId) {
         console.error('Error:', error);
         showToast('Error al eliminar el pago', 'error');
     }
+}
+
+// ===== FUNCIONES DE REPORTES =====
+
+async function loadReportesPreview() {
+    try {
+        // Cargar datos de KPIs para el preview
+        const response = await fetch('php/reportes.php?action=kpis');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateReportesPreview(data.kpis);
+            createPreviewCharts();
+        } else {
+            // Usar datos de ejemplo
+            updateReportesPreview({
+                totalIncome: 28000,
+                totalContributions: 16800,
+                inventoryValue: 11369,
+                grossMargin: 62.5
+            });
+            createPreviewCharts();
+        }
+    } catch (error) {
+        console.error('Error loading reportes preview:', error);
+        // Usar datos de ejemplo
+        updateReportesPreview({
+            totalIncome: 28000,
+            totalContributions: 16800,
+            inventoryValue: 11369,
+            grossMargin: 62.5
+        });
+        createPreviewCharts();
+    }
+}
+
+function updateReportesPreview(kpis) {
+    document.getElementById('previewSales').textContent = formatCurrency(kpis.totalIncome);
+    document.getElementById('previewContributions').textContent = formatCurrency(kpis.totalContributions);
+    document.getElementById('previewInventory').textContent = formatCurrency(kpis.inventoryValue);
+    document.getElementById('previewMargin').textContent = `${kpis.grossMargin}%`;
+}
+
+function createPreviewCharts() {
+    // Gráfico de evolución financiera
+    const financialCtx = document.getElementById('previewFinancialChart').getContext('2d');
+    new Chart(financialCtx, {
+        type: 'line',
+        data: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [
+                {
+                    label: 'Ventas',
+                    data: [25000, 28000, 32000, 29000, 35000, 38000],
+                    borderColor: '#2d5016',
+                    backgroundColor: 'rgba(45, 80, 22, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Aportes',
+                    data: [15000, 16800, 18000, 17200, 19000, 19500],
+                    borderColor: '#4a7c59',
+                    backgroundColor: 'rgba(74, 124, 89, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de inventario por tipo
+    const inventoryCtx = document.getElementById('previewInventoryChart').getContext('2d');
+    new Chart(inventoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Semillas', 'Fertilizantes', 'Herramientas', 'Maquinaria'],
+            datasets: [{
+                data: [3500, 2800, 2100, 2969],
+                backgroundColor: ['#2d5016', '#4a7c59', '#8bc34a', '#ffc107'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function formatCurrency(value) {
+    return new Intl.NumberFormat('es-ES', {
+        style: 'currency',
+        currency: 'USD',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(value);
 }

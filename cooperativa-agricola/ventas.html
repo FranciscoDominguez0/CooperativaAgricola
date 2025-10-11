@@ -8,6 +8,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/search.css">
 </head>
 <body>
     <!-- Sidebar -->
@@ -121,6 +122,45 @@
                             Gestión de Ventas
                         </h2>
                         <div class="search-container stagger-animation">
+                            <div class="search-wrapper">
+                                <div class="search-input-group">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input 
+                                        type="text" 
+                                        id="searchInput_ventas" 
+                                        class="search-input" 
+                                        placeholder="Buscar por producto, cliente, estado o método de pago..."
+                                        autocomplete="off"
+                                    >
+                                    <button class="search-clear-btn" id="searchClear_ventas" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="search-filters" id="searchFilters_ventas">
+                                    <button class="filter-btn" data-filter="producto" title="Filtrar por Producto">
+                                        <i class="fas fa-box"></i>
+                                        <span>Producto</span>
+                                    </button>
+                                    <button class="filter-btn" data-filter="cliente" title="Filtrar por Cliente">
+                                        <i class="fas fa-user-tie"></i>
+                                        <span>Cliente</span>
+                                    </button>
+                                    <button class="filter-btn" data-filter="estado" title="Filtrar por Estado">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Estado</span>
+                                    </button>
+                                    <button class="filter-btn" data-filter="metodo_pago" title="Filtrar por Método de Pago">
+                                        <i class="fas fa-credit-card"></i>
+                                        <span>Método Pago</span>
+                                    </button>
+                                </div>
+                                <div class="search-results-info" id="searchResults_ventas" style="display: none;">
+                                    <span class="search-count"></span>
+                                    <button class="search-reset-btn" id="searchReset_ventas">
+                                        <i class="fas fa-undo"></i> Limpiar búsqueda
+                                    </button>
+                                </div>
+                            </div>
                             <button class="btn btn-primary btn-animate hover-lift" id="addVentaBtn">
                                 <i class="fas fa-plus"></i> Registrar Venta
                             </button>
@@ -261,6 +301,7 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
 
+    <script src="js/search.js"></script>
     <script src="js/ventas.js"></script>
 </body>
 </html>

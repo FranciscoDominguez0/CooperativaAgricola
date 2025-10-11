@@ -4,6 +4,7 @@ let currentUser = null;
 let currentPage = 1;
 let totalPages = 1;
 let sociosList = [];
+let searchInstance = null;
 
 document.addEventListener('DOMContentLoaded', function() {
     checkSession();
@@ -159,9 +160,93 @@ function loadProduccionPage() {
     // Cargar socios para el dropdown
     loadSocios();
     
+    // Initialize search functionality
+    initializeSearch();
+    
     // Cargar estadísticas y producción
     loadStatistics();
     loadProduccion();
+}
+
+function initializeSearch() {
+    // Initialize search functionality after DOM is ready
+    if (typeof CooperativeSearch !== 'undefined') {
+        searchInstance = new CooperativeSearch({
+            module: 'produccion',
+            searchFields: ['cultivo', 'variedad', 'calidad', 'socio'],
+            tableBodyId: 'produccionTableBody',
+            loadFunction: loadProduccion,
+            debounceTime: 300,
+            minSearchLength: 2
+        });
+    } else {
+        // Fallback: Initialize search manually if CooperativeSearch is not available
+        initializeManualSearch();
+    }
+}
+
+function initializeManualSearch() {
+    const searchInput = document.getElementById('searchInput_produccion');
+    const searchClear = document.getElementById('searchClear_produccion');
+    const searchReset = document.getElementById('searchReset_produccion');
+    const filterButtons = document.querySelectorAll('#searchFilters_produccion .filter-btn');
+    
+    if (!searchInput) {
+        console.error('Search input not found for production module');
+        return;
+    }
+    
+    let searchTimeout = null;
+    
+    // Search input events
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        
+        // Show/hide clear button
+        if (searchClear) {
+            searchClear.style.display = searchTerm.length > 0 ? 'block' : 'none';
+        }
+        
+        // Debounce search
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        searchTimeout = setTimeout(() => {
+            loadProduccion(1, searchTerm);
+        }, 300);
+    });
+    
+    // Clear search button
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            loadProduccion(1, '');
+        });
+    }
+    
+    // Reset search button
+    if (searchReset) {
+        searchReset.addEventListener('click', () => {
+            searchInput.value = '';
+            if (searchClear) searchClear.style.display = 'none';
+            loadProduccion(1, '');
+        });
+    }
+    
+    // Filter buttons
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filter = e.currentTarget.dataset.filter;
+            searchInput.placeholder = `Filtrando por ${filter}...`;
+            searchInput.focus();
+            
+            // Update filter button states
+            filterButtons.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+        });
+    });
 }
 
 function getRoleDisplay(role) {
@@ -226,39 +311,66 @@ async function loadProduccion(page = 1, search = '') {
         console.log('Cargando producción...', { page, search });
         updateDebugInfo('Cargando datos de producción...');
         
+        // Use enhanced search API if search term is provided
+        if (search && search.trim().length > 0) {
             const params = new URLSearchParams({
-            page: page,
-                limit: 10,
-            search: search
+                module: 'produccion',
+                search: search,
+                page: page,
+                limit: 10
             });
-        
-        console.log('Parámetros de búsqueda:', params.toString());
             
-            const response = await fetch(`php/produccion.php?${params}`);
-        console.log('Respuesta del servidor:', response.status);
-        updateDebugInfo(`Servidor respondió: ${response.status}`);
-        
+            console.log('Using enhanced search API:', params.toString());
+            const response = await fetch(`php/search.php?${params}`);
             const data = await response.json();
-        console.log('Datos recibidos:', data);
             
             if (data.success) {
-            console.log('Producción cargada exitosamente:', data.data);
-            updateDebugInfo(`Producción cargada: ${data.data.length} registros`);
-            displayProduccion(data.data);
-            displayPagination(data.pagination);
-            currentPage = data.pagination.current_page;
-            totalPages = data.pagination.total_pages;
+                console.log('Search results loaded:', data.data);
+                updateDebugInfo(`Búsqueda completada: ${data.data.length} resultados`);
+                displayProduccion(data.data);
+                displayPagination(data.pagination);
+                currentPage = data.pagination.current_page;
+                totalPages = data.pagination.total_pages;
             } else {
-            console.error('Error del servidor:', data.message);
-            updateDebugInfo('Error: ' + data.message);
-            showToast('Error al cargar producción: ' + data.message, 'error');
+                console.error('Search error:', data.message);
+                updateDebugInfo('Error en búsqueda: ' + data.message);
+                showToast('Error en la búsqueda: ' + data.message, 'error');
             }
-        } catch (error) {
+        } else {
+            // Use standard API for no search
+            const params = new URLSearchParams({
+                page: page,
+                limit: 10,
+                search: search
+            });
+            
+            console.log('Using standard API:', params.toString());
+            const response = await fetch(`php/produccion.php?${params}`);
+            console.log('Server response:', response.status);
+            updateDebugInfo(`Servidor respondió: ${response.status}`);
+            
+            const data = await response.json();
+            console.log('Data received:', data);
+            
+            if (data.success) {
+                console.log('Producción cargada exitosamente:', data.data);
+                updateDebugInfo(`Producción cargada: ${data.data.length} registros`);
+                displayProduccion(data.data);
+                displayPagination(data.pagination);
+                currentPage = data.pagination.current_page;
+                totalPages = data.pagination.total_pages;
+            } else {
+                console.error('Server error:', data.message);
+                updateDebugInfo('Error: ' + data.message);
+                showToast('Error al cargar producción: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
         console.error('Error al cargar producción:', error);
         updateDebugInfo('Error de conexión: ' + error.message);
         showToast('Error de conexión al cargar producción', 'error');
-        }
     }
+}
 
 function displayProduccion(produccion) {
         const tbody = document.getElementById('produccionTableBody');
@@ -422,7 +534,6 @@ function setupEventListeners() {
         document.getElementById('logoutModal').style.display = 'none';
     });
 
-    // Búsqueda de producción - removed as requested
 
     // Agregar producción
     document.getElementById('addProduccionBtn').addEventListener('click', function() {

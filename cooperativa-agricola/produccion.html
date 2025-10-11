@@ -9,6 +9,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/creative-messages.css">
+    <link rel="stylesheet" href="css/search.css">
 </head>
 <body>
     <!-- Header -->
@@ -72,6 +73,45 @@
                         Gestión de Producción
                     </h2>
                     <div class="search-container stagger-animation">
+                        <div class="search-wrapper">
+                            <div class="search-input-group">
+                                <i class="fas fa-search search-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="searchInput_produccion" 
+                                    class="search-input" 
+                                    placeholder="Buscar por cultivo, variedad, calidad o socio..."
+                                    autocomplete="off"
+                                >
+                                <button class="search-clear-btn" id="searchClear_produccion" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="search-filters" id="searchFilters_produccion">
+                                <button class="filter-btn" data-filter="cultivo" title="Filtrar por Cultivo">
+                                    <i class="fas fa-seedling"></i>
+                                    <span>Cultivo</span>
+                                </button>
+                                <button class="filter-btn" data-filter="variedad" title="Filtrar por Variedad">
+                                    <i class="fas fa-leaf"></i>
+                                    <span>Variedad</span>
+                                </button>
+                                <button class="filter-btn" data-filter="calidad" title="Filtrar por Calidad">
+                                    <i class="fas fa-star"></i>
+                                    <span>Calidad</span>
+                                </button>
+                                <button class="filter-btn" data-filter="socio" title="Filtrar por Socio">
+                                    <i class="fas fa-user"></i>
+                                    <span>Socio</span>
+                                </button>
+                            </div>
+                            <div class="search-results-info" id="searchResults_produccion" style="display: none;">
+                                <span class="search-count"></span>
+                                <button class="search-reset-btn" id="searchReset_produccion">
+                                    <i class="fas fa-undo"></i> Limpiar búsqueda
+                                </button>
+                            </div>
+                        </div>
                         <button class="btn btn-primary btn-animate hover-lift" id="addProduccionBtn">
                             <i class="fas fa-plus"></i> Registrar Producción
                         </button>
@@ -252,6 +292,7 @@
     <!-- Toast Container -->
     <div id="toastContainer" class="toast-container"></div>
 
+    <script src="js/search.js"></script>
     <script src="js/produccion.js"></script>
 </body>
 </html>

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Pagos - Cooperativa Agrícola La Pintada</title>
     <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/search.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
 </head>
@@ -90,10 +91,51 @@
                             <i class="fas fa-money-bill-wave"></i>
                             Gestión de Pagos
                         </h2>
-                        <div class="section-actions">
-                            <button class="btn btn-primary" id="addPagoBtn">
-                                <i class="fas fa-plus"></i> Registrar Pago
-                            </button>
+                        <div class="search-container">
+                            <div class="search-wrapper">
+                                <div class="search-input-group">
+                                    <i class="fas fa-search search-icon"></i>
+                                    <input 
+                                        type="text" 
+                                        id="searchInput_pagos" 
+                                        class="search-input" 
+                                        placeholder="Buscar por tipo, estado, método de pago o comprobante..."
+                                        autocomplete="off"
+                                    >
+                                    <button class="search-clear-btn" id="searchClear_pagos" style="display: none;">
+                                        <i class="fas fa-times"></i>
+                                    </button>
+                                </div>
+                                <div class="search-filters" id="searchFilters_pagos">
+                                    <button class="filter-btn" data-filter="tipo" title="Filtrar por Tipo">
+                                        <i class="fas fa-tag"></i>
+                                        <span>Tipo</span>
+                                    </button>
+                                    <button class="filter-btn" data-filter="estado" title="Filtrar por Estado">
+                                        <i class="fas fa-info-circle"></i>
+                                        <span>Estado</span>
+                                    </button>
+                                    <button class="filter-btn" data-filter="metodo_pago" title="Filtrar por Método de Pago">
+                                        <i class="fas fa-credit-card"></i>
+                                        <span>Método Pago</span>
+                                    </button>
+                                    <button class="filter-btn" data-filter="comprobante" title="Filtrar por Comprobante">
+                                        <i class="fas fa-receipt"></i>
+                                        <span>Comprobante</span>
+                                    </button>
+                                </div>
+                                <div class="search-results-info" id="searchResults_pagos" style="display: none;">
+                                    <span class="search-count"></span>
+                                    <button class="search-reset-btn" id="searchReset_pagos">
+                                        <i class="fas fa-undo"></i> Limpiar búsqueda
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="section-actions">
+                                <button class="btn btn-primary" id="addPagoBtn">
+                                    <i class="fas fa-plus"></i> Registrar Pago
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -271,6 +313,7 @@
     <!-- Toast Container -->
     <div id="toastContainer"></div>
 
+    <script src="js/search.js"></script>
     <script src="js/pagos.js"></script>
 </body>
 </html>

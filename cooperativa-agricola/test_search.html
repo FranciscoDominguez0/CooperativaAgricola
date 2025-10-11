@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Search Functionality</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/search.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .search-container {
+            margin-bottom: 20px;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+        }
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🔍 Search Functionality Test</h1>
+        <p>This page tests the search functionality for all three modules.</p>
+
+        <!-- Production Module Test -->
+        <div class="test-section">
+            <h3>🌱 Production Module</h3>
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput_produccion" 
+                            class="search-input" 
+                            placeholder="Buscar por cultivo, variedad, calidad o socio..."
+                            autocomplete="off"
+                        >
+                        <button class="search-clear-btn" id="searchClear_produccion" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="search-filters" id="searchFilters_produccion">
+                        <button class="filter-btn" data-filter="cultivo" title="Filtrar por Cultivo">
+                            <i class="fas fa-seedling"></i>
+                            <span>Cultivo</span>
+                        </button>
+                        <button class="filter-btn" data-filter="variedad" title="Filtrar por Variedad">
+                            <i class="fas fa-leaf"></i>
+                            <span>Variedad</span>
+                        </button>
+                        <button class="filter-btn" data-filter="calidad" title="Filtrar por Calidad">
+                            <i class="fas fa-star"></i>
+                            <span>Calidad</span>
+                        </button>
+                        <button class="filter-btn" data-filter="socio" title="Filtrar por Socio">
+                            <i class="fas fa-user"></i>
+                            <span>Socio</span>
+                        </button>
+                    </div>
+                    <div class="search-results-info" id="searchResults_produccion" style="display: none;">
+                        <span class="search-count"></span>
+                        <button class="search-reset-btn" id="searchReset_produccion">
+                            <i class="fas fa-undo"></i> Limpiar búsqueda
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <table class="table" id="produccionTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Socio</th>
+                        <th>Cultivo</th>
+                        <th>Variedad</th>
+                        <th>Cantidad</th>
+                        <th>Calidad</th>
+                    </tr>
+                </thead>
+                <tbody id="produccionTableBody">
+                    <tr>
+                        <td>1</td>
+                        <td>Juan Pérez</td>
+                        <td>Maíz</td>
+                        <td>Híbrido 123</td>
+                        <td>100 quintales</td>
+                        <td>Premium</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>María García</td>
+                        <td>Frijol</td>
+                        <td>Negro</td>
+                        <td>50 quintales</td>
+                        <td>Buena</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Carlos López</td>
+                        <td>Arroz</td>
+                        <td>Blanco</td>
+                        <td>75 quintales</td>
+                        <td>Regular</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Sales Module Test -->
+        <div class="test-section">
+            <h3>🛒 Sales Module</h3>
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput_ventas" 
+                            class="search-input" 
+                            placeholder="Buscar por producto, cliente, estado o método de pago..."
+                            autocomplete="off"
+                        >
+                        <button class="search-clear-btn" id="searchClear_ventas" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="search-filters" id="searchFilters_ventas">
+                        <button class="filter-btn" data-filter="producto" title="Filtrar por Producto">
+                            <i class="fas fa-box"></i>
+                            <span>Producto</span>
+                        </button>
+                        <button class="filter-btn" data-filter="cliente" title="Filtrar por Cliente">
+                            <i class="fas fa-user-tie"></i>
+                            <span>Cliente</span>
+                        </button>
+                        <button class="filter-btn" data-filter="estado" title="Filtrar por Estado">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Estado</span>
+                        </button>
+                        <button class="filter-btn" data-filter="metodo_pago" title="Filtrar por Método de Pago">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Método Pago</span>
+                        </button>
+                    </div>
+                    <div class="search-results-info" id="searchResults_ventas" style="display: none;">
+                        <span class="search-count"></span>
+                        <button class="search-reset-btn" id="searchReset_ventas">
+                            <i class="fas fa-undo"></i> Limpiar búsqueda
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <table class="table" id="ventasTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Producto</th>
+                        <th>Cliente</th>
+                        <th>Cantidad</th>
+                        <th>Estado</th>
+                        <th>Método Pago</th>
+                    </tr>
+                </thead>
+                <tbody id="ventasTableBody">
+                    <tr>
+                        <td>1</td>
+                        <td>Maíz Premium</td>
+                        <td>Distribuidora ABC</td>
+                        <td>100 quintales</td>
+                        <td>Entregado</td>
+                        <td>Transferencia</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Frijol Negro</td>
+                        <td>Supermercado XYZ</td>
+                        <td>50 quintales</td>
+                        <td>Pendiente</td>
+                        <td>Efectivo</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Arroz Blanco</td>
+                        <td>Restaurante 123</td>
+                        <td>25 quintales</td>
+                        <td>Pagado</td>
+                        <td>Cheque</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Payments Module Test -->
+        <div class="test-section">
+            <h3>💰 Payments Module</h3>
+            <div class="search-container">
+                <div class="search-wrapper">
+                    <div class="search-input-group">
+                        <i class="fas fa-search search-icon"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput_pagos" 
+                            class="search-input" 
+                            placeholder="Buscar por tipo, estado, método de pago o comprobante..."
+                            autocomplete="off"
+                        >
+                        <button class="search-clear-btn" id="searchClear_pagos" style="display: none;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                    <div class="search-filters" id="searchFilters_pagos">
+                        <button class="filter-btn" data-filter="tipo" title="Filtrar por Tipo">
+                            <i class="fas fa-tag"></i>
+                            <span>Tipo</span>
+                        </button>
+                        <button class="filter-btn" data-filter="estado" title="Filtrar por Estado">
+                            <i class="fas fa-info-circle"></i>
+                            <span>Estado</span>
+                        </button>
+                        <button class="filter-btn" data-filter="metodo_pago" title="Filtrar por Método de Pago">
+                            <i class="fas fa-credit-card"></i>
+                            <span>Método Pago</span>
+                        </button>
+                        <button class="filter-btn" data-filter="comprobante" title="Filtrar por Comprobante">
+                            <i class="fas fa-receipt"></i>
+                            <span>Comprobante</span>
+                        </button>
+                    </div>
+                    <div class="search-results-info" id="searchResults_pagos" style="display: none;">
+                        <span class="search-count"></span>
+                        <button class="search-reset-btn" id="searchReset_pagos">
+                            <i class="fas fa-undo"></i> Limpiar búsqueda
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <table class="table" id="pagosTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo</th>
+                        <th>Descripción</th>
+                        <th>Monto</th>
+                        <th>Estado</th>
+                        <th>Método Pago</th>
+                    </tr>
+                </thead>
+                <tbody id="pagosTableBody">
+                    <tr>
+                        <td>1</td>
+                        <td>Aporte Mensual</td>
+                        <td>Cuota mensual enero</td>
+                        <td>$500.00</td>
+                        <td>Confirmado</td>
+                        <td>Transferencia</td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td>Pago de Venta</td>
+                        <td>Venta de maíz</td>
+                        <td>$1,200.00</td>
+                        <td>Pendiente</td>
+                        <td>Efectivo</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>Aporte Extraordinario</td>
+                        <td>Fondo de emergencia</td>
+                        <td>$300.00</td>
+                        <td>Confirmado</td>
+                        <td>Cheque</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Test search functionality for all modules
+        function initializeTestSearch() {
+            // Production search
+            initializeModuleSearch('produccion', ['cultivo', 'variedad', 'calidad', 'socio']);
+            // Sales search
+            initializeModuleSearch('ventas', ['producto', 'cliente', 'estado', 'metodo_pago']);
+            // Payments search
+            initializeModuleSearch('pagos', ['tipo', 'estado', 'metodo_pago', 'comprobante']);
+        }
+
+        function initializeModuleSearch(module, searchFields) {
+            const searchInput = document.getElementById(`searchInput_${module}`);
+            const searchClear = document.getElementById(`searchClear_${module}`);
+            const searchReset = document.getElementById(`searchReset_${module}`);
+            const filterButtons = document.querySelectorAll(`#searchFilters_${module} .filter-btn`);
+            const tableBody = document.getElementById(`${module}TableBody`);
+            
+            if (!searchInput || !tableBody) {
+                console.error(`Search elements not found for ${module} module`);
+                return;
+            }
+            
+            let searchTimeout = null;
+            const originalRows = Array.from(tableBody.querySelectorAll('tr'));
+            
+            // Search input events
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.trim().toLowerCase();
+                
+                // Show/hide clear button
+                if (searchClear) {
+                    searchClear.style.display = searchTerm.length > 0 ? 'block' : 'none';
+                }
+                
+                // Debounce search
+                if (searchTimeout) {
+                    clearTimeout(searchTimeout);
+                }
+                
+                searchTimeout = setTimeout(() => {
+                    filterTableRows(module, searchTerm, originalRows, tableBody);
+                }, 300);
+            });
+            
+            // Clear search button
+            if (searchClear) {
+                searchClear.addEventListener('click', () => {
+                    searchInput.value = '';
+                    searchClear.style.display = 'none';
+                    showAllRows(originalRows, tableBody);
+                });
+            }
+            
+            // Reset search button
+            if (searchReset) {
+                searchReset.addEventListener('click', () => {
+                    searchInput.value = '';
+                    if (searchClear) searchClear.style.display = 'none';
+                    showAllRows(originalRows, tableBody);
+                });
+            }
+            
+            // Filter buttons
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const filter = e.currentTarget.dataset.filter;
+                    searchInput.placeholder = `Filtrando por ${filter}...`;
+                    searchInput.focus();
+                    
+                    // Update filter button states
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    e.currentTarget.classList.add('active');
+                });
+            });
+        }
+
+        function filterTableRows(module, searchTerm, originalRows, tableBody) {
+            if (!searchTerm) {
+                showAllRows(originalRows, tableBody);
+                return;
+            }
+            
+            const filteredRows = originalRows.filter(row => {
+                const cells = row.querySelectorAll('td');
+                return Array.from(cells).some(cell => 
+                    cell.textContent.toLowerCase().includes(searchTerm)
+                );
+            });
+            
+            // Clear table
+            tableBody.innerHTML = '';
+            
+            if (filteredRows.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="no-data">
+                            <i class="fas fa-search"></i>
+                            <p>No se encontraron resultados para "${searchTerm}"</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                filteredRows.forEach(row => tableBody.appendChild(row.cloneNode(true)));
+            }
+        }
+
+        function showAllRows(originalRows, tableBody) {
+            tableBody.innerHTML = '';
+            originalRows.forEach(row => tableBody.appendChild(row.cloneNode(true)));
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', initializeTestSearch);
+    </script>
+</body>
+</html>

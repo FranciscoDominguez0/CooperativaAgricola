@@ -5,6 +5,7 @@ console.log('✅ Script pagos.js cargado correctamente');
 let currentPagosPage = 1;
 let totalPagosPages = 1;
 let sociosListPagos = [];
+let searchInstance = null;
 
 // Verificar sesión al cargar la página
 async function checkSession() {
@@ -29,6 +30,7 @@ async function checkSession() {
 async function loadPagosPage() {
     await loadPagosStatistics();
     await loadSociosForPagos();
+    initializeSearch();
     await loadPagos();
 }
 
@@ -94,22 +96,48 @@ function populateSociosDropdownForPagos() {
 
 async function loadPagos(page = 1, search = '') {
     try {
-        const params = new URLSearchParams({
-            page: page,
-            limit: 10,
-            search: search
-        });
-        
-        const response = await fetch(`php/pagos.php?${params}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            displayPagos(data.data);
-            displayPagosPagination(data.pagination);
-            currentPagosPage = data.pagination.current_page;
-            totalPagosPages = data.pagination.total_pages;
+        // Use enhanced search API if search term is provided
+        if (search && search.trim().length > 0) {
+            const params = new URLSearchParams({
+                module: 'pagos',
+                search: search,
+                page: page,
+                limit: 10
+            });
+            
+            console.log('Using enhanced search API for payments:', params.toString());
+            const response = await fetch(`php/search.php?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log('Payments search results loaded:', data.data);
+                displayPagos(data.data);
+                displayPagosPagination(data.pagination);
+                currentPagosPage = data.pagination.current_page;
+                totalPagosPages = data.pagination.total_pages;
+            } else {
+                console.error('Payments search error:', data.message);
+                showToast('Error en la búsqueda: ' + data.message, 'error');
+            }
         } else {
-            showToast('Error al cargar pagos: ' + data.message, 'error');
+            // Use standard API for no search
+            const params = new URLSearchParams({
+                page: page,
+                limit: 10,
+                search: search
+            });
+            
+            const response = await fetch(`php/pagos.php?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                displayPagos(data.data);
+                displayPagosPagination(data.pagination);
+                currentPagosPage = data.pagination.current_page;
+                totalPagosPages = data.pagination.total_pages;
+            } else {
+                showToast('Error al cargar pagos: ' + data.message, 'error');
+            }
         }
     } catch (error) {
         console.error('Error:', error);
@@ -569,3 +597,84 @@ document.addEventListener('DOMContentLoaded', function() {
         messagesBtn.addEventListener('click', showMessages);
     }
 });
+
+// Initialize search functionality
+function initializeSearch() {
+    if (typeof CooperativeSearch !== 'undefined') {
+        searchInstance = new CooperativeSearch({
+            module: 'pagos',
+            searchFields: ['tipo', 'estado', 'metodo_pago', 'comprobante'],
+            tableBodyId: 'pagosTableBody',
+            loadFunction: loadPagos,
+            debounceTime: 300,
+            minSearchLength: 2
+        });
+    } else {
+        // Fallback: Initialize search manually if CooperativeSearch is not available
+        initializeManualSearchPagos();
+    }
+}
+
+function initializeManualSearchPagos() {
+    const searchInput = document.getElementById('searchInput_pagos');
+    const searchClear = document.getElementById('searchClear_pagos');
+    const searchReset = document.getElementById('searchReset_pagos');
+    const filterButtons = document.querySelectorAll('#searchFilters_pagos .filter-btn');
+    
+    if (!searchInput) {
+        console.error('Search input not found for payments module');
+        return;
+    }
+    
+    let searchTimeout = null;
+    
+    // Search input events
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        
+        // Show/hide clear button
+        if (searchClear) {
+            searchClear.style.display = searchTerm.length > 0 ? 'block' : 'none';
+        }
+        
+        // Debounce search
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        searchTimeout = setTimeout(() => {
+            loadPagos(1, searchTerm);
+        }, 300);
+    });
+    
+    // Clear search button
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            loadPagos(1, '');
+        });
+    }
+    
+    // Reset search button
+    if (searchReset) {
+        searchReset.addEventListener('click', () => {
+            searchInput.value = '';
+            if (searchClear) searchClear.style.display = 'none';
+            loadPagos(1, '');
+        });
+    }
+    
+    // Filter buttons
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filter = e.currentTarget.dataset.filter;
+            searchInput.placeholder = `Filtrando por ${filter}...`;
+            searchInput.focus();
+            
+            // Update filter button states
+            filterButtons.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+        });
+    });
+}

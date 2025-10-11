@@ -1,5 +1,7 @@
 // ===== FUNCIONES PRINCIPALES =====
 
+let searchInstance = null;
+
 // Verificar sesión
 async function checkSession() {
     try {
@@ -25,6 +27,7 @@ async function loadVentasPage() {
         await checkSession();
         await loadVentasStatistics();
         await loadSociosForVentas();
+        initializeSearch();
         await loadVentas();
         setupEventListeners();
     } catch (error) {
@@ -42,6 +45,87 @@ function getRoleDisplay(role) {
         'admin': '👑 Administrador'
     };
     return roles[role] || role;
+}
+
+// Initialize search functionality
+function initializeSearch() {
+    if (typeof CooperativeSearch !== 'undefined') {
+        searchInstance = new CooperativeSearch({
+            module: 'ventas',
+            searchFields: ['producto', 'cliente', 'estado', 'metodo_pago'],
+            tableBodyId: 'ventasTableBody',
+            loadFunction: loadVentas,
+            debounceTime: 300,
+            minSearchLength: 2
+        });
+    } else {
+        // Fallback: Initialize search manually if CooperativeSearch is not available
+        initializeManualSearchVentas();
+    }
+}
+
+function initializeManualSearchVentas() {
+    const searchInput = document.getElementById('searchInput_ventas');
+    const searchClear = document.getElementById('searchClear_ventas');
+    const searchReset = document.getElementById('searchReset_ventas');
+    const filterButtons = document.querySelectorAll('#searchFilters_ventas .filter-btn');
+    
+    if (!searchInput) {
+        console.error('Search input not found for sales module');
+        return;
+    }
+    
+    let searchTimeout = null;
+    
+    // Search input events
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        
+        // Show/hide clear button
+        if (searchClear) {
+            searchClear.style.display = searchTerm.length > 0 ? 'block' : 'none';
+        }
+        
+        // Debounce search
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        searchTimeout = setTimeout(() => {
+            loadVentas(1, searchTerm);
+        }, 300);
+    });
+    
+    // Clear search button
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            loadVentas(1, '');
+        });
+    }
+    
+    // Reset search button
+    if (searchReset) {
+        searchReset.addEventListener('click', () => {
+            searchInput.value = '';
+            if (searchClear) searchClear.style.display = 'none';
+            loadVentas(1, '');
+        });
+    }
+    
+    // Filter buttons
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filter = e.currentTarget.dataset.filter;
+            searchInput.placeholder = `Filtrando por ${filter}...`;
+            searchInput.focus();
+            
+            // Update filter button states
+            filterButtons.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+        });
+    });
 }
 
 // ===== ESTADÍSTICAS =====
@@ -138,19 +222,44 @@ function populateSociosDropdown(socios) {
 // ===== VENTAS =====
 
 // Cargar ventas
-async function loadVentas(page = 1) {
+async function loadVentas(page = 1, search = '') {
     try {
-        const response = await fetch(`php/ventas.php?action=list&page=${page}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            displayVentas(data.ventas);
-            displayPagination(data.pagination);
+        // Use enhanced search API if search term is provided
+        if (search && search.trim().length > 0) {
+            const params = new URLSearchParams({
+                module: 'ventas',
+                search: search,
+                page: page,
+                limit: 10
+            });
+            
+            console.log('Using enhanced search API for sales:', params.toString());
+            const response = await fetch(`php/search.php?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log('Sales search results loaded:', data.data);
+                displayVentas(data.data);
+                displayPagination(data.pagination);
+            } else {
+                console.error('Sales search error:', data.message);
+                showToast('Error en la búsqueda: ' + data.message, 'error');
+            }
         } else {
-            console.error('Error cargando ventas:', data.message);
+            // Use standard API for no search
+            const response = await fetch(`php/ventas.php?page=${page}&search=${search}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                displayVentas(data.data);
+                displayPagination(data.pagination);
+            } else {
+                console.error('Error cargando ventas:', data.message);
+            }
         }
     } catch (error) {
         console.error('Error:', error);
+        showToast('Error cargando ventas', 'error');
     }
 }
 

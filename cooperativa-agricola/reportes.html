@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reportes y Estadísticas - Cooperativa Agrícola La Pintada</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/creative-messages.css">
+    <link rel="stylesheet" href="css/reportes.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1>Cooperativa La Pintada</h1>
+            </div>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <div class="nav-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </div>
+            <div class="nav-item" data-section="socios">
+                <i class="fas fa-users"></i>
+                <span>Socios</span>
+            </div>
+            <div class="nav-item" data-section="insumos">
+                <i class="fas fa-seedling"></i>
+                <span>Insumos</span>
+            </div>
+            <div class="nav-item" data-section="produccion">
+                <i class="fas fa-chart-bar"></i>
+                <span>Producción</span>
+            </div>
+            <div class="nav-item" data-section="ventas">
+                <i class="fas fa-shopping-cart"></i>
+                <span>Ventas</span>
+            </div>
+            <div class="nav-item" data-section="pagos">
+                <i class="fas fa-money-bill-wave"></i>
+                <span>Pagos</span>
+            </div>
+            <div class="nav-item active" data-section="reportes">
+                <i class="fas fa-chart-pie"></i>
+                <span>Reportes</span>
+            </div>
+        </nav>
+        
+        <div class="sidebar-footer">
+            <button class="logout-btn" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>LOG OUT</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <div class="main-wrapper">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <div class="logo">
+                        <div class="logo-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <h1>Cooperativa La Pintada</h1>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <div class="header-actions">
+                        <button class="header-btn" id="notificationsBtn" title="Notificaciones">
+                            <i class="fas fa-bell"></i>
+                            <span class="notification-badge">3</span>
+                        </button>
+                        <button class="header-btn" id="messagesBtn" title="Mensajes">
+                            <i class="fas fa-envelope"></i>
+                            <span class="message-badge">2</span>
+                        </button>
+                    </div>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-details">
+                            <div class="user-name" id="userName">Usuario</div>
+                            <div class="user-role" id="userRole">Miembro</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Cargando reportes...</p>
+            </div>
+
+            <!-- Reportes Section -->
+            <section class="content-section active" id="reportesSection">
+                <div class="reportes-header">
+                    <h2><i class="fas fa-chart-pie"></i> Reportes y Estadísticas</h2>
+                    <p>Análisis completo del rendimiento de la cooperativa</p>
+                </div>
+
+                <!-- Filtros -->
+                <div class="filters-container">
+                    <div class="filter-group">
+                        <label for="dateFrom">Desde:</label>
+                        <input type="date" id="dateFrom" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="dateTo">Hasta:</label>
+                        <input type="date" id="dateTo" class="filter-input">
+                    </div>
+                    <div class="filter-group">
+                        <label for="productFilter">Producto:</label>
+                        <select id="productFilter" class="filter-input">
+                            <option value="">Todos los productos</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="socioFilter">Socio:</label>
+                        <select id="socioFilter" class="filter-input">
+                            <option value="">Todos los socios</option>
+                        </select>
+                    </div>
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" id="applyFilters">
+                            <i class="fas fa-filter"></i> Aplicar Filtros
+                        </button>
+                        <button class="btn btn-secondary" id="resetFilters">
+                            <i class="fas fa-undo"></i> Limpiar
+                        </button>
+                        <button class="btn btn-success" id="exportPDF">
+                            <i class="fas fa-file-pdf"></i> Exportar PDF
+                        </button>
+                    </div>
+                </div>
+
+                <!-- KPIs Cards -->
+                <div class="kpis-grid">
+                    <div class="kpi-card kpi-sales">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="kpi-title">
+                                <h3>Reporte de Ventas (Mensual)</h3>
+                                <p>Ingresos del mes actual</p>
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="totalIncome">$28,000</div>
+                            <div class="kpi-change positive" id="incomeChange">+12.5% vs mes anterior</div>
+                            <div class="kpi-actions">
+                                <button class="btn btn-sm btn-primary" id="generateSalesReport">
+                                    <i class="fas fa-play"></i> Generar
+                                </button>
+                                <button class="btn btn-sm btn-secondary" id="exportSalesReport">
+                                    <i class="fas fa-download"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-contributions">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-hand-holding-usd"></i>
+                            </div>
+                            <div class="kpi-title">
+                                <h3>Aportes Recaudados</h3>
+                                <p>Contribuciones de socios</p>
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="totalContributions">$16,800</div>
+                            <div class="kpi-subtitle" id="activeMembers">124 miembros activos</div>
+                            <div class="kpi-actions">
+                                <button class="btn btn-sm btn-primary" id="generateContributionsReport">
+                                    <i class="fas fa-play"></i> Generar
+                                </button>
+                                <button class="btn btn-sm btn-secondary" id="exportContributionsReport">
+                                    <i class="fas fa-download"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-inventory">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-boxes"></i>
+                            </div>
+                            <div class="kpi-title">
+                                <h3>Valor de Inventario</h3>
+                                <p>Stock disponible</p>
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="inventoryValue">$11,369</div>
+                            <div class="kpi-subtitle" id="availableItems">305 artículos disponibles</div>
+                            <div class="kpi-actions">
+                                <button class="btn btn-sm btn-primary" id="generateInventoryReport">
+                                    <i class="fas fa-play"></i> Generar
+                                </button>
+                                <button class="btn btn-sm btn-secondary" id="exportInventoryReport">
+                                    <i class="fas fa-download"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-card kpi-margin">
+                        <div class="kpi-header">
+                            <div class="kpi-icon">
+                                <i class="fas fa-percentage"></i>
+                            </div>
+                            <div class="kpi-title">
+                                <h3>Margen Bruto</h3>
+                                <p>Rentabilidad mensual</p>
+                            </div>
+                        </div>
+                        <div class="kpi-content">
+                            <div class="kpi-value" id="grossMargin">62.5%</div>
+                            <div class="kpi-subtitle">Rentabilidad mensual</div>
+                            <div class="kpi-actions">
+                                <button class="btn btn-sm btn-primary" id="generateMarginReport">
+                                    <i class="fas fa-play"></i> Generar
+                                </button>
+                                <button class="btn btn-sm btn-secondary" id="exportMarginReport">
+                                    <i class="fas fa-download"></i> Exportar
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Section -->
+                <div class="charts-section">
+                    <div class="charts-grid">
+                        <!-- Monthly Financial Evolution -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-bar"></i> Evolución Financiera Mensual</h3>
+                                <p>Ventas, aportes y gastos por mes</p>
+                            </div>
+                            <div class="chart-content">
+                                <canvas id="monthlyFinancialChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Contributions per Member -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-users"></i> Aportes por Socio</h3>
+                                <p>Comparación de aportes reales vs cuotas asignadas</p>
+                            </div>
+                            <div class="chart-content">
+                                <canvas id="contributionsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Inventory by Type -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-pie-chart"></i> Inventario por Tipo</h3>
+                                <p>Distribución del valor total del inventario</p>
+                            </div>
+                            <div class="chart-content">
+                                <canvas id="inventoryTypeChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Sales by Product -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-chart-line"></i> Ventas por Producto</h3>
+                                <p>Distribución y tendencias por categoría de producto</p>
+                            </div>
+                            <div class="chart-content">
+                                <canvas id="salesProductChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Production Trends -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-seedling"></i> Tendencias de Producción</h3>
+                                <p>Evolución de la producción por cultivo</p>
+                            </div>
+                            <div class="chart-content">
+                                <canvas id="productionTrendsChart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Member Performance -->
+                        <div class="chart-container">
+                            <div class="chart-header">
+                                <h3><i class="fas fa-trophy"></i> Rendimiento de Socios</h3>
+                                <p>Top 10 socios por producción y ventas</p>
+                            </div>
+                            <div class="chart-content">
+                                <canvas id="memberPerformanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Summary Table -->
+                <div class="summary-section">
+                    <div class="summary-header">
+                        <h3><i class="fas fa-table"></i> Resumen Ejecutivo</h3>
+                        <p>Datos consolidados del período seleccionado</p>
+                    </div>
+                    <div class="summary-table-container">
+                        <table class="summary-table" id="summaryTable">
+                            <thead>
+                                <tr>
+                                    <th>Métrica</th>
+                                    <th>Valor Actual</th>
+                                    <th>Mes Anterior</th>
+                                    <th>Cambio %</th>
+                                    <th>Tendencia</th>
+                                </tr>
+                            </thead>
+                            <tbody id="summaryTableBody">
+                                <!-- Los datos se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer"></div>
+
+    <script src="js/reportes.js"></script>
+</body>
+</html>
