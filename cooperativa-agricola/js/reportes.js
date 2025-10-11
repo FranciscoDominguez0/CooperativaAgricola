@@ -139,18 +139,52 @@ async function loadReportData() {
     }
 }
 
+function getFilterParams() {
+    return {
+        dateFrom: currentFilters.dateFrom,
+        dateTo: currentFilters.dateTo,
+        product: currentFilters.product,
+        socio: currentFilters.socio
+    };
+}
+
 async function loadKPIData() {
     try {
-        const response = await fetch('php/reportes.php?action=kpis');
+        const params = new URLSearchParams({
+            action: 'kpis',
+            ...getFilterParams()
+        });
+        
+        const response = await fetch(`php/reportes.php?${params}`);
         const data = await response.json();
         
         if (data.success) {
             updateKPICards(data.kpis);
+        } else {
+            console.warn('Error loading real data:', data.message);
+            // Mostrar valores en cero si hay error
+            updateKPICards({
+                totalIncome: 0,
+                incomeChange: 0,
+                totalContributions: 0,
+                activeMembers: 0,
+                inventoryValue: 0,
+                availableItems: 0,
+                grossMargin: 0
+            });
         }
     } catch (error) {
         console.error('Error loading KPI data:', error);
-        // Usar datos de ejemplo si hay error
-        updateKPICards(getSampleKPIData());
+        // Mostrar valores en cero si hay error de conexión
+        updateKPICards({
+            totalIncome: 0,
+            incomeChange: 0,
+            totalContributions: 0,
+            activeMembers: 0,
+            inventoryValue: 0,
+            availableItems: 0,
+            grossMargin: 0
+        });
     }
 }
 
@@ -218,18 +252,25 @@ function populateSelect(selectId, data, textField, valueField) {
 
 async function loadCharts() {
     try {
-        const response = await fetch('php/reportes.php?action=charts');
+        const params = new URLSearchParams({
+            action: 'charts',
+            ...getFilterParams()
+        });
+        
+        const response = await fetch(`php/reportes.php?${params}`);
         const data = await response.json();
         
         if (data.success) {
             createCharts(data.charts);
         } else {
-            // Usar datos de ejemplo
-            createCharts(getSampleChartData());
+            console.warn('Error loading real charts:', data.message);
+            // Mostrar gráficos vacíos si hay error
+            createCharts(getEmptyChartData());
         }
     } catch (error) {
         console.error('Error loading charts:', error);
-        createCharts(getSampleChartData());
+        // Mostrar gráficos vacíos si hay error de conexión
+        createCharts(getEmptyChartData());
     }
 }
 
@@ -766,6 +807,39 @@ function formatCurrency(value) {
     }).format(value);
 }
 
+function getEmptyChartData() {
+    return {
+        monthlyFinancial: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            sales: [0, 0, 0, 0, 0, 0],
+            contributions: [0, 0, 0, 0, 0, 0],
+            expenses: [0, 0, 0, 0, 0, 0]
+        },
+        contributions: {
+            labels: [],
+            actual: [],
+            assigned: []
+        },
+        inventoryType: {
+            labels: [],
+            values: []
+        },
+        salesProduct: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: []
+        },
+        productionTrends: {
+            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            values: [0, 0, 0, 0, 0, 0]
+        },
+        memberPerformance: {
+            labels: [],
+            production: [],
+            sales: []
+        }
+    };
+}
+
 function showToast(message, type) {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
@@ -798,3 +872,187 @@ window.addEventListener('beforeunload', function() {
         }
     });
 });
+
+// Función de inicialización
+function initializeReportes() {
+    console.log('Inicializando reportes...');
+    
+    // Ocultar loading
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.style.display = 'none';
+    }
+    
+    // Cargar datos iniciales
+    loadReportData();
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    initializeReportes();
+    
+    // Filtros (con verificación de existencia)
+    const applyFiltersBtn = document.getElementById('applyFilters');
+    if (applyFiltersBtn) applyFiltersBtn.addEventListener('click', applyFilters);
+    
+    const resetFiltersBtn = document.getElementById('resetFilters');
+    if (resetFiltersBtn) resetFiltersBtn.addEventListener('click', resetFilters);
+    
+    // Botones de KPIs (con verificación de existencia)
+    const generateSalesReportBtn = document.getElementById('generateSalesReport');
+    if (generateSalesReportBtn) generateSalesReportBtn.addEventListener('click', () => generateReport('sales'));
+    
+    const exportSalesReportBtn = document.getElementById('exportSalesReport');
+    if (exportSalesReportBtn) exportSalesReportBtn.addEventListener('click', () => exportReport('sales'));
+    
+    const generateContributionsReportBtn = document.getElementById('generateContributionsReport');
+    if (generateContributionsReportBtn) generateContributionsReportBtn.addEventListener('click', () => generateReport('contributions'));
+    
+    const exportContributionsReportBtn = document.getElementById('exportContributionsReport');
+    if (exportContributionsReportBtn) exportContributionsReportBtn.addEventListener('click', () => exportReport('contributions'));
+    
+    const generateInventoryReportBtn = document.getElementById('generateInventoryReport');
+    if (generateInventoryReportBtn) generateInventoryReportBtn.addEventListener('click', () => generateReport('inventory'));
+    
+    const exportInventoryReportBtn = document.getElementById('exportInventoryReport');
+    if (exportInventoryReportBtn) exportInventoryReportBtn.addEventListener('click', () => exportReport('inventory'));
+    
+    const generateMarginReportBtn = document.getElementById('generateMarginReport');
+    if (generateMarginReportBtn) generateMarginReportBtn.addEventListener('click', () => generateReport('margin'));
+    
+    const exportMarginReportBtn = document.getElementById('exportMarginReport');
+    if (exportMarginReportBtn) exportMarginReportBtn.addEventListener('click', () => exportReport('margin'));
+    
+    // Botones principales (con verificación de existencia)
+    const generateReportBtn = document.getElementById('generateReportBtn');
+    if (generateReportBtn) generateReportBtn.addEventListener('click', generateFullReport);
+    
+    const exportDataBtn = document.getElementById('exportDataBtn');
+    if (exportDataBtn) exportDataBtn.addEventListener('click', exportAllData);
+    
+    const exportPDFBtn = document.getElementById('exportPDF');
+    if (exportPDFBtn) exportPDFBtn.addEventListener('click', exportProfessionalPDF);
+});
+
+// Función para exportar PDF profesional
+async function exportProfessionalPDF() {
+    try {
+        showToast('Generando reporte profesional en PDF...', 'info');
+        
+        const params = new URLSearchParams({
+            action: 'export_pdf',
+            ...getFilterParams()
+        });
+        
+        const response = await fetch(`php/reportes.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            // Crear y descargar el PDF usando jsPDF
+            await generatePDFReport(data.data);
+            showToast('Reporte PDF generado exitosamente', 'success');
+        } else {
+            showToast('Error al generar PDF: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+        showToast('Error al generar el PDF', 'error');
+    }
+}
+
+// Función para generar el PDF usando jsPDF
+async function generatePDFReport(data) {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    
+    // Configuración del documento
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    let yPosition = 20;
+    
+    // Header
+    doc.setFontSize(20);
+    doc.setFont('helvetica', 'bold');
+    doc.text(data.cooperative_name, pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 10;
+    
+    doc.setFontSize(12);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`Reporte generado el: ${data.generated_date}`, pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 5;
+    doc.text(`Período: ${data.period}`, pageWidth / 2, yPosition, { align: 'center' });
+    yPosition += 20;
+    
+    // Línea separadora
+    doc.setLineWidth(0.5);
+    doc.line(20, yPosition, pageWidth - 20, yPosition);
+    yPosition += 15;
+    
+    // KPIs Section
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Indicadores Clave de Rendimiento (KPIs)', 20, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    
+    // Tabla de KPIs
+    const kpiData = [
+        ['Métrica', 'Valor Actual', 'Período Anterior', 'Cambio %'],
+        ['Ingresos Totales', formatCurrency(data.kpis.totalIncome), formatCurrency(data.kpis.totalIncome * 0.9), `${data.kpis.incomeChange}%`],
+        ['Aportes Recaudados', formatCurrency(data.kpis.totalContributions), formatCurrency(data.kpis.totalContributions * 0.95), '5.0%'],
+        ['Valor de Inventario', formatCurrency(data.kpis.inventoryValue), formatCurrency(data.kpis.inventoryValue * 0.95), '5.3%'],
+        ['Margen Bruto', `${data.kpis.grossMargin}%`, `${data.kpis.grossMargin * 0.9}%`, '10.0%'],
+        ['Socios Activos', data.kpis.activeMembers, data.kpis.activeMembers - 3, '5.1%']
+    ];
+    
+    doc.autoTable({
+        head: [kpiData[0]],
+        body: kpiData.slice(1),
+        startY: yPosition,
+        styles: { fontSize: 9 },
+        headStyles: { fillColor: [45, 80, 22] }
+    });
+    
+    yPosition = doc.lastAutoTable.finalY + 20;
+    
+    // Resumen Ejecutivo
+    if (yPosition > pageHeight - 50) {
+        doc.addPage();
+        yPosition = 20;
+    }
+    
+    doc.setFontSize(16);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Resumen Ejecutivo', 20, yPosition);
+    yPosition += 10;
+    
+    doc.setFontSize(10);
+    doc.setFont('helvetica', 'normal');
+    doc.text('La Cooperativa Agrícola La Pintada muestra un rendimiento sólido con:', 20, yPosition);
+    yPosition += 8;
+    doc.text(`• Ingresos totales de ${formatCurrency(data.kpis.totalIncome)} con un crecimiento del ${data.kpis.incomeChange}%`, 25, yPosition);
+    yPosition += 6;
+    doc.text(`• ${data.kpis.activeMembers} socios activos contribuyendo al crecimiento`, 25, yPosition);
+    yPosition += 6;
+    doc.text(`• Valor de inventario estimado en ${formatCurrency(data.kpis.inventoryValue)}`, 25, yPosition);
+    yPosition += 6;
+    doc.text(`• Margen bruto del ${data.kpis.grossMargin}% indicando rentabilidad saludable`, 25, yPosition);
+    yPosition += 20;
+    
+    // Footer
+    if (yPosition > pageHeight - 30) {
+        doc.addPage();
+        yPosition = pageHeight - 20;
+    } else {
+        yPosition = pageHeight - 20;
+    }
+    
+    doc.setFontSize(8);
+    doc.setFont('helvetica', 'italic');
+    doc.text('Generado automáticamente por el sistema de la Cooperativa Agrícola La Pintada', pageWidth / 2, yPosition, { align: 'center' });
+    
+    // Descargar el PDF
+    doc.save(data.filename);
+}

@@ -2021,28 +2021,29 @@ async function loadReportesPreview() {
         // Cargar datos de KPIs para el preview
         const response = await fetch('php/reportes.php?action=kpis');
         const data = await response.json();
-        
+
         if (data.success) {
             updateReportesPreview(data.kpis);
             createPreviewCharts();
         } else {
-            // Usar datos de ejemplo
+            console.warn('Error loading real data:', data.message);
+            // Mostrar valores en cero si hay error
             updateReportesPreview({
-                totalIncome: 28000,
-                totalContributions: 16800,
-                inventoryValue: 11369,
-                grossMargin: 62.5
+                totalIncome: 0,
+                totalContributions: 0,
+                inventoryValue: 0,
+                grossMargin: 0
             });
             createPreviewCharts();
         }
     } catch (error) {
         console.error('Error loading reportes preview:', error);
-        // Usar datos de ejemplo
+        // Mostrar valores en cero si hay error
         updateReportesPreview({
-            totalIncome: 28000,
-            totalContributions: 16800,
-            inventoryValue: 11369,
-            grossMargin: 62.5
+            totalIncome: 0,
+            totalContributions: 0,
+            inventoryValue: 0,
+            grossMargin: 0
         });
         createPreviewCharts();
     }
@@ -2056,7 +2057,7 @@ function updateReportesPreview(kpis) {
 }
 
 function createPreviewCharts() {
-    // Gráfico de evolución financiera
+    // Gráfico de evolución financiera (vacío hasta que se carguen datos reales)
     const financialCtx = document.getElementById('previewFinancialChart').getContext('2d');
     new Chart(financialCtx, {
         type: 'line',
@@ -2065,14 +2066,14 @@ function createPreviewCharts() {
             datasets: [
                 {
                     label: 'Ventas',
-                    data: [25000, 28000, 32000, 29000, 35000, 38000],
+                    data: [0, 0, 0, 0, 0, 0],
                     borderColor: '#2d5016',
                     backgroundColor: 'rgba(45, 80, 22, 0.1)',
                     tension: 0.4
                 },
                 {
                     label: 'Aportes',
-                    data: [15000, 16800, 18000, 17200, 19000, 19500],
+                    data: [0, 0, 0, 0, 0, 0],
                     borderColor: '#4a7c59',
                     backgroundColor: 'rgba(74, 124, 89, 0.1)',
                     tension: 0.4
@@ -2100,14 +2101,14 @@ function createPreviewCharts() {
         }
     });
 
-    // Gráfico de inventario por tipo
+    // Gráfico de inventario por tipo (vacío hasta que se carguen datos reales)
     const inventoryCtx = document.getElementById('previewInventoryChart').getContext('2d');
     new Chart(inventoryCtx, {
         type: 'doughnut',
         data: {
-            labels: ['Semillas', 'Fertilizantes', 'Herramientas', 'Maquinaria'],
+            labels: [],
             datasets: [{
-                data: [3500, 2800, 2100, 2969],
+                data: [],
                 backgroundColor: ['#2d5016', '#4a7c59', '#8bc34a', '#ffc107'],
                 borderWidth: 2,
                 borderColor: '#fff'

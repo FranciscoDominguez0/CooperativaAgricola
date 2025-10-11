@@ -1,9 +1,9 @@
 <?php
 // Configuración de la base de datos
 $host = 'localhost';
-$dbname = 'pagos';
+$dbname = 'cooperativa_agricola';
 $username = 'root';
-$password = '';
+$password = '12345678'; // Cambiar si tienes contraseña en MySQL
 
 $pdo = null;
 
@@ -21,7 +21,7 @@ try {
 function conectarDB() {
     global $pdo;
     if ($pdo === null) {
-        throw new Exception("No se pudo conectar a la base de datos 'pagos'");
+        throw new Exception("No se pudo conectar a la base de datos 'cooperativa_agricola'");
     }
     return $pdo;
 }
