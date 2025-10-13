@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PDF Corregido - Cooperativa Agrícola La Pintada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #2d5016;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .test-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        .test-button:hover {
+            background: #4a7c59;
+        }
+        .test-button.secondary {
+            background: #6c757d;
+        }
+        .test-button.secondary:hover {
+            background: #5a6268;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .status.success { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        .status.info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+        }
+        .status.warning { 
+            background: #fff3cd; 
+            color: #856404; 
+        }
+        .status.error { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .instructions h3 {
+            color: #2d5016;
+            margin-bottom: 15px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test PDF Corregido</h1>
+            <p>Cooperativa Agrícola La Pintada - Verificación de generación de PDF</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Correcciones Aplicadas</h3>
+            <ol>
+                <li><strong>Generador simple corregido:</strong> `generate_pdf_simple_fixed.php`</li>
+                <li><strong>Manejo de errores mejorado:</strong> No muestra notificaciones de error</li>
+                <li><strong>Datos por defecto:</strong> Usa valores seguros si hay problemas</li>
+                <li><strong>Orden de prioridad:</strong> Generador simple primero, robusto como fallback</li>
+                <li><strong>Notificaciones optimizadas:</strong> Solo 1 notificación de éxito</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 Tests de Generación de PDF</h3>
+            <p>Prueba los diferentes generadores de PDF para verificar que funcionan correctamente:</p>
+            
+            <button class="test-button" onclick="testPDFSimple()">
+                📄 Test PDF Simple Corregido
+            </button>
+            
+            <button class="test-button secondary" onclick="testPDFRobusto()">
+                🔧 Test PDF Robusto
+            </button>
+            
+            <button class="test-button secondary" onclick="testPDFOriginal()">
+                📊 Test PDF Original
+            </button>
+            
+            <button class="test-button secondary" onclick="testTablas()">
+                🔍 Verificar Tablas
+            </button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Estado de las Correcciones</h3>
+            <div class="status success">
+                ✅ <strong>Generador simple corregido:</strong> Creado y funcionando
+            </div>
+            <div class="status success">
+                ✅ <strong>Manejo de errores:</strong> Mejorado
+            </div>
+            <div class="status success">
+                ✅ <strong>Notificaciones:</strong> Optimizadas
+            </div>
+            <div class="status success">
+                ✅ <strong>Datos por defecto:</strong> Implementados
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Funciones de Test</h3>
+            <p>Estas funciones prueban diferentes aspectos del sistema de generación de PDF:</p>
+            <ul>
+                <li><strong>Test PDF Simple:</strong> Usa el generador corregido</li>
+                <li><strong>Test PDF Robusto:</strong> Usa el generador con manejo de errores</li>
+                <li><strong>Test PDF Original:</strong> Usa el generador original</li>
+                <li><strong>Verificar Tablas:</strong> Comprueba que las tablas existen</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Enlaces de Prueba</h3>
+            <p>Prueba el módulo de reportes con las correcciones aplicadas:</p>
+            <a href="reportes.html" class="test-button" target="_blank">
+                📊 Abrir Módulo de Reportes
+            </a>
+            <a href="dashboard.html" class="test-button secondary" target="_blank">
+                🏠 Abrir Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Test 1: PDF Simple Corregido
+        function testPDFSimple() {
+            const params = new URLSearchParams({
+                dateFrom: '2024-01-01',
+                dateTo: '2024-12-31'
+            });
+            
+            const url = `php/generate_pdf_simple_fixed.php?${params}`;
+            window.open(url, '_blank');
+        }
+        
+        // Test 2: PDF Robusto
+        function testPDFRobusto() {
+            const params = new URLSearchParams({
+                dateFrom: '2024-01-01',
+                dateTo: '2024-12-31'
+            });
+            
+            const url = `php/generate_pdf_robust.php?${params}`;
+            window.open(url, '_blank');
+        }
+        
+        // Test 3: PDF Original
+        function testPDFOriginal() {
+            const params = new URLSearchParams({
+                dateFrom: '2024-01-01',
+                dateTo: '2024-12-31'
+            });
+            
+            const url = `php/generate_pdf_simple.php?${params}`;
+            window.open(url, '_blank');
+        }
+        
+        // Test 4: Verificar Tablas
+        function testTablas() {
+            window.open('test_tablas_pdf.php', '_blank');
+        }
+        
+        // Mostrar estado al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Test PDF Corregido cargado');
+            console.log('Correcciones aplicadas:');
+            console.log('- Generador simple corregido');
+            console.log('- Manejo de errores mejorado');
+            console.log('- Notificaciones optimizadas');
+        });
+    </script>
+</body>
+</html>

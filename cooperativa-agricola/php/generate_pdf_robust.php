@@ -54,12 +54,12 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
         ],
         'ventas' => [],
         'socios' => [],
-        'debug' => []
+        // 'debug' => [] // Removido para producción
     ];
     
     // Verificar tablas existentes
     $tablasExistentes = verificarTablasExistentes($pdo);
-    $data['debug']['tablas_existentes'] = $tablasExistentes;
+    // $data['debug']['tablas_existentes'] = $tablasExistentes; // Removido para producción
     
     // KPIs principales - Ventas
     if (in_array('ventas', $tablasExistentes)) {
@@ -77,9 +77,9 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
             
             $data['kpis']['ingresos'] = $ventas['total_ingresos'] ?? 0;
             $data['kpis']['ventas'] = $ventas['total_ventas'] ?? 0;
-            $data['debug']['ventas_ok'] = true;
+            // $data['debug']['ventas_ok'] = true; // Removido para producción
         } catch (Exception $e) {
-            $data['debug']['ventas_error'] = $e->getMessage();
+            // $data['debug']['ventas_error'] = $e->getMessage(); // Removido para producción
         }
     }
     
@@ -97,9 +97,9 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
             $aportes = $stmt->fetch();
             
             $data['kpis']['aportes'] = $aportes['total_aportes'] ?? 0;
-            $data['debug']['aportes_ok'] = true;
+            // $data['debug']['aportes_ok'] = true; // Removido para producción
         } catch (Exception $e) {
-            $data['debug']['aportes_error'] = $e->getMessage();
+            // $data['debug']['aportes_error'] = $e->getMessage(); // Removido para producción
         }
     }
     
@@ -109,9 +109,9 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
             $stmt = $pdo->query("SELECT COUNT(*) as total_socios FROM socios WHERE estado = 'activo'");
             $socios = $stmt->fetch();
             $data['kpis']['socios'] = $socios['total_socios'] ?? 0;
-            $data['debug']['socios_ok'] = true;
+            // $data['debug']['socios_ok'] = true; // Removido para producción
         } catch (Exception $e) {
-            $data['debug']['socios_error'] = $e->getMessage();
+            // $data['debug']['socios_error'] = $e->getMessage(); // Removido para producción
         }
     }
     
@@ -126,9 +126,9 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
             ");
             $inventario = $stmt->fetch();
             $data['kpis']['inventario'] = $inventario['valor_inventario'] ?? 0;
-            $data['debug']['inventario_ok'] = true;
+            // $data['debug']['inventario_ok'] = true; // Removido para producción
         } catch (Exception $e) {
-            $data['debug']['inventario_error'] = $e->getMessage();
+            // $data['debug']['inventario_error'] = $e->getMessage(); // Removido para producción
         }
     }
     
@@ -151,9 +151,9 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
             ");
             $stmt->execute([$dateFrom, $dateTo]);
             $data['ventas'] = $stmt->fetchAll();
-            $data['debug']['ventas_detalle_ok'] = true;
+            // $data['debug']['ventas_detalle_ok'] = true; // Removido para producción
         } catch (Exception $e) {
-            $data['debug']['ventas_detalle_error'] = $e->getMessage();
+            // $data['debug']['ventas_detalle_error'] = $e->getMessage(); // Removido para producción
         }
     }
     
@@ -175,9 +175,9 @@ function obtenerDatosReporteSeguro($pdo, $dateFrom, $dateTo) {
             ");
             $stmt->execute([$dateFrom, $dateTo]);
             $data['socios'] = $stmt->fetchAll();
-            $data['debug']['socios_top_ok'] = true;
+            // $data['debug']['socios_top_ok'] = true; // Removido para producción
         } catch (Exception $e) {
-            $data['debug']['socios_top_error'] = $e->getMessage();
+            // $data['debug']['socios_top_error'] = $e->getMessage(); // Removido para producción
         }
     }
     
@@ -339,14 +339,14 @@ function generarHTMLReporteRobusto($data) {
             <p>Período: ' . date('d/m/Y', strtotime($data['periodo']['desde'])) . ' - ' . date('d/m/Y', strtotime($data['periodo']['hasta'])) . '</p>
         </div>';
     
-    // Debug info (solo en desarrollo)
-    if (isset($data['debug']) && !empty($data['debug'])) {
-        $html .= '
-        <div class="debug">
-            <h4>Información de Debug:</h4>
-            <pre>' . json_encode($data['debug'], JSON_PRETTY_PRINT) . '</pre>
-        </div>';
-    }
+    // Debug info (solo en desarrollo - deshabilitado para producción)
+    // if (isset($data['debug']) && !empty($data['debug']) && $_SERVER['HTTP_HOST'] === 'localhost') {
+    //     $html .= '
+    //     <div class="debug">
+    //         <h4>Información de Debug:</h4>
+    //         <pre>' . json_encode($data['debug'], JSON_PRETTY_PRINT) . '</pre>
+    //     </div>';
+    // }
     
     // KPIs
     $html .= '

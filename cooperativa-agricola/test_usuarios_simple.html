@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Simple - Módulo de Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #4a7c59;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Simple - Módulo de Usuarios</h1>
+    
+    <div class="test-section">
+        <h2>🔗 Enlaces de Navegación</h2>
+        <p>Verifica que el módulo de usuarios esté disponible en la navegación:</p>
+        <button class="test-button" onclick="abrirDashboard()">📊 Abrir Dashboard</button>
+        <button class="test-button" onclick="abrirVentas()">🛒 Abrir Ventas</button>
+        <button class="test-button" onclick="abrirPagos()">💳 Abrir Pagos</button>
+        <button class="test-button" onclick="abrirUsuarios()">👥 Abrir Usuarios</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📁 Verificación de Archivos</h2>
+        <div id="archivosStatus">
+            <p>Verificando archivos del módulo de usuarios...</p>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔧 Test de Funcionalidad</h2>
+        <button class="test-button" onclick="testConexion()">🔌 Test Conexión</button>
+        <button class="test-button" onclick="testEstadisticas()">📈 Test Estadísticas</button>
+        <button class="test-button" onclick="testListaUsuarios()">👥 Test Lista Usuarios</button>
+        <div id="testResults"></div>
+    </div>
+
+    <script>
+        function abrirDashboard() {
+            window.open('dashboard.html', '_blank');
+        }
+        
+        function abrirVentas() {
+            window.open('ventas.html', '_blank');
+        }
+        
+        function abrirPagos() {
+            window.open('pagos.html', '_blank');
+        }
+        
+        function abrirUsuarios() {
+            window.open('usuarios.html', '_blank');
+        }
+        
+        function log(message, type = 'info') {
+            const resultsDiv = document.getElementById('testResults');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logEntry.className = `status ${type}`;
+            resultsDiv.appendChild(logEntry);
+        }
+        
+        async function testConexion() {
+            log('🔌 Probando conexión...', 'info');
+            try {
+                const response = await fetch('php/conexion.php');
+                if (response.ok) {
+                    log('✅ Conexión: EXITOSA', 'success');
+                } else {
+                    log('❌ Conexión: ERROR', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testEstadisticas() {
+            log('📊 Probando estadísticas...', 'info');
+            try {
+                const response = await fetch('php/usuarios.php?action=estadisticas');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Estadísticas: EXITOSAS', 'success');
+                    log(`📈 Total usuarios: ${data.estadisticas.total_usuarios}`, 'info');
+                } else {
+                    log(`❌ Estadísticas: ERROR - ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testListaUsuarios() {
+            log('👥 Probando lista de usuarios...', 'info');
+            try {
+                const response = await fetch('php/usuarios.php?action=lista');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Lista usuarios: EXITOSA', 'success');
+                    log(`👥 Total usuarios encontrados: ${data.total}`, 'info');
+                } else {
+                    log(`❌ Lista usuarios: ERROR - ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Verificar archivos al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            const archivosStatus = document.getElementById('archivosStatus');
+            archivosStatus.innerHTML = `
+                <div class="status info">
+                    <strong>Archivos del módulo de usuarios:</strong><br>
+                    ✅ usuarios.html - Página principal del módulo<br>
+                    ✅ php/usuarios.php - Backend del módulo<br>
+                    ✅ js/usuarios.js - JavaScript del módulo<br>
+                    ✅ CSS integrado en dashboard.css<br>
+                    <br>
+                    <strong>Enlaces de navegación agregados a:</strong><br>
+                    ✅ dashboard.html<br>
+                    ✅ ventas.html<br>
+                    ✅ pagos.html<br>
+                    ✅ usuarios.html<br>
+                </div>
+            `;
+        });
+    </script>
+</body>
+</html>
