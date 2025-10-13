@@ -10,6 +10,31 @@ let currentFilters = {
     socio: ''
 };
 
+// Controlador para cancelar peticiones
+let abortController = new AbortController();
+
+// Función para limpiar recursos
+function limpiarRecursos() {
+    // Limpiar gráficos
+    Object.values(chartInstances).forEach(chart => {
+        if (chart) {
+            chart.destroy();
+        }
+    });
+    chartInstances = {};
+    
+    // Cancelar peticiones pendientes
+    if (abortController) {
+        abortController.abort();
+        abortController = new AbortController();
+    }
+    
+    // Limpiar localStorage de reportes
+    localStorage.removeItem('reportesState');
+    
+    console.log('Recursos limpiados');
+}
+
 // Colores del tema
 const chartColors = {
     primary: '#2d5016',
@@ -32,6 +57,12 @@ document.addEventListener('DOMContentLoaded', function() {
     setupEventListeners();
     initializeDateFilters();
     loadReportData();
+    
+    // Configurar actualización automática cada 5 minutos
+    setInterval(loadReportData, 5 * 60 * 1000);
+    
+    // Configurar detección de visibilidad para recargar datos
+    setupVisibilityDetection();
 });
 
 async function checkSession() {
@@ -96,12 +127,17 @@ function setupEventListeners() {
         }
     });
 
-    // Navegación
+    // Navegación optimizada
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
             const section = this.dataset.section;
             if (section !== 'reportes') {
+                // Guardar estado antes de navegar
+                saveReportState();
                 window.location.href = 'dashboard.html';
+            } else {
+                // Si ya estamos en reportes, recargar datos
+                loadReportData();
             }
         });
     });
@@ -119,8 +155,29 @@ function initializeDateFilters() {
     currentFilters.dateTo = lastDay.toISOString().split('T')[0];
 }
 
-async function loadReportData() {
+let isLoading = false;
+let lastLoadTime = 0;
+
+async function loadReportData(forceReload = false) {
+    // Evitar cargas múltiples simultáneas
+    if (isLoading) {
+        console.log('Ya hay una carga en progreso, omitiendo...');
+        return;
+    }
+    
+    // Verificar si necesitamos recargar
+    const now = Date.now();
+    if (!forceReload && now - lastLoadTime < 10000) { // 10 segundos mínimo entre cargas
+        console.log('Carga reciente, omitiendo recarga...');
+        return;
+    }
+    
+    isLoading = true;
+    lastLoadTime = now;
+    
     try {
+        console.log('Cargando datos de reportes...');
+        
         // Cargar datos de KPIs
         await loadKPIData();
         
@@ -133,9 +190,12 @@ async function loadReportData() {
         // Cargar tabla de resumen
         await loadSummaryTable();
         
+        console.log('Datos de reportes cargados exitosamente');
+        
     } catch (error) {
         console.error('Error loading report data:', error);
-        showToast('Error al cargar los datos del reporte', 'error');
+    } finally {
+        isLoading = false;
     }
 }
 
@@ -150,32 +210,52 @@ function getFilterParams() {
 
 async function loadKPIData() {
     try {
-        const params = new URLSearchParams({
-            action: 'kpis',
-            ...getFilterParams()
+        // Primero intentar con el endpoint de debug
+        const debugResponse = await fetch('debug_reportes_simple.php', {
+            signal: abortController.signal
         });
+        const debugData = await debugResponse.json();
         
-        const response = await fetch(`php/reportes.php?${params}`);
-        const data = await response.json();
+        console.log('Debug data:', debugData);
         
-        if (data.success) {
-            updateKPICards(data.kpis);
+        if (debugData.success) {
+            updateKPICards(debugData.kpis);
+            
+            // Solo mostrar información de debug en consola (sin notificaciones)
+            if (debugData.debug_info) {
+                console.log('Información de debug:', debugData.debug_info);
+            }
         } else {
-            console.warn('Error loading real data:', data.message);
-            // Mostrar valores en cero si hay error
-            updateKPICards({
-                totalIncome: 0,
-                incomeChange: 0,
-                totalContributions: 0,
-                activeMembers: 0,
-                inventoryValue: 0,
-                availableItems: 0,
-                grossMargin: 0
+            // Fallback al endpoint original
+            const params = new URLSearchParams({
+                action: 'kpis',
+                ...getFilterParams()
             });
+            
+            const response = await fetch(`php/reportes.php?${params}`, {
+                signal: abortController.signal
+            });
+            const data = await response.json();
+            
+            if (data.success) {
+                updateKPICards(data.kpis);
+            } else {
+                console.warn('Error loading real data:', data.message);
+                // Mostrar valores en cero si hay error (sin notificación)
+                updateKPICards({
+                    totalIncome: 0,
+                    incomeChange: 0,
+                    totalContributions: 0,
+                    activeMembers: 0,
+                    inventoryValue: 0,
+                    availableItems: 0,
+                    grossMargin: 0
+                });
+            }
         }
     } catch (error) {
         console.error('Error loading KPI data:', error);
-        // Mostrar valores en cero si hay error de conexión
+        // Mostrar valores en cero si hay error (sin notificación)
         updateKPICards({
             totalIncome: 0,
             incomeChange: 0,
@@ -201,19 +281,14 @@ function updateKPICards(kpis) {
     document.getElementById('availableItems').textContent = `${kpis.availableItems} artículos disponibles`;
     
     document.getElementById('grossMargin').textContent = `${kpis.grossMargin}%`;
+    
+    // Mostrar información de última actualización solo en consola
+    if (kpis.lastUpdated) {
+        console.log('Datos actualizados:', kpis.lastUpdated);
+    }
 }
 
-function getSampleKPIData() {
-    return {
-        totalIncome: 28000,
-        incomeChange: 12.5,
-        totalContributions: 16800,
-        activeMembers: 124,
-        inventoryValue: 11369,
-        availableItems: 305,
-        grossMargin: 62.5
-    };
-}
+// Función eliminada - ya no usamos datos de muestra
 
 async function loadFilterOptions() {
     try {
@@ -264,12 +339,12 @@ async function loadCharts() {
             createCharts(data.charts);
         } else {
             console.warn('Error loading real charts:', data.message);
-            // Mostrar gráficos vacíos si hay error
+            // Mostrar gráficos vacíos si hay error (sin notificación)
             createCharts(getEmptyChartData());
         }
     } catch (error) {
         console.error('Error loading charts:', error);
-        // Mostrar gráficos vacíos si hay error de conexión
+        // Mostrar gráficos vacíos si hay error de conexión (sin notificación)
         createCharts(getEmptyChartData());
     }
 }
@@ -566,11 +641,13 @@ async function loadSummaryTable() {
         if (data.success) {
             populateSummaryTable(data.summary);
         } else {
-            populateSummaryTable(getSampleSummaryData());
+            // Mostrar tabla vacía si hay error (sin notificación)
+            populateSummaryTable([]);
         }
     } catch (error) {
         console.error('Error loading summary table:', error);
-        populateSummaryTable(getSampleSummaryData());
+        // Mostrar tabla vacía si hay error (sin notificación)
+        populateSummaryTable([]);
     }
 }
 
@@ -602,86 +679,9 @@ function populateSummaryTable(summaryData) {
     });
 }
 
-function getSampleChartData() {
-    return {
-        monthlyFinancial: {
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-            sales: [25000, 28000, 32000, 29000, 35000, 38000],
-            contributions: [15000, 16800, 18000, 17200, 19000, 19500],
-            expenses: [8000, 9200, 10500, 9800, 11200, 11800]
-        },
-        contributions: {
-            labels: ['Socio A', 'Socio B', 'Socio C', 'Socio D', 'Socio E'],
-            actual: [500, 750, 600, 800, 650],
-            assigned: [500, 500, 500, 500, 500]
-        },
-        inventoryType: {
-            labels: ['Semillas', 'Fertilizantes', 'Herramientas', 'Maquinaria'],
-            values: [3500, 2800, 2100, 2969]
-        },
-        salesProduct: {
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-            datasets: [
-                {
-                    label: 'Maíz',
-                    data: [12000, 14000, 16000, 15000, 18000, 20000]
-                },
-                {
-                    label: 'Frijol',
-                    data: [8000, 9000, 10000, 9500, 11000, 12000]
-                },
-                {
-                    label: 'Arroz',
-                    data: [5000, 5000, 6000, 4500, 6000, 6000]
-                }
-            ]
-        },
-        productionTrends: {
-            labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
-            values: [120, 135, 150, 140, 165, 180]
-        },
-        memberPerformance: {
-            labels: ['Juan P.', 'María L.', 'Carlos M.', 'Ana S.', 'Pedro R.'],
-            production: [45, 38, 42, 35, 40],
-            sales: [28000, 25000, 26000, 22000, 24000]
-        }
-    };
-}
+// Función eliminada - ya no usamos datos de muestra
 
-function getSampleSummaryData() {
-    return [
-        {
-            metric: 'Ingresos Totales',
-            current: '$28,000',
-            previous: '$24,900',
-            change: 12.5
-        },
-        {
-            metric: 'Aportes Recaudados',
-            current: '$16,800',
-            previous: '$15,200',
-            change: 10.5
-        },
-        {
-            metric: 'Valor de Inventario',
-            current: '$11,369',
-            previous: '$10,800',
-            change: 5.3
-        },
-        {
-            metric: 'Margen Bruto',
-            current: '62.5%',
-            previous: '58.2%',
-            change: 7.4
-        },
-        {
-            metric: 'Socios Activos',
-            current: '124',
-            previous: '118',
-            change: 5.1
-        }
-    ];
-}
+// Función eliminada - ya no usamos datos de muestra
 
 function applyFilters() {
     currentFilters.dateFrom = document.getElementById('dateFrom').value;
@@ -689,8 +689,8 @@ function applyFilters() {
     currentFilters.product = document.getElementById('productFilter').value;
     currentFilters.socio = document.getElementById('socioFilter').value;
     
-    showToast('Filtros aplicados correctamente', 'success');
-    loadReportData();
+    // Aplicar filtros y forzar recarga
+    loadReportData(true);
 }
 
 function resetFilters() {
@@ -706,8 +706,8 @@ function resetFilters() {
         socio: ''
     };
     
-    showToast('Filtros restablecidos', 'info');
-    loadReportData();
+    // Restablecer filtros y forzar recarga
+    loadReportData(true);
 }
 
 async function exportToPDF() {
@@ -866,11 +866,30 @@ window.addEventListener('resize', function() {
 
 // Función para limpiar gráficos al salir de la página
 window.addEventListener('beforeunload', function() {
+    // Limpiar todos los gráficos
     Object.values(chartInstances).forEach(chart => {
         if (chart) {
             chart.destroy();
         }
     });
+    
+    // Limpiar variables globales
+    chartInstances = {};
+    currentUser = null;
+    currentFilters = {
+        dateFrom: '',
+        dateTo: '',
+        product: '',
+        socio: ''
+    };
+    
+    // Cerrar conexiones activas
+    if (typeof AbortController !== 'undefined') {
+        // Cancelar peticiones pendientes
+        if (window.abortController) {
+            window.abortController.abort();
+        }
+    }
 });
 
 // Función de inicialización
@@ -885,6 +904,104 @@ function initializeReportes() {
     
     // Cargar datos iniciales
     loadReportData();
+}
+
+// Configurar detección de visibilidad
+function setupVisibilityDetection() {
+    let isVisible = true;
+    let lastLoadTime = 0;
+    
+    // Detectar cuando la página se vuelve visible
+    document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+            isVisible = true;
+            // Recargar datos si han pasado más de 30 segundos
+            const now = Date.now();
+            if (now - lastLoadTime > 30000) {
+                console.log('Página visible - recargando datos...');
+                loadReportData();
+                lastLoadTime = now;
+            }
+        } else {
+            isVisible = false;
+        }
+    });
+    
+    // Detectar cuando la ventana se enfoca
+    window.addEventListener('focus', function() {
+        if (isVisible) {
+            const now = Date.now();
+            if (now - lastLoadTime > 30000) {
+                console.log('Ventana enfocada - recargando datos...');
+                loadReportData();
+                lastLoadTime = now;
+            }
+        }
+    });
+    
+    // Detectar cuando se hace clic en la sección de reportes
+    const reportesSection = document.getElementById('reportesSection');
+    if (reportesSection) {
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    console.log('Sección de reportes visible - recargando datos...');
+                    loadReportData(true); // Forzar recarga
+                    lastLoadTime = Date.now();
+                }
+            });
+        });
+        observer.observe(reportesSection);
+    }
+    
+    // Agregar botón de recarga manual
+    addRefreshButton();
+}
+
+// Guardar estado de los reportes
+function saveReportState() {
+    const state = {
+        filters: currentFilters,
+        timestamp: Date.now()
+    };
+    localStorage.setItem('reportesState', JSON.stringify(state));
+}
+
+// Cargar estado de los reportes
+function loadReportState() {
+    const savedState = localStorage.getItem('reportesState');
+    if (savedState) {
+        const state = JSON.parse(savedState);
+        // Si han pasado más de 5 minutos, recargar datos
+        if (Date.now() - state.timestamp > 300000) {
+            return null;
+        }
+        return state;
+    }
+    return null;
+}
+
+// Agregar botón de recarga manual
+function addRefreshButton() {
+    // Buscar el header de reportes
+    const reportesHeader = document.querySelector('.reportes-header');
+    if (reportesHeader) {
+        // Crear botón de recarga
+        const refreshBtn = document.createElement('button');
+        refreshBtn.id = 'refreshReportsBtn';
+        refreshBtn.className = 'btn btn-primary';
+        refreshBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Actualizar';
+        refreshBtn.style.marginLeft = '10px';
+        
+        // Agregar evento de clic
+        refreshBtn.addEventListener('click', function() {
+            console.log('Recarga manual iniciada...');
+            loadReportData(true);
+        });
+        
+        // Agregar el botón al header
+        reportesHeader.appendChild(refreshBtn);
+    }
 }
 
 // Event listeners

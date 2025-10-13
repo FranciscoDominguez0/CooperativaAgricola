@@ -127,3 +127,4 @@ cooperativa-agricola/
 
 ## Support
 For technical support or customization requests, refer to the main application documentation or contact the development team.
+

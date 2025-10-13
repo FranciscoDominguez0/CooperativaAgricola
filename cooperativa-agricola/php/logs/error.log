@@ -1,0 +1,35 @@
+[13-Oct-2025 22:15:33 Europe/Berlin] Reportes action: kpis
+[13-Oct-2025 22:15:33 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:33 Europe/Berlin] Total de ventas en BD: 10
+[13-Oct-2025 22:15:33 Europe/Berlin] Ingresos del período 2025-10-01 a 2025-10-31: 1040.00
+[13-Oct-2025 22:15:33 Europe/Berlin] Ingresos período anterior 2025-09-30 a 2025-09-30: 2600.00
+[13-Oct-2025 22:15:33 Europe/Berlin] Cambio porcentual: -60
+[13-Oct-2025 22:15:33 Europe/Berlin] KPIs result: {"success":true,"kpis":{"totalIncome":"1040.00","incomeChange":-60,"totalContributions":"0.00","activeMembers":5,"inventoryValue":"23194.00","availableItems":5,"grossMargin":100,"lastUpdated":"2025-10-13 22:15:33"},"message":"Datos actualizados desde la base de datos"}
+[13-Oct-2025 22:15:39 Europe/Berlin] Reportes action: kpis
+[13-Oct-2025 22:15:39 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:39 Europe/Berlin] Total de ventas en BD: 10
+[13-Oct-2025 22:15:39 Europe/Berlin] Ingresos del período 2025-10-01 a 2025-10-31: 1040.00
+[13-Oct-2025 22:15:39 Europe/Berlin] Ingresos período anterior 2025-09-30 a 2025-09-30: 2600.00
+[13-Oct-2025 22:15:39 Europe/Berlin] Cambio porcentual: -60
+[13-Oct-2025 22:15:39 Europe/Berlin] KPIs result: {"success":true,"kpis":{"totalIncome":"1040.00","incomeChange":-60,"totalContributions":"0.00","activeMembers":5,"inventoryValue":"23194.00","availableItems":5,"grossMargin":100,"lastUpdated":"2025-10-13 22:15:39"},"message":"Datos actualizados desde la base de datos"}
+[13-Oct-2025 22:15:42 Europe/Berlin] Reportes action: products
+[13-Oct-2025 22:15:42 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:42 Europe/Berlin] Reportes action: charts
+[13-Oct-2025 22:15:42 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:42 Europe/Berlin] Charts result: {"success":true,"charts":{"monthlyFinancial":{"labels":["May","Jun","Jul","Aug","Sep","Oct"],"sales":["0.00","0.00","0.00","0.00","3550.00","1040.00"],"contributions":["0.00","0.00","0.00","0.00","0.00","0.00"],"expenses":["0.00","0.00","0.00","0.00","3157.50","7686.00"]},"contributions":{"labels":["francisco Dominguez","Ashley Lorenzo","Luis Rodriguez","carlos duran","danila mu\u00f1oz"],"actual":["0.00","0.00","0.00","0.00","0.00"],"assigned":[500,500,500,500,500]},"inventoryType":{"labels":["Semillas","Fertilizantes","Herramientas","Pesticidas"],"values":["13110.00","4500.00","2840.00","2744.00"]},"salesProduct":{"labels":["May","Jun","Jul","Aug","Sep","Oct"],"datasets":[{"label":"Semilla de arroz","data":["0.00","0.00","0.00","0.00","2600.00","0.00"]},{"label":"Fertilizante NPK 15-15-15","data":["0.00","0.00","0.00","0.00","0.00","1040.00"]},{"label":"Pesticida Org\u00e1nico","data":["0.00","0.00","0.00","0.00","950.00","0.00"]}]},"productionTrends":{"labels":["May","Jun","Jul","Aug","Sep","Oct"],"values":["0.00","0.00","100.00","0.00","0.00","33.00"]},"memberPerformance":{"labels":["Ashley Lorenzo","danila mu\u00f1oz","carlos duran","francisco Dominguez"],"production":["3.00","30.00","12.00","100.00"],"sales":["2600.00","1040.00","950.00","0.00"]}}}
+[13-Oct-2025 22:15:42 Europe/Berlin] Reportes action: summary
+[13-Oct-2025 22:15:42 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:48 Europe/Berlin] Reportes action: products
+[13-Oct-2025 22:15:48 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:48 Europe/Berlin] Reportes action: charts
+[13-Oct-2025 22:15:48 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:48 Europe/Berlin] Charts result: {"success":true,"charts":{"monthlyFinancial":{"labels":["May","Jun","Jul","Aug","Sep","Oct"],"sales":["0.00","0.00","0.00","0.00","3550.00","1040.00"],"contributions":["0.00","0.00","0.00","0.00","0.00","0.00"],"expenses":["0.00","0.00","0.00","0.00","3157.50","7686.00"]},"contributions":{"labels":["francisco Dominguez","Ashley Lorenzo","Luis Rodriguez","carlos duran","danila mu\u00f1oz"],"actual":["0.00","0.00","0.00","0.00","0.00"],"assigned":[500,500,500,500,500]},"inventoryType":{"labels":["Semillas","Fertilizantes","Herramientas","Pesticidas"],"values":["13110.00","4500.00","2840.00","2744.00"]},"salesProduct":{"labels":["May","Jun","Jul","Aug","Sep","Oct"],"datasets":[{"label":"Semilla de arroz","data":["0.00","0.00","0.00","0.00","2600.00","0.00"]},{"label":"Fertilizante NPK 15-15-15","data":["0.00","0.00","0.00","0.00","0.00","1040.00"]},{"label":"Pesticida Org\u00e1nico","data":["0.00","0.00","0.00","0.00","950.00","0.00"]}]},"productionTrends":{"labels":["May","Jun","Jul","Aug","Sep","Oct"],"values":["0.00","0.00","100.00","0.00","0.00","33.00"]},"memberPerformance":{"labels":["Ashley Lorenzo","danila mu\u00f1oz","carlos duran","francisco Dominguez"],"production":["3.00","30.00","12.00","100.00"],"sales":["2600.00","1040.00","950.00","0.00"]}}}
+[13-Oct-2025 22:15:48 Europe/Berlin] Reportes action: summary
+[13-Oct-2025 22:15:48 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:58 Europe/Berlin] Reportes action: kpis
+[13-Oct-2025 22:15:58 Europe/Berlin] Date from: 2025-10-01 to: 2025-10-31
+[13-Oct-2025 22:15:58 Europe/Berlin] Total de ventas en BD: 10
+[13-Oct-2025 22:15:58 Europe/Berlin] Ingresos del período 2025-10-01 a 2025-10-31: 1040.00
+[13-Oct-2025 22:15:58 Europe/Berlin] Ingresos período anterior 2025-09-30 a 2025-09-30: 2600.00
+[13-Oct-2025 22:15:58 Europe/Berlin] Cambio porcentual: -60
+[13-Oct-2025 22:15:58 Europe/Berlin] KPIs result: {"success":true,"kpis":{"totalIncome":"1040.00","incomeChange":-60,"totalContributions":"0.00","activeMembers":5,"inventoryValue":"23194.00","availableItems":5,"grossMargin":100,"lastUpdated":"2025-10-13 22:15:58"},"message":"Datos actualizados desde la base de datos"}

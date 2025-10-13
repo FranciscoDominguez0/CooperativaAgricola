@@ -2018,34 +2018,35 @@ async function deletePago(pagoId) {
 
 async function loadReportesPreview() {
     try {
+        console.log('Cargando preview de reportes con datos reales...');
+        
         // Cargar datos de KPIs para el preview
         const response = await fetch('php/reportes.php?action=kpis');
         const data = await response.json();
 
         if (data.success) {
             updateReportesPreview(data.kpis);
-            createPreviewCharts();
+            await loadPreviewChartsData();
+            console.log('Preview de reportes cargado:', data.kpis);
         } else {
             console.warn('Error loading real data:', data.message);
-            // Mostrar valores en cero si hay error
             updateReportesPreview({
                 totalIncome: 0,
                 totalContributions: 0,
                 inventoryValue: 0,
                 grossMargin: 0
             });
-            createPreviewCharts();
+            createEmptyCharts();
         }
     } catch (error) {
         console.error('Error loading reportes preview:', error);
-        // Mostrar valores en cero si hay error
         updateReportesPreview({
             totalIncome: 0,
             totalContributions: 0,
             inventoryValue: 0,
             grossMargin: 0
         });
-        createPreviewCharts();
+        createEmptyCharts();
     }
 }
 
@@ -2056,8 +2057,97 @@ function updateReportesPreview(kpis) {
     document.getElementById('previewMargin').textContent = `${kpis.grossMargin}%`;
 }
 
-function createPreviewCharts() {
-    // Gráfico de evolución financiera (vacío hasta que se carguen datos reales)
+async function loadPreviewChartsData() {
+    try {
+        // Cargar datos de evolución financiera
+        const financialResponse = await fetch('php/reportes.php?action=charts');
+        const financialData = await financialResponse.json();
+        
+        if (financialData.success) {
+            createFinancialChart(financialData.charts.monthlyFinancial);
+            createInventoryChart(financialData.charts.inventoryType);
+        } else {
+            // Si hay error, crear gráficos vacíos
+            createEmptyCharts();
+        }
+    } catch (error) {
+        console.error('Error loading preview charts:', error);
+        createEmptyCharts();
+    }
+}
+
+function createFinancialChart(data) {
+    const financialCtx = document.getElementById('previewFinancialChart').getContext('2d');
+    new Chart(financialCtx, {
+        type: 'line',
+        data: {
+            labels: data.labels || ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
+            datasets: [
+                {
+                    label: 'Ventas',
+                    data: data.sales || [0, 0, 0, 0, 0, 0],
+                    borderColor: '#2d5016',
+                    backgroundColor: 'rgba(45, 80, 22, 0.1)',
+                    tension: 0.4
+                },
+                {
+                    label: 'Aportes',
+                    data: data.contributions || [0, 0, 0, 0, 0, 0],
+                    borderColor: '#4a7c59',
+                    backgroundColor: 'rgba(74, 124, 89, 0.1)',
+                    tension: 0.4
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createInventoryChart(data) {
+    const inventoryCtx = document.getElementById('previewInventoryChart').getContext('2d');
+    new Chart(inventoryCtx, {
+        type: 'doughnut',
+        data: {
+            labels: data.labels || [],
+            datasets: [{
+                data: data.values || [],
+                backgroundColor: ['#2d5016', '#4a7c59', '#8bc34a', '#ffc107', '#ff9800', '#9c27b0'],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+function createEmptyCharts() {
+    // Gráfico de evolución financiera vacío
     const financialCtx = document.getElementById('previewFinancialChart').getContext('2d');
     new Chart(financialCtx, {
         type: 'line',
@@ -2101,7 +2191,7 @@ function createPreviewCharts() {
         }
     });
 
-    // Gráfico de inventario por tipo (vacío hasta que se carguen datos reales)
+    // Gráfico de inventario vacío
     const inventoryCtx = document.getElementById('previewInventoryChart').getContext('2d');
     new Chart(inventoryCtx, {
         type: 'doughnut',

@@ -87,3 +87,4 @@ SELECT COUNT(*) as total_socios FROM socios;
 SELECT COUNT(*) as total_ventas FROM ventas;
 SELECT COUNT(*) as total_pagos FROM pagos;
 
+

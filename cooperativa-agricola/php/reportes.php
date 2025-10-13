@@ -90,13 +90,23 @@ function getKPIData() {
         // Total de ingresos del período (tabla ventas)
         if (in_array('ventas', $existingTables)) {
             try {
+                // Primero verificar si hay datos en ventas
+                $stmt = $pdo->query("SELECT COUNT(*) as total_ventas FROM ventas");
+                $totalVentas = $stmt->fetch()['total_ventas'];
+                error_log("Total de ventas en BD: " . $totalVentas);
+                
+                // Consulta de ingresos del período (más flexible con estados)
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(total), 0) as total_income 
                     FROM ventas 
-                    WHERE fecha_venta >= ? AND fecha_venta <= ? AND estado = 'pagado'
+                    WHERE fecha_venta >= ? AND fecha_venta <= ? 
+                    AND (estado = 'pagado' OR estado = 'completado' OR estado = 'finalizado' OR estado IS NULL)
                 ");
                 $stmt->execute([$dateFrom, $dateTo]);
-                $kpis['totalIncome'] = $stmt->fetch()['total_income'];
+                $result = $stmt->fetch();
+                $kpis['totalIncome'] = $result['total_income'];
+                
+                error_log("Ingresos del período $dateFrom a $dateTo: " . $kpis['totalIncome']);
                 
                 // Cambio porcentual vs período anterior
                 $periodLength = (strtotime($dateTo) - strtotime($dateFrom)) / (60 * 60 * 24);
@@ -106,16 +116,27 @@ function getKPIData() {
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(total), 0) as previous_income 
                     FROM ventas 
-                    WHERE fecha_venta >= ? AND fecha_venta <= ? AND estado = 'pagado'
+                    WHERE fecha_venta >= ? AND fecha_venta <= ? 
+                    AND (estado = 'pagado' OR estado = 'completado' OR estado = 'finalizado' OR estado IS NULL)
                 ");
                 $stmt->execute([$previousStart, $previousEnd]);
                 $previousIncome = $stmt->fetch()['previous_income'];
                 
                 $kpis['incomeChange'] = $previousIncome > 0 ? 
                     (($kpis['totalIncome'] - $previousIncome) / $previousIncome) * 100 : 0;
+                    
+                error_log("Ingresos período anterior $previousStart a $previousEnd: " . $previousIncome);
+                error_log("Cambio porcentual: " . $kpis['incomeChange']);
+                
             } catch (Exception $e) {
                 error_log("Error en ventas: " . $e->getMessage());
+                $kpis['totalIncome'] = 0;
+                $kpis['incomeChange'] = 0;
             }
+        } else {
+            error_log("Tabla 'ventas' no encontrada");
+            $kpis['totalIncome'] = 0;
+            $kpis['incomeChange'] = 0;
         }
         
         // Aportes recaudados (si existe tabla pagos)
@@ -193,12 +214,19 @@ function getKPIData() {
                     (($financials['total_sales'] - $financials['total_costs']) / $financials['total_sales']) * 100 : 0;
             } catch (Exception $e) {
                 error_log("Error en margen bruto: " . $e->getMessage());
+                $kpis['grossMargin'] = 0;
             }
+        } else {
+            $kpis['grossMargin'] = 0;
         }
+        
+        // Agregar timestamp de última actualización
+        $kpis['lastUpdated'] = date('Y-m-d H:i:s');
         
         return [
             'success' => true,
-            'kpis' => $kpis
+            'kpis' => $kpis,
+            'message' => 'Datos actualizados desde la base de datos'
         ];
         
     } catch (Exception $e) {
@@ -206,6 +234,11 @@ function getKPIData() {
             'success' => false,
             'message' => 'Error al obtener KPIs: ' . $e->getMessage()
         ];
+    } finally {
+        // Cerrar conexión después de usar
+        if (isset($pdo)) {
+            $pdo = null;
+        }
     }
 }
 
