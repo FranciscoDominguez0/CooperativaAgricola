@@ -712,53 +712,76 @@ function resetFilters() {
 
 async function exportToPDF() {
     try {
-        showToast('Generando PDF...', 'info');
+        showToast('Generando PDF profesional...', 'info');
         
-        const { jsPDF } = window.jspdf;
-        const pdf = new jsPDF('p', 'mm', 'a4');
+        // Obtener parámetros de filtros actuales
+        const today = new Date();
+        const firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+        const lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
         
-        // Título
-        pdf.setFontSize(20);
-        pdf.setTextColor(45, 80, 22);
-        pdf.text('Reporte de Cooperativa La Pintada', 20, 20);
-        
-        // Fecha
-        pdf.setFontSize(12);
-        pdf.setTextColor(100, 100, 100);
-        pdf.text(`Generado el: ${new Date().toLocaleDateString('es-ES')}`, 20, 30);
-        
-        // KPIs
-        pdf.setFontSize(16);
-        pdf.setTextColor(45, 80, 22);
-        pdf.text('Indicadores Clave de Rendimiento', 20, 50);
-        
-        const kpis = [
-            ['Métrica', 'Valor'],
-            ['Ingresos Totales', '$28,000'],
-            ['Aportes Recaudados', '$16,800'],
-            ['Valor de Inventario', '$11,369'],
-            ['Margen Bruto', '62.5%']
-        ];
-        
-        pdf.autoTable({
-            startY: 60,
-            head: [kpis[0]],
-            body: kpis.slice(1),
-            theme: 'grid',
-            headStyles: {
-                fillColor: [139, 195, 74],
-                textColor: [255, 255, 255]
-            }
+        const params = new URLSearchParams({
+            dateFrom: currentFilters.dateFrom || firstDay.toISOString().split('T')[0],
+            dateTo: currentFilters.dateTo || lastDay.toISOString().split('T')[0]
         });
         
-        // Guardar PDF
-        pdf.save(`reporte-cooperativa-${new Date().toISOString().split('T')[0]}.pdf`);
+        // Intentar con el generador robusto primero
+        try {
+            const response = await fetch(`php/generate_pdf_robust.php?${params}`, {
+                method: 'GET'
+            });
+            
+            if (response.ok) {
+                // Abrir en nueva ventana para impresión
+                const html = await response.text();
+                const newWindow = window.open('', '_blank');
+                newWindow.document.write(html);
+                newWindow.document.close();
+                
+                showToast('PDF generado exitosamente - Se abrirá para impresión', 'success');
+                return;
+            }
+        } catch (error) {
+            console.log('Generador robusto no disponible, usando alternativa...');
+        }
         
-        showToast('PDF generado exitosamente', 'success');
+        // Fallback: usar generador simple
+        try {
+            const response = await fetch(`php/generate_pdf_simple.php?${params}`);
+            
+            if (response.ok) {
+                // Si es HTML, abrir en nueva ventana para imprimir
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('text/html')) {
+                    const html = await response.text();
+                    const newWindow = window.open('', '_blank');
+                    newWindow.document.write(html);
+                    newWindow.document.close();
+                    newWindow.print();
+                } else {
+                    // Si es PDF, descargar directamente
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `reporte-cooperativa-${new Date().toISOString().split('T')[0]}.pdf`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(url);
+                }
+                
+                showToast('PDF generado exitosamente', 'success');
+            } else {
+                throw new Error('Error en el servidor');
+            }
+        } catch (error) {
+            console.error('Error con generador simple:', error);
+            throw error;
+        }
         
     } catch (error) {
         console.error('Error generating PDF:', error);
-        showToast('Error al generar PDF', 'error');
+        showToast('Error al generar PDF: ' + error.message, 'error');
     }
 }
 
