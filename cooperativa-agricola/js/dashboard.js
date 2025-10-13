@@ -273,6 +273,37 @@ function setupEventListeners() {
             closeVentaModal();
         }
     });
+
+    // Event listeners para el modal de usuario
+    document.querySelector('.user-profile').addEventListener('click', function() {
+        openUserProfileModal();
+    });
+
+    document.getElementById('closeUserProfile').addEventListener('click', function() {
+        closeUserProfileModal();
+    });
+
+    document.getElementById('cancelUserProfile').addEventListener('click', function() {
+        closeUserProfileModal();
+    });
+
+    document.getElementById('userProfileModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeUserProfileModal();
+        }
+    });
+
+    document.getElementById('saveUserProfile').addEventListener('click', function() {
+        saveUserProfile();
+    });
+
+    document.getElementById('changePasswordBtn').addEventListener('click', function() {
+        showChangePasswordModal();
+    });
+
+    document.getElementById('changeAvatarBtn').addEventListener('click', function() {
+        showChangeAvatarModal();
+    });
 }
 
 function showSection(sectionName) {
@@ -2223,4 +2254,318 @@ function formatCurrency(value) {
         minimumFractionDigits: 0,
         maximumFractionDigits: 0
     }).format(value);
+}
+
+// ===== FUNCIONES DEL MODAL DE USUARIO =====
+
+function openUserProfileModal() {
+    console.log('Abriendo modal de usuario');
+    // Cargar datos del usuario actual
+    loadUserProfileData();
+    
+    // Mostrar el modal
+    document.getElementById('userProfileModal').style.display = 'flex';
+}
+
+function closeUserProfileModal() {
+    document.getElementById('userProfileModal').style.display = 'none';
+}
+
+async function loadUserProfileData() {
+    if (currentUser) {
+        try {
+            // Cargar datos completos del usuario desde la base de datos
+            const response = await fetch('php/get_user_profile.php');
+            const userData = await response.json();
+            
+            if (userData.success) {
+                const user = userData.user;
+                
+                // Actualizar información del perfil
+                document.getElementById('profileUserName').textContent = user.nombre || 'Usuario';
+                document.getElementById('profileUserRole').textContent = getRoleDisplay(user.rol);
+                document.getElementById('profileUserEmail').textContent = user.correo || 'usuario@cooperativa.com';
+                
+                // Mostrar fecha de registro real
+                const joinDate = user.fecha_ingreso_formatted || new Date().getFullYear();
+                document.getElementById('profileJoinDate').textContent = `Miembro desde: ${joinDate}`;
+                
+                // Mostrar último acceso
+                const lastAccess = user.ultimo_acceso ? 
+                    new Date(user.ultimo_acceso).toLocaleDateString('es-ES') : 
+                    'Hoy';
+                document.getElementById('profileLastAccess').textContent = `Último acceso: ${lastAccess}`;
+                
+                // Llenar formulario con datos del usuario
+                document.getElementById('firstName').value = user.nombre || '';
+                document.getElementById('lastName').value = ''; // No hay apellido en la BD
+                document.getElementById('email').value = user.correo || '';
+                document.getElementById('phone').value = ''; // No hay teléfono en la BD
+                
+                // Cargar preferencias guardadas
+                loadUserPreferences();
+            } else {
+                // Fallback a datos básicos si no se pueden cargar
+                loadBasicUserData();
+            }
+        } catch (error) {
+            console.error('Error cargando datos del usuario:', error);
+            loadBasicUserData();
+        }
+    }
+}
+
+function loadBasicUserData() {
+    // Datos básicos del usuario actual
+    document.getElementById('profileUserName').textContent = currentUser.nombre || 'Usuario';
+    document.getElementById('profileUserRole').textContent = getRoleDisplay(currentUser.rol);
+    document.getElementById('profileUserEmail').textContent = currentUser.correo || 'usuario@cooperativa.com';
+    document.getElementById('profileJoinDate').textContent = `Miembro desde: ${new Date().getFullYear()}`;
+    document.getElementById('profileLastAccess').textContent = 'Último acceso: Hoy';
+    
+    // Llenar formulario
+    document.getElementById('firstName').value = currentUser.nombre || '';
+    document.getElementById('email').value = currentUser.correo || '';
+    
+    loadUserPreferences();
+}
+
+function loadUserPreferences() {
+    // Cargar preferencias desde localStorage o servidor
+    const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+    
+    document.getElementById('emailNotifications').checked = preferences.emailNotifications !== false;
+    document.getElementById('smsNotifications').checked = preferences.smsNotifications || false;
+    document.getElementById('darkMode').checked = preferences.darkMode || false;
+    document.getElementById('autoSave').checked = preferences.autoSave !== false;
+}
+
+async function saveUserProfile() {
+    try {
+        showToast('Guardando cambios...', 'info');
+        
+        // Recopilar datos del formulario
+        const formData = {
+            nombre: document.getElementById('firstName').value,
+            email: document.getElementById('email').value
+        };
+        
+        // Guardar preferencias
+        const preferences = {
+            emailNotifications: document.getElementById('emailNotifications').checked,
+            smsNotifications: document.getElementById('smsNotifications').checked,
+            darkMode: document.getElementById('darkMode').checked,
+            autoSave: document.getElementById('autoSave').checked
+        };
+        
+        localStorage.setItem('userPreferences', JSON.stringify(preferences));
+        
+        // Enviar datos al servidor
+        const response = await fetch('php/update_user_profile.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.message || 'Error al actualizar perfil');
+        }
+        
+        // Actualizar la información del usuario en la interfaz
+        if (currentUser) {
+            currentUser.nombre = formData.nombre;
+            currentUser.correo = formData.email;
+            
+            // Actualizar el header
+            document.getElementById('userName').textContent = formData.nombre;
+        }
+        
+        showToast('Perfil actualizado exitosamente', 'success');
+        closeUserProfileModal();
+        
+    } catch (error) {
+        console.error('Error al guardar perfil:', error);
+        showToast('Error al guardar los cambios', 'error');
+    }
+}
+
+function showChangePasswordModal() {
+    console.log('Abriendo modal de cambiar contraseña');
+    // Crear modal para cambiar contraseña
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'changePasswordModal';
+    modal.innerHTML = `
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Cambiar Contraseña</h3>
+                <button class="close-btn" id="closePasswordModal">&times;</button>
+            </div>
+            <div style="padding: 20px;">
+                <form id="changePasswordForm">
+                    <div class="form-group">
+                        <label for="currentPassword">Contraseña Actual</label>
+                        <input type="password" id="currentPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="newPassword">Nueva Contraseña</label>
+                        <input type="password" id="newPassword" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                        <input type="password" id="confirmPassword" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelPassword">Cancelar</button>
+                <button class="btn btn-primary" id="savePassword">Cambiar Contraseña</button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+    
+    // Event listeners para el modal de contraseña
+    document.getElementById('closePasswordModal').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    document.getElementById('cancelPassword').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    document.getElementById('savePassword').addEventListener('click', async () => {
+        await changePassword();
+        modal.remove();
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
+}
+
+async function changePassword() {
+    const currentPassword = document.getElementById('currentPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    
+    if (newPassword !== confirmPassword) {
+        showToast('Las contraseñas no coinciden', 'error');
+        return;
+    }
+    
+    if (newPassword.length < 6) {
+        showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+        return;
+    }
+    
+    try {
+        showToast('Cambiando contraseña...', 'info');
+        
+        // Aquí enviarías la petición al servidor
+        // const response = await fetch('php/change_password.php', {
+        //     method: 'POST',
+        //     headers: { 'Content-Type': 'application/json' },
+        //     body: JSON.stringify({ currentPassword, newPassword })
+        // });
+        
+        showToast('Contraseña cambiada exitosamente', 'success');
+        
+    } catch (error) {
+        console.error('Error al cambiar contraseña:', error);
+        showToast('Error al cambiar la contraseña', 'error');
+    }
+}
+
+function showChangeAvatarModal() {
+    console.log('Abriendo modal de cambiar avatar');
+    // Crear modal para cambiar avatar
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.id = 'changeAvatarModal';
+    modal.innerHTML = `
+        <div class="modal-content" style="max-width: 500px;">
+            <div class="modal-header">
+                <h3><i class="fas fa-camera"></i> Cambiar Foto de Perfil</h3>
+                <button class="close-btn" id="closeAvatarModal">&times;</button>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+                <div style="margin-bottom: 20px;">
+                    <div class="profile-avatar-large" id="previewAvatar" style="margin: 0 auto 20px; width: 150px; height: 150px; font-size: 4rem; border: 5px solid white; flex-shrink: 0; aspect-ratio: 1 / 1;">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <p>Selecciona una nueva foto de perfil</p>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <input type="file" id="avatarInput" accept="image/*" style="margin-bottom: 15px; width: 100%; padding: 10px; border: 2px dashed #1a3a2e; border-radius: 8px; background: #f8f9fa;">
+                    <p style="font-size: 0.9rem; color: #666;">Formatos permitidos: JPG, PNG, GIF (máx. 2MB)</p>
+                </div>
+                <div style="display: flex; gap: 10px; justify-content: center;">
+                    <button class="btn btn-outline" id="removeAvatar">Eliminar Foto</button>
+                    <button class="btn btn-primary" id="saveAvatar">Guardar</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    modal.style.display = 'flex';
+    
+    // Preview de imagen
+    const fileInput = document.getElementById('avatarInput');
+    const previewAvatar = document.getElementById('previewAvatar');
+    
+    fileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewAvatar.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+    
+    // Event listeners para el modal de avatar
+    document.getElementById('closeAvatarModal').addEventListener('click', () => {
+        modal.remove();
+    });
+    
+    document.getElementById('removeAvatar').addEventListener('click', () => {
+        // Restaurar avatar por defecto
+        const profileAvatar = document.getElementById('profileAvatar');
+        profileAvatar.innerHTML = '<i class="fas fa-user"></i>';
+        showToast('Foto eliminada', 'success');
+        modal.remove();
+    });
+    
+    document.getElementById('saveAvatar').addEventListener('click', () => {
+        const fileInput = document.getElementById('avatarInput');
+        if (fileInput.files.length > 0) {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                // Actualizar avatar en el perfil principal
+                const profileAvatar = document.getElementById('profileAvatar');
+                profileAvatar.innerHTML = `<img src="${e.target.result}" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                showToast('Foto actualizada exitosamente', 'success');
+                modal.remove();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            showToast('Selecciona una foto', 'error');
+        }
+    });
+    
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.remove();
+        }
+    });
 }

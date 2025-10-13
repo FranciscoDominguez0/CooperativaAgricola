@@ -991,6 +991,93 @@
         </div>
     </div>
 
+    <!-- User Profile Modal -->
+    <div class="modal" id="userProfileModal">
+        <div class="modal-content user-profile-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-cog"></i> Mi Perfil</h3>
+                <button class="close-btn" id="closeUserProfile">&times;</button>
+            </div>
+            
+            <div class="user-profile-content">
+                <!-- User Info Section -->
+                <div class="profile-section">
+                    <div class="profile-avatar-section">
+                        <div class="profile-avatar-large" id="profileAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h4 id="profileUserName">Usuario</h4>
+                            <p class="user-role-badge" id="profileUserRole">Miembro</p>
+                            <p class="user-email" id="profileUserEmail">usuario@cooperativa.com</p>
+                            <p class="user-join-date" id="profileJoinDate">Miembro desde: 2022</p>
+                            <p class="user-last-access" id="profileLastAccess">Último acceso: Hoy</p>
+                        </div>
+                        <button class="btn btn-outline btn-sm" id="changeAvatarBtn">
+                            <i class="fas fa-camera"></i> Cambiar Foto
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Personal Information Form -->
+                <div class="profile-section">
+                    <h4><i class="fas fa-user-edit"></i> Información Personal</h4>
+                    <form id="userProfileForm">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">Nombre Completo</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="email">Correo Electrónico</label>
+                                <input type="email" id="email" name="email" required>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Security Section -->
+                <div class="profile-section">
+                    <h4><i class="fas fa-shield-alt"></i> Seguridad</h4>
+                    <div class="security-options">
+                        <button class="btn btn-outline" id="changePasswordBtn">
+                            <i class="fas fa-key"></i> Cambiar Contraseña
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="profile-section">
+                    <h4><i class="fas fa-cog"></i> Preferencias</h4>
+                    <div class="preferences-grid">
+                        <div class="preference-item">
+                            <label class="switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                            <span>Notificaciones por Email</span>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <label class="switch">
+                                <input type="checkbox" id="darkMode">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Modo Oscuro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelUserProfile">Cancelar</button>
+                <button class="btn btn-primary" id="saveUserProfile">
+                    <i class="fas fa-save"></i> Guardar
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Logout Modal -->
     <div class="modal" id="logoutModal">
         <div class="modal-content">
