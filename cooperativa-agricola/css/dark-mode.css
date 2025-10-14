@@ -37,11 +37,11 @@
     --border-color: #333333;
     --border-light: #444444;
     
-    /* Colores agrícolas oscuros */
-    --verde-primario: #00ff00;
-    --verde-secundario: #00cc00;
-    --verde-claro: #ffff00;
-    --verde-oscuro: #000000;
+    /* Colores agrícolas oscuros - Más suaves y elegantes */
+    --verde-primario: #1a3a2e;
+    --verde-secundario: #2d5016;
+    --verde-claro: #4a7c59;
+    --verde-oscuro: #0f2419;
     
     /* Sombras oscuras */
     --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.8);
@@ -1002,6 +1002,100 @@
 
 [data-theme="dark"] .reportes-section {
     background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro al header de la sección de reportes del dashboard */
+[data-theme="dark"] .reportes-section .section-header {
+    background: linear-gradient(135deg, #1a3a2e 0%, #2d5016 100%) !important;
+    border-radius: 15px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(139, 195, 74, 0.2) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title i {
+    color: #ffffff !important;
+}
+
+/* Aplicar modo oscuro a las tarjetas de vista previa del dashboard */
+[data-theme="dark"] .preview-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 4px solid var(--verde-claro) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .preview-card:hover {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-icon {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .preview-content h3 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .preview-value {
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-change.positive {
+    background: rgba(0, 255, 0, 0.1) !important;
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-change.negative {
+    background: rgba(255, 0, 0, 0.1) !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .preview-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .preview-chart {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .preview-chart h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .preview-chart h4 i {
+    color: var(--verde-claro) !important;
+}
+
+/* Aplicar modo oscuro al botón de ir a reportes completos en el dashboard */
+[data-theme="dark"] .reportes-section .btn-primary {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(26, 58, 46, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(26, 58, 46, 0.4) !important;
+    background: linear-gradient(135deg, #2d5016, #4a7c59) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary i {
+    margin-right: 0.5rem !important;
 }
 
 [data-theme="dark"] .usuarios-section {

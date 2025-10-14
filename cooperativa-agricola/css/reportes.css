@@ -611,16 +611,20 @@
 
 /* Aplicar modo oscuro a la sección de reportes */
 [data-theme="dark"] .reportes-header {
-    background: linear-gradient(135deg, var(--verde-primario) 0%, var(--verde-secundario) 100%) !important;
-    color: var(--text-primary) !important;
+    background: linear-gradient(135deg, #1a3a2e 0%, #2d5016 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(139, 195, 74, 0.2) !important;
 }
 
 [data-theme="dark"] .reportes-header h2 {
-    color: var(--text-primary) !important;
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
 }
 
 [data-theme="dark"] .reportes-header p {
-    color: var(--text-secondary) !important;
+    color: #e8f5e8 !important;
+    opacity: 0.9 !important;
 }
 
 /* Aplicar modo oscuro a los filtros */
@@ -811,4 +815,159 @@
 
 [data-theme="dark"] .reportes-section .text-secondary {
     color: var(--text-secondary) !important;
+}
+
+/* ===== MODO OSCURO PARA SECCIÓN DE REPORTES EN DASHBOARD ===== */
+
+/* Aplicar modo oscuro a la sección de reportes del dashboard */
+[data-theme="dark"] .reportes-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-header {
+    background: linear-gradient(135deg, #1a3a2e 0%, #2d5016 100%) !important;
+    border-radius: 15px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(139, 195, 74, 0.2) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title i {
+    color: #ffffff !important;
+}
+
+/* Aplicar modo oscuro a las tarjetas de vista previa */
+[data-theme="dark"] .preview-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+[data-theme="dark"] .preview-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .preview-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-icon {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+[data-theme="dark"] .preview-content h3 {
+    color: var(--text-primary) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+[data-theme="dark"] .preview-value {
+    color: var(--verde-claro) !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+[data-theme="dark"] .preview-change {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 20px !important;
+    display: inline-block !important;
+}
+
+[data-theme="dark"] .preview-change.positive {
+    background: rgba(0, 255, 0, 0.1) !important;
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-change.negative {
+    background: rgba(255, 0, 0, 0.1) !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .preview-subtitle {
+    color: var(--text-secondary) !important;
+    font-size: 0.85rem !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Aplicar modo oscuro a los gráficos de vista previa */
+[data-theme="dark"] .preview-charts {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 1.5rem !important;
+}
+
+[data-theme="dark"] .preview-chart {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .preview-chart h4 {
+    color: var(--text-primary) !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+[data-theme="dark"] .preview-chart h4 i {
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-chart canvas {
+    max-width: 100% !important;
+    height: 200px !important;
+}
+
+/* Aplicar modo oscuro al botón de ir a reportes completos */
+[data-theme="dark"] .reportes-section .btn-primary {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(26, 58, 46, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(26, 58, 46, 0.4) !important;
+    background: linear-gradient(135deg, #2d5016, #4a7c59) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary i {
+    margin-right: 0.5rem !important;
 }
