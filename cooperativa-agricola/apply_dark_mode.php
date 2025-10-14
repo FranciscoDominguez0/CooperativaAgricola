@@ -1,0 +1,76 @@
+<?php
+/**
+ * Script para aplicar modo oscuro a todos los archivos HTML del proyecto
+ * Cooperativa Agrícola La Pintada
+ */
+
+// Lista de archivos HTML a actualizar
+$htmlFiles = [
+    'index.html',
+    'login.html',
+    'register.html',
+    'socios.html',
+    'insumos.html',
+    'produccion.html',
+    'ventas.html',
+    'pagos.html',
+    'index_usuarios.html',
+    'index_usuarios_final.html',
+    'index_usuarios_completo.html',
+    'usuarios_simple.html',
+    'test_dark_mode.html'
+];
+
+// CSS y JS a agregar
+$darkModeCSS = '    <link rel="stylesheet" href="css/dark-mode.css">';
+$darkModeJS = '    <script src="js/dark-mode.js"></script>';
+
+foreach ($htmlFiles as $file) {
+    if (file_exists($file)) {
+        echo "Procesando: $file\n";
+        
+        $content = file_get_contents($file);
+        $originalContent = $content;
+        
+        // Agregar CSS de modo oscuro si no existe
+        if (strpos($content, 'dark-mode.css') === false) {
+            // Buscar la última etiqueta link de CSS
+            $pattern = '/(<link[^>]*rel="stylesheet"[^>]*>)/';
+            preg_match_all($pattern, $content, $matches);
+            
+            if (!empty($matches[0])) {
+                $lastCSS = end($matches[0]);
+                $content = str_replace($lastCSS, $lastCSS . "\n" . $darkModeCSS, $content);
+            }
+        }
+        
+        // Agregar JS de modo oscuro si no existe
+        if (strpos($content, 'dark-mode.js') === false) {
+            // Buscar la última etiqueta script antes de </body>
+            $pattern = '/(<script[^>]*src="[^"]*\.js"[^>]*><\/script>)/';
+            preg_match_all($pattern, $content, $matches);
+            
+            if (!empty($matches[0])) {
+                $lastScript = end($matches[0]);
+                $content = str_replace($lastScript, $lastScript . "\n" . $darkModeJS, $content);
+            } else {
+                // Si no hay scripts, agregar antes de </body>
+                $content = str_replace('</body>', $darkModeJS . "\n</body>", $content);
+            }
+        }
+        
+        // Solo escribir si hubo cambios
+        if ($content !== $originalContent) {
+            file_put_contents($file, $content);
+            echo "✓ Actualizado: $file\n";
+        } else {
+            echo "- Sin cambios: $file\n";
+        }
+    } else {
+        echo "✗ No encontrado: $file\n";
+    }
+}
+
+echo "\n¡Proceso completado!\n";
+echo "El modo oscuro ha sido aplicado a todos los archivos HTML del proyecto.\n";
+?>

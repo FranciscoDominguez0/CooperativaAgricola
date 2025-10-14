@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Modo Oscuro - Cooperativa Agrícola</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2><i class="fas fa-seedling"></i> La Pintada</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <a href="#" class="nav-item active">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-users"></i>
+                    <span>Socios</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Reportes</span>
+                </a>
+            </nav>
+        </div>
+        
+        <div class="main-content">
+            <header class="header">
+                <h1>Dashboard</h1>
+                <div class="header-actions">
+                    <button class="notification-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="message-badge">2</span>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <span class="user-name">Usuario Test</span>
+                            <span class="user-role">Administrador</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="content-section active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total Socios</h3>
+                            <div class="stat-value">150</div>
+                            <div class="stat-label">Activos</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Ventas</h3>
+                            <div class="stat-value">$25,000</div>
+                            <div class="stat-label">Este mes</div>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Producción</h3>
+                            <div class="stat-value">500kg</div>
+                            <div class="stat-label">Café</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="chart-container">
+                    <h3>Gráfico de Ventas</h3>
+                    <p>Este es un ejemplo de contenido que cambiará con el modo oscuro.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Perfil -->
+    <div class="modal" id="userProfileModal">
+        <div class="modal-content user-profile-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-user-cog"></i> Mi Perfil</h3>
+                <button class="close-btn" id="closeUserProfile">&times;</button>
+            </div>
+            
+            <div class="user-profile-content">
+                <div class="profile-section">
+                    <h4><i class="fas fa-cog"></i> Preferencias</h4>
+                    <div class="preferences-grid">
+                        <div class="preference-item">
+                            <label class="switch">
+                                <input type="checkbox" id="darkMode">
+                                <span class="slider"></span>
+                            </label>
+                            <span>Modo Oscuro</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelUserProfile">Cancelar</button>
+                <button class="btn btn-primary" id="saveUserProfile">Guardar</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Funciones del modo oscuro
+        function applyDarkMode(isDark) {
+            const body = document.body;
+            const html = document.documentElement;
+            
+            if (isDark) {
+                html.setAttribute('data-theme', 'dark');
+                body.classList.add('dark-mode');
+            } else {
+                html.removeAttribute('data-theme');
+                body.classList.remove('dark-mode');
+            }
+            
+            // Guardar preferencia
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            preferences.darkMode = isDark;
+            localStorage.setItem('userPreferences', JSON.stringify(preferences));
+        }
+        
+        function toggleDarkMode() {
+            const darkModeToggle = document.getElementById('darkMode');
+            const isDark = darkModeToggle.checked;
+            
+            applyDarkMode(isDark);
+            
+            // Mostrar notificación
+            const message = isDark ? 'Modo oscuro activado' : 'Modo claro activado';
+            alert(message);
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            // Cargar modo oscuro al inicializar
+            const preferences = JSON.parse(localStorage.getItem('userPreferences') || '{}');
+            if (preferences.darkMode) {
+                applyDarkMode(true);
+                document.getElementById('darkMode').checked = true;
+            }
+            
+            // Event listener para modo oscuro
+            document.getElementById('darkMode').addEventListener('change', function() {
+                toggleDarkMode();
+            });
+            
+            // Event listener para abrir modal
+            document.querySelector('.user-profile').addEventListener('click', function() {
+                document.getElementById('userProfileModal').style.display = 'flex';
+            });
+            
+            // Event listener para cerrar modal
+            document.getElementById('closeUserProfile').addEventListener('click', function() {
+                document.getElementById('userProfileModal').style.display = 'none';
+            });
+            
+            document.getElementById('cancelUserProfile').addEventListener('click', function() {
+                document.getElementById('userProfileModal').style.display = 'none';
+            });
+        });
+    </script>
+    <script src="js/dark-mode.js"></script>
+</body>
+</html>

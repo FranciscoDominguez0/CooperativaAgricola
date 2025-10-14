@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/dashboard.css">
     <link rel="stylesheet" href="css/creative-messages.css">
     <link rel="stylesheet" href="css/reportes.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
@@ -87,13 +88,16 @@
                             <span class="message-badge">2</span>
                         </button>
                     </div>
-                    <div class="user-profile">
+                    <div class="user-profile" id="userProfileBtn">
                         <div class="user-avatar">
                             <i class="fas fa-user"></i>
                         </div>
                         <div class="user-details">
                             <div class="user-name" id="userName">Usuario</div>
                             <div class="user-role" id="userRole">Miembro</div>
+                        </div>
+                        <div class="user-profile-arrow">
+                            <i class="fas fa-chevron-down"></i>
                         </div>
                     </div>
                 </div>
@@ -1010,12 +1014,38 @@
                             <h4 id="profileUserName">Usuario</h4>
                             <p class="user-role-badge" id="profileUserRole">Miembro</p>
                             <p class="user-email" id="profileUserEmail">usuario@cooperativa.com</p>
-                            <p class="user-join-date" id="profileJoinDate">Miembro desde: 2022</p>
-                            <p class="user-last-access" id="profileLastAccess">Último acceso: Hoy</p>
                         </div>
-                        <button class="btn btn-outline btn-sm" id="changeAvatarBtn">
+                        <button class="btn btn-outline" id="changeAvatarBtn">
                             <i class="fas fa-camera"></i> Cambiar Foto
                         </button>
+                    </div>
+                </div>
+
+                <!-- Preferences Section -->
+                <div class="profile-section">
+                    <h4><i class="fas fa-cog"></i> Preferencias de Aplicación</h4>
+                    <div class="preferences-grid">
+                        <div class="preference-item">
+                            <div class="preference-content">
+                                <span class="preference-label">Modo Oscuro</span>
+                                <span class="preference-description">Cambiar entre tema claro y oscuro</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="darkMode">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        
+                        <div class="preference-item">
+                            <div class="preference-content">
+                                <span class="preference-label">Notificaciones por Email</span>
+                                <span class="preference-description">Recibir notificaciones importantes</span>
+                            </div>
+                            <label class="switch">
+                                <input type="checkbox" id="emailNotifications" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -1026,11 +1056,11 @@
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="firstName">Nombre Completo</label>
-                                <input type="text" id="firstName" name="firstName" required>
+                                <input type="text" id="firstName" name="firstName" class="form-control" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Correo Electrónico</label>
-                                <input type="email" id="email" name="email" required>
+                                <input type="email" id="email" name="email" class="form-control" required>
                             </div>
                         </div>
                     </form>
@@ -1045,34 +1075,12 @@
                         </button>
                     </div>
                 </div>
-
-                <!-- Preferences Section -->
-                <div class="profile-section">
-                    <h4><i class="fas fa-cog"></i> Preferencias</h4>
-                    <div class="preferences-grid">
-                        <div class="preference-item">
-                            <label class="switch">
-                                <input type="checkbox" id="emailNotifications" checked>
-                                <span class="slider"></span>
-                            </label>
-                            <span>Notificaciones por Email</span>
-                        </div>
-                        
-                        <div class="preference-item">
-                            <label class="switch">
-                                <input type="checkbox" id="darkMode">
-                                <span class="slider"></span>
-                            </label>
-                            <span>Modo Oscuro</span>
-                        </div>
-                    </div>
-                </div>
             </div>
             
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelUserProfile">Cancelar</button>
                 <button class="btn btn-primary" id="saveUserProfile">
-                    <i class="fas fa-save"></i> Guardar
+                    <i class="fas fa-save"></i> Guardar Cambios
                 </button>
             </div>
         </div>
@@ -1094,5 +1102,281 @@
     <div id="toastContainer"></div>
 
     <script src="js/dashboard.js"></script>
+    <script src="js/dark-mode.js"></script>
+    <script>
+        // Inicializar modo oscuro al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar el gestor de modo oscuro
+            if (typeof darkModeManager !== 'undefined') {
+                darkModeManager.init();
+            }
+            
+            // Inicializar el toggle del perfil de usuario
+            initializeProfileDarkMode();
+            
+            // Event listener para abrir modal de perfil
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            if (userProfileBtn) {
+                userProfileBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('userProfileModal');
+                    modal.style.display = 'flex';
+                    modal.classList.add('show');
+                    document.body.style.overflow = 'hidden'; // Prevenir scroll del body
+                });
+            }
+            
+            // Event listeners para cerrar modal de perfil
+            const closeUserProfile = document.getElementById('closeUserProfile');
+            const cancelUserProfile = document.getElementById('cancelUserProfile');
+            
+            if (closeUserProfile) {
+                closeUserProfile.addEventListener('click', function() {
+                    const modal = document.getElementById('userProfileModal');
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    document.body.style.overflow = 'auto'; // Restaurar scroll del body
+                });
+            }
+            
+            if (cancelUserProfile) {
+                cancelUserProfile.addEventListener('click', function() {
+                    const modal = document.getElementById('userProfileModal');
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    document.body.style.overflow = 'auto'; // Restaurar scroll del body
+                });
+            }
+            
+            // Event listener para guardar perfil
+            const saveUserProfile = document.getElementById('saveUserProfile');
+            if (saveUserProfile) {
+                saveUserProfile.addEventListener('click', function() {
+                    // Aquí puedes agregar lógica para guardar las preferencias del usuario
+                    showToast('Preferencias guardadas correctamente', 'success');
+                    const modal = document.getElementById('userProfileModal');
+                    modal.style.display = 'none';
+                    modal.classList.remove('show');
+                    document.body.style.overflow = 'auto'; // Restaurar scroll del body
+                });
+            }
+            
+            // Event listener para cambiar avatar
+            const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+            if (changeAvatarBtn) {
+                changeAvatarBtn.addEventListener('click', function() {
+                    // Crear input de archivo oculto
+                    const fileInput = document.createElement('input');
+                    fileInput.type = 'file';
+                    fileInput.accept = 'image/*';
+                    fileInput.style.display = 'none';
+                    
+                    fileInput.addEventListener('change', function(e) {
+                        const file = e.target.files[0];
+                        if (file) {
+                            const reader = new FileReader();
+                            reader.onload = function(e) {
+                                const profileAvatar = document.getElementById('profileAvatar');
+                                profileAvatar.innerHTML = `<img src="${e.target.result}" alt="Avatar" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">`;
+                                showToast('Foto de perfil actualizada', 'success');
+                            };
+                            reader.readAsDataURL(file);
+                        }
+                    });
+                    
+                    document.body.appendChild(fileInput);
+                    fileInput.click();
+                    document.body.removeChild(fileInput);
+                });
+            }
+            
+            // Event listener para cerrar modal al hacer clic en el overlay
+            const userProfileModal = document.getElementById('userProfileModal');
+            if (userProfileModal) {
+                userProfileModal.addEventListener('click', function(e) {
+                    if (e.target === userProfileModal) {
+                        userProfileModal.style.display = 'none';
+                        userProfileModal.classList.remove('show');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            }
+        });
+        
+        // Función para mostrar notificaciones toast
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            const container = document.getElementById('toastContainer');
+            if (container) {
+                container.appendChild(toast);
+                
+                // Mostrar toast
+                setTimeout(() => {
+                    toast.style.opacity = '1';
+                    toast.style.transform = 'translateY(0)';
+                }, 100);
+                
+                // Ocultar toast después de 3 segundos
+                setTimeout(() => {
+                    toast.style.opacity = '0';
+                    toast.style.transform = 'translateY(-20px)';
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }, 3000);
+            }
+        }
+    </script>
+
+    <!-- Modal de Cambio de Contraseña -->
+    <div class="modal" id="changePasswordModal">
+        <div class="modal-content user-profile-modal">
+            <div class="modal-header">
+                <h3><i class="fas fa-key"></i> Cambiar Contraseña</h3>
+                <button class="close-btn" id="closeChangePassword">&times;</button>
+            </div>
+            
+            <div class="user-profile-content">
+                <!-- Formulario de Cambio de Contraseña -->
+                <div class="profile-section">
+                    <h4><i class="fas fa-shield-alt"></i> Seguridad de la Cuenta</h4>
+                    <form id="changePasswordForm">
+                        <div class="form-group">
+                            <label for="currentPassword">Contraseña Actual</label>
+                            <input type="password" id="currentPassword" name="currentPassword" class="form-control" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="newPassword">Nueva Contraseña</label>
+                            <input type="password" id="newPassword" name="newPassword" class="form-control" required>
+                            <small class="form-text">Mínimo 8 caracteres, incluir letras y números</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirmar Nueva Contraseña</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Información de Seguridad -->
+                <div class="profile-section">
+                    <h4><i class="fas fa-info-circle"></i> Recomendaciones de Seguridad</h4>
+                    <div class="security-tips">
+                        <div class="tip-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Usa una combinación de letras mayúsculas y minúsculas</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Incluye números y símbolos especiales</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Evita información personal obvia</span>
+                        </div>
+                        <div class="tip-item">
+                            <i class="fas fa-check-circle"></i>
+                            <span>No reutilices contraseñas de otras cuentas</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelChangePassword">Cancelar</button>
+                <button class="btn btn-primary" id="saveChangePassword">
+                    <i class="fas fa-save"></i> Cambiar Contraseña
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Event listener para abrir modal de cambio de contraseña
+        const changePasswordBtn = document.getElementById('changePasswordBtn');
+        if (changePasswordBtn) {
+            changePasswordBtn.addEventListener('click', function() {
+                const modal = document.getElementById('changePasswordModal');
+                modal.style.display = 'flex';
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        // Event listeners para cerrar modal de cambio de contraseña
+        const closeChangePassword = document.getElementById('closeChangePassword');
+        const cancelChangePassword = document.getElementById('cancelChangePassword');
+        
+        if (closeChangePassword) {
+            closeChangePassword.addEventListener('click', function() {
+                const modal = document.getElementById('changePasswordModal');
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+        }
+        
+        if (cancelChangePassword) {
+            cancelChangePassword.addEventListener('click', function() {
+                const modal = document.getElementById('changePasswordModal');
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            });
+        }
+        
+        // Event listener para guardar cambio de contraseña
+        const saveChangePassword = document.getElementById('saveChangePassword');
+        if (saveChangePassword) {
+            saveChangePassword.addEventListener('click', function() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+                
+                // Validaciones básicas
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    showToast('Por favor, completa todos los campos', 'error');
+                    return;
+                }
+                
+                if (newPassword !== confirmPassword) {
+                    showToast('Las contraseñas nuevas no coinciden', 'error');
+                    return;
+                }
+                
+                if (newPassword.length < 8) {
+                    showToast('La nueva contraseña debe tener al menos 8 caracteres', 'error');
+                    return;
+                }
+                
+                // Aquí puedes agregar lógica para cambiar la contraseña
+                showToast('Contraseña cambiada correctamente', 'success');
+                const modal = document.getElementById('changePasswordModal');
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+                
+                // Limpiar formulario
+                document.getElementById('changePasswordForm').reset();
+            });
+        }
+        
+        // Event listener para cerrar modal al hacer clic en el overlay
+        const changePasswordModal = document.getElementById('changePasswordModal');
+        if (changePasswordModal) {
+            changePasswordModal.addEventListener('click', function(e) {
+                if (e.target === changePasswordModal) {
+                    changePasswordModal.style.display = 'none';
+                    changePasswordModal.classList.remove('show');
+                    document.body.style.overflow = 'auto';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
