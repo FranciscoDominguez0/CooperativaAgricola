@@ -1102,8 +1102,403 @@
     background: var(--bg-primary) !important;
 }
 
+/* Aplicar modo oscuro al botón de cerrar sesión */
+[data-theme="dark"] .logout-btn {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: #ffffff !important;
+    border: 1px solid #6c757d !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
+}
+
+[data-theme="dark"] .logout-btn:hover {
+    background: linear-gradient(135deg, #5a6268, #495057) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
+    border-color: #495057 !important;
+}
+
+[data-theme="dark"] .logout-btn i {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .logout-btn span {
+    color: #ffffff !important;
+}
+
+/* Aplicar modo oscuro al modal de confirmación de eliminación */
+[data-theme="dark"] .confirmation-modal {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .confirmation-content {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .confirmation-icon {
+    background: rgba(220, 38, 38, 0.1) !important;
+    border: 2px solid rgba(220, 38, 38, 0.3) !important;
+}
+
+[data-theme="dark"] .confirmation-icon i {
+    color: #dc2626 !important;
+}
+
+[data-theme="dark"] .confirmation-title {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .confirmation-message {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a los botones del modal de confirmación */
+[data-theme="dark"] .confirmation-buttons .btn {
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268, #495057) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-danger:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4) !important;
+}
+
 [data-theme="dark"] .pagos-section {
     background: var(--bg-primary) !important;
+}
+
+/* ===== MODO OSCURO PARA LOGIN Y REGISTER ===== */
+
+/* Aplicar modo oscuro al body de login y register */
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #0f2419 0%, #1a3a2e 50%, #2d5016 100%) !important;
+}
+
+/* Regla general para mantener dimensiones en modo oscuro */
+[data-theme="dark"] * {
+    /* Solo cambiar colores, no dimensiones */
+    box-sizing: border-box !important;
+}
+
+[data-theme="dark"] .login-container,
+[data-theme="dark"] .register-container,
+[data-theme="dark"] .form-control,
+[data-theme="dark"] .btn,
+[data-theme="dark"] .agricultural-badge {
+    /* Mantener dimensiones originales */
+    transform: none !important;
+    scale: 1 !important;
+    zoom: 1 !important;
+}
+
+/* Aplicar modo oscuro al contenedor de login */
+[data-theme="dark"] .login-container {
+    background: rgba(26, 58, 46, 0.95) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(20px) !important;
+    /* Mantener las mismas dimensiones del modo claro */
+    border-radius: 20px !important;
+    padding: 1.5rem !important;
+    max-width: 380px !important;
+    width: 100% !important;
+}
+
+/* Aplicar modo oscuro al contenedor de register */
+[data-theme="dark"] .register-container {
+    background: rgba(26, 58, 46, 0.95) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(20px) !important;
+    /* Mantener las mismas dimensiones del modo claro */
+    border-radius: 20px !important;
+    padding: 1.5rem !important;
+    max-width: 400px !important;
+    width: 100% !important;
+}
+
+/* Aplicar modo oscuro a los títulos */
+[data-theme="dark"] .header h1 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .header p {
+    color: #e8f5e8 !important;
+    opacity: 0.9 !important;
+}
+
+/* Aplicar modo oscuro a los iconos del logo */
+[data-theme="dark"] .logo-icon {
+    background: linear-gradient(135deg, #4a7c59, #2d5016) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 20px rgba(74, 124, 89, 0.3) !important;
+}
+
+/* Aplicar modo oscuro a los formularios */
+[data-theme="dark"] .form-group {
+    margin-bottom: 1rem !important;
+}
+
+[data-theme="dark"] .form-group label {
+    color: #ffffff !important;
+    font-weight: 500 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+}
+
+[data-theme="dark"] .form-control {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 0.75rem !important;
+    width: 100% !important;
+    transition: all 0.3s ease !important;
+    /* Mantener dimensiones exactas del modo claro */
+    font-size: inherit !important;
+    line-height: inherit !important;
+    height: auto !important;
+    min-height: auto !important;
+}
+
+[data-theme="dark"] .form-control:focus {
+    outline: none !important;
+    border-color: #4a7c59 !important;
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.2) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Aplicar modo oscuro a los botones */
+[data-theme="dark"] .btn {
+    border: none !important;
+    border-radius: 8px !important;
+    padding: 0.75rem 1.5rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    /* Mantener dimensiones exactas del modo claro */
+    font-size: inherit !important;
+    line-height: inherit !important;
+    width: auto !important;
+    height: auto !important;
+}
+
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, #4a7c59, #2d5016) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(74, 124, 89, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: linear-gradient(135deg, #2d5016, #1a3a2e) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(74, 124, 89, 0.4) !important;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268, #495057) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
+}
+
+/* Aplicar modo oscuro a los enlaces */
+[data-theme="dark"] .login-links a,
+[data-theme="dark"] .register-links a {
+    color: #4a7c59 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    transition: color 0.3s ease !important;
+}
+
+[data-theme="dark"] .login-links a:hover,
+[data-theme="dark"] .register-links a:hover {
+    color: #6bc34a !important;
+    text-decoration: underline !important;
+}
+
+/* Aplicar modo oscuro a los mensajes de error */
+[data-theme="dark"] .error-message {
+    background: rgba(220, 53, 69, 0.1) !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+    color: #ff6b6b !important;
+    padding: 0.75rem !important;
+    border-radius: 8px !important;
+    margin-bottom: 1rem !important;
+    font-size: 0.9rem !important;
+}
+
+/* Aplicar modo oscuro a los mensajes de éxito */
+[data-theme="dark"] .success-message {
+    background: rgba(40, 167, 69, 0.1) !important;
+    border: 1px solid rgba(40, 167, 69, 0.3) !important;
+    color: #6bc34a !important;
+    padding: 0.75rem !important;
+    border-radius: 8px !important;
+    margin-bottom: 1rem !important;
+    font-size: 0.9rem !important;
+}
+
+/* Aplicar modo oscuro a los iconos de input */
+[data-theme="dark"] .input-icon {
+    color: #4a7c59 !important;
+}
+
+/* Aplicar modo oscuro a los checkboxes y radio buttons */
+[data-theme="dark"] input[type="checkbox"],
+[data-theme="dark"] input[type="radio"] {
+    accent-color: #4a7c59 !important;
+}
+
+/* Aplicar modo oscuro a los textos de ayuda */
+[data-theme="dark"] .help-text {
+    color: rgba(255, 255, 255, 0.7) !important;
+    font-size: 0.85rem !important;
+    margin-top: 0.25rem !important;
+}
+
+/* Aplicar modo oscuro a los separadores */
+[data-theme="dark"] .divider {
+    border-color: rgba(139, 195, 74, 0.3) !important;
+}
+
+[data-theme="dark"] .divider::before,
+[data-theme="dark"] .divider::after {
+    background: rgba(139, 195, 74, 0.3) !important;
+}
+
+/* Aplicar modo oscuro a los elementos de validación */
+[data-theme="dark"] .form-control.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.2) !important;
+}
+
+[data-theme="dark"] .form-control.is-valid {
+    border-color: #28a745 !important;
+    box-shadow: 0 0 0 3px rgba(40, 167, 69, 0.2) !important;
+}
+
+[data-theme="dark"] .invalid-feedback {
+    color: #ff6b6b !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+}
+
+[data-theme="dark"] .valid-feedback {
+    color: #6bc34a !important;
+    font-size: 0.8rem !important;
+    margin-top: 0.25rem !important;
+}
+
+/* Toggle de modo oscuro para login y register */
+[data-theme="dark"] .dark-mode-toggle {
+    display: block !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 1000 !important;
+}
+
+[data-theme="dark"] .dark-mode-toggle {
+    background: rgba(26, 58, 46, 0.9) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #ffffff !important;
+    padding: 0.75rem !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+[data-theme="dark"] .dark-mode-toggle:hover {
+    background: rgba(74, 124, 89, 0.9) !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Aplicar modo oscuro a la sección "Acceso Seguro" */
+[data-theme="dark"] .agricultural-badge {
+    background: linear-gradient(135deg, rgba(26, 58, 46, 0.8), rgba(45, 80, 22, 0.8)) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #ffffff !important;
+    /* Mantener las mismas dimensiones del modo claro */
+    border-radius: 10px !important;
+    padding: 0.6rem !important;
+    margin-top: 0.75rem !important;
+    text-align: center !important;
+}
+
+[data-theme="dark"] .agricultural-badge h4 {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    /* Mantener las mismas dimensiones del modo claro */
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.25rem !important;
+}
+
+[data-theme="dark"] .agricultural-badge p {
+    color: #e8f5e8 !important;
+    opacity: 0.9 !important;
+    /* Mantener las mismas dimensiones del modo claro */
+    font-size: 0.75rem !important;
+}
+
+/* Aplicar modo oscuro a los enlaces en login y register */
+[data-theme="dark"] .links a {
+    color: #4a7c59 !important;
+    text-decoration: none !important;
+    font-weight: 500 !important;
+    transition: color 0.3s ease !important;
+}
+
+[data-theme="dark"] .links a:hover {
+    color: #6bc34a !important;
+    text-decoration: underline !important;
+}
+
+[data-theme="dark"] .links p {
+    color: #e8f5e8 !important;
+    margin-bottom: 0.5rem !important;
 }
 
 /* Aplicar modo oscuro a elementos de texto específicos */
@@ -1121,7 +1516,27 @@
     color: var(--text-secondary) !important;
 }
 
-/* Ocultar el toggle flotante del modo oscuro */
+/* Estilos para el toggle de modo oscuro */
 .dark-mode-toggle {
-    display: none !important;
+    display: block !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 1000 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #2d5016 !important;
+    padding: 0.75rem !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(139, 195, 74, 0.9) !important;
+    color: #ffffff !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
 }

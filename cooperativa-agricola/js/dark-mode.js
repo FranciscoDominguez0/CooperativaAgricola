@@ -64,6 +64,38 @@ function initProfileDarkMode() {
     }
 }
 
+// Función para inicializar el toggle en login y register
+function initLoginRegisterDarkMode() {
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    if (darkModeToggle) {
+        // Establecer el estado inicial
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        updateToggleIcon(darkModeToggle, currentTheme);
+        
+        // Event listener para cambios
+        darkModeToggle.addEventListener('click', function() {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            darkModeManager.setTheme(newTheme);
+            updateToggleIcon(this, newTheme);
+        });
+    }
+}
+
+// Función para actualizar el icono del toggle
+function updateToggleIcon(toggle, theme) {
+    const icon = toggle.querySelector('i');
+    if (icon) {
+        if (theme === 'dark') {
+            icon.className = 'fas fa-sun';
+            toggle.title = 'Cambiar a modo claro';
+        } else {
+            icon.className = 'fas fa-moon';
+            toggle.title = 'Cambiar a modo oscuro';
+        }
+    }
+}
+
 // Aplicar modo oscuro a elementos dinámicos
 function applyDarkModeToDynamicElements() {
     const observer = new MutationObserver((mutations) => {
@@ -94,6 +126,7 @@ function applyDarkModeToDynamicElements() {
 // Inicializar cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     initProfileDarkMode();
+    initLoginRegisterDarkMode();
     applyDarkModeToDynamicElements();
 });
 
