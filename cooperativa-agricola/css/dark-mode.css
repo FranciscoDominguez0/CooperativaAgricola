@@ -1,1125 +1,1033 @@
-/* Sistema de Modo Oscuro - Cooperativa Agrícola La Pintada */
-/* Variables CSS para modo oscuro con colores optimizados */
+/* ===== MODO OSCURO - COOPERATIVA AGRÍCOLA ===== */
 
+/* Variables para modo oscuro */
 :root {
-    /* Variables de modo claro (por defecto) */
-    --bg-primary: #f5f5f5;
-    --bg-secondary: #ffffff;
-    --bg-tertiary: #f8fafc;
+    /* Colores base */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
     --text-primary: #1a3a2e;
-    --text-secondary: #6b7280;
-    --text-muted: #9ca3af;
-    --border-color: #e5e7eb;
-    --border-light: #f1f5f9;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: #dee2e6;
+    --border-light: #e9ecef;
     
-    /* Colores agrícolas adaptados para modo claro */
-    --verde-primario: #2d5016;
-    --verde-secundario: #4a7c59;
-    --verde-claro: #8bc34a;
-    --verde-oscuro: #1a4d3a;
-    --amarillo-trigo: #ffc107;
-    --marron-tierra: #8d6e63;
-    --beige-claro: #f5f5dc;
-    
-    /* Colores de estado */
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
-    --info: #3b82f6;
+    /* Colores agrícolas */
+    --verde-primario: #1a3a2e;
+    --verde-secundario: #2d5016;
+    --verde-claro: #d4ff00;
+    --verde-oscuro: #0f2419;
     
     /* Sombras */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
 }
 
 /* Modo oscuro */
 [data-theme="dark"] {
-    /* Fondos oscuros - Más negros */
+    /* Colores base oscuros */
     --bg-primary: #000000;
     --bg-secondary: #0a0a0a;
     --bg-tertiary: #1a1a1a;
     --text-primary: #ffffff;
-    --text-secondary: #e0e0e0;
-    --text-muted: #a0a0a0;
+    --text-secondary: #cccccc;
+    --text-muted: #999999;
     --border-color: #333333;
-    --border-light: #1a1a1a;
+    --border-light: #444444;
     
-    /* Colores agrícolas adaptados para modo oscuro - Más brillantes */
-    --verde-primario: #00ff00; /* Verde neón brillante */
-    --verde-secundario: #32ff32; /* Verde claro vibrante */
-    --verde-claro: #66ff66; /* Verde muy claro */
-    --verde-oscuro: #00cc00; /* Verde oscuro más visible */
-    --amarillo-trigo: #ffff00; /* Amarillo neón */
-    --marron-tierra: #ff6600; /* Naranja brillante */
-    --beige-claro: #ffffcc; /* Beige más claro */
+    /* Colores agrícolas oscuros */
+    --verde-primario: #00ff00;
+    --verde-secundario: #00cc00;
+    --verde-claro: #ffff00;
+    --verde-oscuro: #000000;
     
-    /* Colores de estado adaptados - Más brillantes */
-    --success: #00ff00;
-    --warning: #ffff00;
-    --error: #ff0000;
-    --info: #00ffff;
-    
-    /* Sombras más intensas para modo oscuro negro */
-    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.8);
-    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.9);
-    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.95);
-    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 1);
+    /* Sombras oscuras */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.8);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.9);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.95);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 1);
 }
 
-/* Aplicar variables a elementos base */
-body {
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-/* Fondo completamente negro para modo oscuro */
+/* Aplicar modo oscuro al body */
 [data-theme="dark"] body {
-    background: #000000;
-    background-image: none;
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
 }
 
+/* Aplicar modo oscuro al main wrapper */
 [data-theme="dark"] .main-wrapper {
-    background: #000000;
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .sidebar {
-    background: #0a0a0a;
-    border-right: 1px solid #333333;
+/* Aplicar modo oscuro a todos los elementos principales */
+[data-theme="dark"] * {
+    color: inherit;
 }
 
-[data-theme="dark"] .header {
-    background: #0a0a0a;
-    border-bottom: 1px solid #333333;
+[data-theme="dark"] html {
+    background: var(--bg-primary) !important;
 }
 
-/* Sidebar modo oscuro */
+[data-theme="dark"] .content-wrapper {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro al sidebar */
 [data-theme="dark"] .sidebar {
     background: var(--bg-secondary);
     border-right: 1px solid var(--border-color);
 }
 
-[data-theme="dark"] .sidebar-header {
-    border-bottom-color: var(--border-color);
-}
-
-[data-theme="dark"] .logo h1 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .nav-item {
+[data-theme="dark"] .sidebar .nav-link {
     color: var(--text-secondary);
 }
 
-[data-theme="dark"] .nav-item:hover {
-    background: var(--bg-tertiary);
+[data-theme="dark"] .sidebar .nav-link:hover,
+[data-theme="dark"] .sidebar .nav-link.active {
     color: var(--verde-claro);
+    background: var(--bg-tertiary);
 }
 
-[data-theme="dark"] .nav-item.active {
-    background: var(--verde-primario);
-    color: var(--bg-primary);
-}
-
-[data-theme="dark"] .logout-btn {
-    background: var(--verde-primario);
-    color: var(--bg-primary);
-    border: 1px solid var(--verde-primario);
-}
-
-[data-theme="dark"] .logout-btn:hover {
-    background: var(--verde-secundario);
-}
-
-/* Header modo oscuro */
+/* Aplicar modo oscuro al header */
 [data-theme="dark"] .header {
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
 }
 
-[data-theme="dark"] .user-name {
+[data-theme="dark"] .header h1 {
     color: var(--text-primary);
 }
 
-[data-theme="dark"] .user-role {
-    color: var(--text-secondary);
+/* Aplicar modo oscuro a las cards */
+[data-theme="dark"] .card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
-/* Main content modo oscuro */
-[data-theme="dark"] .main-wrapper {
-    background: var(--bg-primary);
+[data-theme="dark"] .card-header {
+    background: var(--bg-tertiary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
-/* Cards y contenedores */
+[data-theme="dark"] .card-body {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-title {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-text {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a estadísticas y métricas */
 [data-theme="dark"] .stat-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .stat-card-dark {
-    background: var(--verde-primario);
-    color: var(--bg-primary);
+[data-theme="dark"] .stat-card .stat-number {
+    color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .stat-number {
-    color: var(--text-primary);
+[data-theme="dark"] .stat-card .stat-label {
+    color: var(--text-secondary) !important;
 }
 
-[data-theme="dark"] .stat-label {
-    color: var(--text-secondary);
+[data-theme="dark"] .stat-card .stat-icon {
+    color: var(--verde-claro) !important;
 }
 
-/* Secciones */
-[data-theme="dark"] .socios-section,
-[data-theme="dark"] .insumos-section,
-[data-theme="dark"] .produccion-section,
-[data-theme="dark"] .ventas-section,
-[data-theme="dark"] .pagos-section,
-[data-theme="dark"] .reportes-section {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+/* Aplicar modo oscuro a elementos específicos de dashboard */
+[data-theme="dark"] .dashboard-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
 }
 
-[data-theme="dark"] .section-title {
-    color: var(--text-primary);
+[data-theme="dark"] .dashboard-card.active {
+    background: var(--verde-primario) !important;
+    color: white !important;
 }
 
-/* Tablas modo oscuro */
-[data-theme="dark"] .table-container {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+[data-theme="dark"] .dashboard-card.active .stat-number {
+    color: white !important;
 }
 
+[data-theme="dark"] .dashboard-card.active .stat-label {
+    color: white !important;
+}
+
+/* Aplicar modo oscuro a las tablas - SIN BORDES */
 [data-theme="dark"] .table {
-    background: var(--bg-secondary);
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    border-collapse: collapse !important;
 }
 
-[data-theme="dark"] .table th {
-    background: var(--bg-tertiary);
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-color);
+[data-theme="dark"] .table thead th {
+    background: var(--bg-primary) !important;
+    border: none !important;
+    color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .table td {
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-light);
+[data-theme="dark"] .table tbody tr {
+    background: var(--bg-primary) !important;
+    border: none !important;
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .table tbody tr:hover {
-    background: var(--bg-tertiary);
+    background: var(--bg-secondary) !important;
 }
 
-/* Formularios modo oscuro */
+[data-theme="dark"] .table tbody td {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .table tbody tr:hover td {
+    background: var(--bg-secondary) !important;
+}
+
+/* Quitar todos los bordes de las tablas en modo oscuro */
+[data-theme="dark"] .table,
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table tr {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+[data-theme="dark"] .table-bordered {
+    border: none !important;
+}
+
+[data-theme="dark"] .table-bordered th,
+[data-theme="dark"] .table-bordered td {
+    border: none !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(even) {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro a contenedores de tablas - SIN BORDES */
+[data-theme="dark"] .table-container {
+    background: var(--bg-primary) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .table-responsive {
+    background: var(--bg-primary) !important;
+    border: none !important;
+}
+
+/* Aplicar modo oscuro a badges y etiquetas en tablas - COLORES VARIADOS */
+[data-theme="dark"] .badge {
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    border: none !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+}
+
+/* Estados - Colores más brillantes para modo oscuro */
+[data-theme="dark"] .badge-success,
+[data-theme="dark"] .badge.bg-success,
+[data-theme="dark"] .status-active,
+[data-theme="dark"] .status-completed,
+[data-theme="dark"] .status-approved,
+[data-theme="dark"] .table td .badge-success,
+[data-theme="dark"] .table td .bg-success {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .badge-danger,
+[data-theme="dark"] .badge.bg-danger,
+[data-theme="dark"] .status-inactive,
+[data-theme="dark"] .status-cancelled,
+[data-theme="dark"] .status-rejected {
+    background: #ff0000 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .badge-warning,
+[data-theme="dark"] .badge.bg-warning,
+[data-theme="dark"] .status-pending,
+[data-theme="dark"] .status-waiting {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .badge-info,
+[data-theme="dark"] .badge.bg-info,
+[data-theme="dark"] .status-processing {
+    background: #00ffff !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Tipos - Colores específicos para modo oscuro */
+[data-theme="dark"] .badge-primary,
+[data-theme="dark"] .badge.bg-primary,
+[data-theme="dark"] .type-premium,
+[data-theme="dark"] .type-high {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .type-standard,
+[data-theme="dark"] .type-medium {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .type-basic,
+[data-theme="dark"] .type-low {
+    background: #ff8000 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Calidad - Colores específicos para modo oscuro */
+[data-theme="dark"] .quality-premium,
+[data-theme="dark"] .quality-excellent {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .quality-good,
+[data-theme="dark"] .quality-standard {
+    background: #00ffff !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .quality-fair,
+[data-theme="dark"] .quality-average {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .quality-poor,
+[data-theme="dark"] .quality-bad {
+    background: #ff0000 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Estilos para elementos con colores inline o clases genéricas */
+[data-theme="dark"] .table td span[style*="background-color"],
+[data-theme="dark"] .table td div[style*="background-color"],
+[data-theme="dark"] .table td .badge[style*="background-color"] {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Colores específicos para texto que contenga ciertas palabras */
+[data-theme="dark"] .table td:contains("Premium"),
+[data-theme="dark"] .table td:contains("Activo"),
+[data-theme="dark"] .table td:contains("Completado"),
+[data-theme="dark"] .table td:contains("Aprobado") {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .table td:contains("Buena"),
+[data-theme="dark"] .table td:contains("Estándar"),
+[data-theme="dark"] .table td:contains("Procesando") {
+    background: #00ffff !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .table td:contains("Pendiente"),
+[data-theme="dark"] .table td:contains("Esperando"),
+[data-theme="dark"] .table td:contains("Regular") {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .table td:contains("Inactivo"),
+[data-theme="dark"] .table td:contains("Cancelado"),
+[data-theme="dark"] .table td:contains("Rechazado"),
+[data-theme="dark"] .table td:contains("Malo") {
+    background: #ff0000 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Colores suaves y profesionales para modo oscuro - TODAS LAS TABLAS */
+/* Estados - Colores suaves con buen contraste - TODAS LAS VARIACIONES */
+[data-theme="dark"] .table td .badge-success,
+[data-theme="dark"] .table td .badge.bg-success,
+[data-theme="dark"] .table td .status-active,
+[data-theme="dark"] .table td .status-completed,
+[data-theme="dark"] .table td .status-approved,
+[data-theme="dark"] .table td .status-activo,
+[data-theme="dark"] .table td .status-completado,
+[data-theme="dark"] .table td .status-aprobado,
+[data-theme="dark"] .table td .status-confirmado,
+[data-theme="dark"] .table td .status-entregado,
+[data-theme="dark"] .table td .status-delivered,
+[data-theme="dark"] .table td .status-finalizado,
+[data-theme="dark"] .table td .status-finished {
+    background: #2d5a2d !important; /* Verde suave */
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+}
+
+[data-theme="dark"] .table td .badge-danger,
+[data-theme="dark"] .table td .badge.bg-danger,
+[data-theme="dark"] .table td .status-inactive,
+[data-theme="dark"] .table td .status-cancelled,
+[data-theme="dark"] .table td .status-rejected,
+[data-theme="dark"] .table td .status-inactivo,
+[data-theme="dark"] .table td .status-cancelado,
+[data-theme="dark"] .table td .status-rechazado {
+    background: #5a2d2d !important; /* Rojo suave */
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+}
+
+[data-theme="dark"] .table td .badge-warning,
+[data-theme="dark"] .table td .badge.bg-warning,
+[data-theme="dark"] .table td .status-pending,
+[data-theme="dark"] .table td .status-waiting,
+[data-theme="dark"] .table td .status-pendiente,
+[data-theme="dark"] .table td .status-esperando {
+    background: #5a4a2d !important; /* Amarillo suave */
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+}
+
+[data-theme="dark"] .table td .badge-info,
+[data-theme="dark"] .table td .badge.bg-info,
+[data-theme="dark"] .table td .status-processing,
+[data-theme="dark"] .table td .status-procesando {
+    background: #2d4a5a !important; /* Azul suave */
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a6a7c !important;
+}
+
+/* Tipos - Colores suaves y profesionales - TODAS LAS VARIACIONES */
+[data-theme="dark"] .table td .badge-primary,
+[data-theme="dark"] .table td .badge.bg-primary,
+[data-theme="dark"] .table td .type-premium,
+[data-theme="dark"] .table td .type-high,
+[data-theme="dark"] .table td .type-premium,
+[data-theme="dark"] .table td .type-alto,
+[data-theme="dark"] .table td .type-pago-venta,
+[data-theme="dark"] .table td .type-pago,
+[data-theme="dark"] .table td .type-payment,
+[data-theme="dark"] .table td .type-venta,
+[data-theme="dark"] .table td .type-sale,
+[data-theme="dark"] .table td .type-insumo,
+[data-theme="dark"] .table td .type-supply,
+[data-theme="dark"] .table td .type-produccion,
+[data-theme="dark"] .table td .type-production {
+    background: #2d3a5a !important; /* Azul suave */
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+}
+
+[data-theme="dark"] .table td .type-standard,
+[data-theme="dark"] .table td .type-medium,
+[data-theme="dark"] .table td .type-estandar,
+[data-theme="dark"] .table td .type-medio {
+    background: #4a4a4a !important; /* Gris suave */
+    color: #d3d3d3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #6a6a6a !important;
+}
+
+[data-theme="dark"] .table td .type-basic,
+[data-theme="dark"] .table td .type-low,
+[data-theme="dark"] .table td .type-basico,
+[data-theme="dark"] .table td .type-bajo {
+    background: #5a3a2d !important; /* Naranja suave */
+    color: #ffb366 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c5a4a !important;
+}
+
+/* Aplicar colores a TODOS los elementos de tipo y estado en tablas */
+[data-theme="dark"] .table td span,
+[data-theme="dark"] .table td div,
+[data-theme="dark"] .table td .badge,
+[data-theme="dark"] .table td [class*="status"],
+[data-theme="dark"] .table td [class*="type"],
+[data-theme="dark"] .table td [class*="quality"] {
+    /* Aplicar estilos base para todos los elementos */
+}
+
+/* Forzar aplicación de colores a TODOS los badges en tablas */
+[data-theme="dark"] .table td * {
+    /* Resetear colores por defecto */
+}
+
+/* Aplicar colores específicos a badges de insumos */
+[data-theme="dark"] .table td .badge,
+[data-theme="dark"] .table td span.badge,
+[data-theme="dark"] .table td div.badge,
+[data-theme="dark"] .table td [class*="badge"] {
+    background: #2d3a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Estados específicos para badges */
+[data-theme="dark"] .table td .badge-success,
+[data-theme="dark"] .table td .badge.bg-success,
+[data-theme="dark"] .table td span:contains("DISPONIBLE"),
+[data-theme="dark"] .table td div:contains("DISPONIBLE") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    border: 1px solid #4a7c4a !important;
+}
+
+/* Estados específicos por texto */
+[data-theme="dark"] .table td:contains("CONFIRMADO"),
+[data-theme="dark"] .table td:contains("ACTIVO"),
+[data-theme="dark"] .table td:contains("COMPLETADO"),
+[data-theme="dark"] .table td:contains("APROBADO"),
+[data-theme="dark"] .table td:contains("ENTREGADO"),
+[data-theme="dark"] .table td:contains("FINALIZADO") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+[data-theme="dark"] .table td:contains("PENDIENTE"),
+[data-theme="dark"] .table td:contains("ESPERANDO"),
+[data-theme="dark"] .table td:contains("PROCESANDO") {
+    background: #5a4a2d !important;
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+[data-theme="dark"] .table td:contains("INACTIVO"),
+[data-theme="dark"] .table td:contains("CANCELADO"),
+[data-theme="dark"] .table td:contains("RECHAZADO") {
+    background: #5a2d2d !important;
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Tipos específicos por texto */
+[data-theme="dark"] .table td:contains("PAGO DE VENTA"),
+[data-theme="dark"] .table td:contains("VENTA"),
+[data-theme="dark"] .table td:contains("PAGO"),
+[data-theme="dark"] .table td:contains("INSUMO"),
+[data-theme="dark"] .table td:contains("PRODUCCION"),
+[data-theme="dark"] .table td:contains("PREMIUM"),
+[data-theme="dark"] .table td:contains("ALTO") {
+    background: #2d3a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Tipos específicos de insumos - COLORES DIFERENTES */
+/* Semillas - Verde */
+[data-theme="dark"] .table td:contains("semillas") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Fertilizantes - Azul */
+[data-theme="dark"] .table td:contains("fertilizantes") {
+    background: #2d3a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Pesticidas - Naranja */
+[data-theme="dark"] .table td:contains("pesticidas") {
+    background: #5a3a2d !important;
+    color: #ffb366 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c5a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Herramientas - Cian */
+[data-theme="dark"] .table td:contains("herramientas") {
+    background: #2d4a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a6a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Equipos - Púrpura */
+[data-theme="dark"] .table td:contains("equipos") {
+    background: #4a2d5a !important;
+    color: #dda0dd !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #6a4a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Maquinaria - Gris */
+[data-theme="dark"] .table td:contains("maquinaria") {
+    background: #4a4a4a !important;
+    color: #d3d3d3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #6a6a6a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Estados específicos de insumos - COLORES DIFERENTES */
+/* Disponible - Verde */
+[data-theme="dark"] .table td:contains("DISPONIBLE") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Agotado - Rojo */
+[data-theme="dark"] .table td:contains("AGOTADO") {
+    background: #5a2d2d !important;
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Reservado - Amarillo */
+[data-theme="dark"] .table td:contains("RESERVADO") {
+    background: #5a4a2d !important;
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Mantenimiento - Naranja */
+[data-theme="dark"] .table td:contains("MANTENIMIENTO") {
+    background: #5a3a2d !important;
+    color: #ffb366 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c5a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* No disponible - Rojo oscuro */
+[data-theme="dark"] .table td:contains("NO DISPONIBLE"),
+[data-theme="dark"] .table td:contains("DESCONTINUADO") {
+    background: #3d1a1a !important;
+    color: #ff9999 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #5a2a2a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Calidad - Colores suaves */
+[data-theme="dark"] .table td .quality-premium,
+[data-theme="dark"] .table td .quality-excellent,
+[data-theme="dark"] .table td .quality-premium,
+[data-theme="dark"] .table td .quality-excelente {
+    background: #2d5a2d !important; /* Verde suave */
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+}
+
+[data-theme="dark"] .table td .quality-good,
+[data-theme="dark"] .table td .quality-standard,
+[data-theme="dark"] .table td .quality-bueno,
+[data-theme="dark"] .table td .quality-estandar {
+    background: #2d4a5a !important; /* Azul suave */
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a6a7c !important;
+}
+
+[data-theme="dark"] .table td .quality-fair,
+[data-theme="dark"] .table td .quality-average,
+[data-theme="dark"] .table td .quality-regular,
+[data-theme="dark"] .table td .quality-promedio {
+    background: #5a4a2d !important; /* Amarillo suave */
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+}
+
+[data-theme="dark"] .table td .quality-poor,
+[data-theme="dark"] .table td .quality-bad,
+[data-theme="dark"] .table td .quality-malo,
+[data-theme="dark"] .table td .quality-pobre {
+    background: #5a2d2d !important; /* Rojo suave */
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+}
+
+/* Los botones de acción mantienen sus colores originales - SIN MODIFICACIONES */
+
+/* Aplicar modo oscuro a los formularios */
 [data-theme="dark"] .form-control {
     background: var(--bg-secondary);
-    border: 2px solid var(--border-color);
+    border: 1px solid var(--border-color);
     color: var(--text-primary);
 }
 
 [data-theme="dark"] .form-control:focus {
+    background: var(--bg-secondary);
     border-color: var(--verde-claro);
-    box-shadow: 0 0 0 3px rgba(190, 242, 100, 0.1);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 255, 0, 0.25);
 }
 
-[data-theme="dark"] .form-group label {
+[data-theme="dark"] .form-label {
     color: var(--text-primary);
 }
 
-/* Botones modo oscuro */
+/* Aplicar modo oscuro a los botones */
 [data-theme="dark"] .btn-primary {
     background: var(--verde-primario);
+    border-color: var(--verde-primario);
     color: var(--bg-primary);
 }
 
 [data-theme="dark"] .btn-primary:hover {
     background: var(--verde-secundario);
+    border-color: var(--verde-secundario);
 }
 
 [data-theme="dark"] .btn-secondary {
     background: var(--bg-tertiary);
+    border-color: var(--border-color);
     color: var(--text-primary);
-    border: 1px solid var(--border-color);
 }
 
 [data-theme="dark"] .btn-secondary:hover {
     background: var(--border-color);
+    border-color: var(--border-color);
 }
 
-/* Modales modo oscuro */
+[data-theme="dark"] .btn-outline {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-outline:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Aplicar modo oscuro a los modales */
 [data-theme="dark"] .modal-content {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .modal h3 {
     color: var(--text-primary);
 }
 
 [data-theme="dark"] .modal-header {
-    background: var(--verde-primario);
-    color: var(--bg-primary);
-}
-
-/* Badges y estados modo oscuro */
-[data-theme="dark"] .status-activo {
-    background: rgba(34, 197, 94, 0.2);
-    color: var(--success);
-    border: 1px solid rgba(34, 197, 94, 0.3);
-}
-
-[data-theme="dark"] .status-inactivo {
-    background: rgba(248, 113, 113, 0.2);
-    color: var(--error);
-    border: 1px solid rgba(248, 113, 113, 0.3);
-}
-
-[data-theme="dark"] .status-suspendido {
-    background: rgba(245, 158, 11, 0.2);
-    color: var(--warning);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-/* Inputs de búsqueda modo oscuro */
-[data-theme="dark"] .search-input {
-    background: var(--bg-secondary);
-    border: 2px solid var(--border-color);
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .search-input:focus {
-    border-color: var(--verde-claro);
-    box-shadow: 0 0 0 3px rgba(190, 242, 100, 0.1);
-}
-
-[data-theme="dark"] .search-input::placeholder {
-    color: var(--text-muted);
-}
-
-/* Paginación modo oscuro */
-[data-theme="dark"] .pagination button {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .pagination button:hover {
     background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
-[data-theme="dark"] .pagination button.active {
-    background: var(--verde-primario);
-    color: var(--bg-primary);
-    border-color: var(--verde-primario);
+[data-theme="dark"] .modal-footer {
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border-color);
 }
 
-/* Toast messages modo oscuro */
-[data-theme="dark"] .toast.success {
-    background: var(--success);
-    color: var(--bg-primary);
+/* Aplicar modo oscuro al perfil de usuario */
+[data-theme="dark"] .user-profile {
+    color: var(--text-primary);
 }
 
-[data-theme="dark"] .toast.error {
-    background: var(--error);
-    color: var(--bg-primary);
+[data-theme="dark"] .user-profile .user-name {
+    color: var(--text-primary);
 }
 
-/* Loading spinner modo oscuro */
-[data-theme="dark"] .spinner {
-    border-color: var(--border-color);
-    border-top-color: var(--verde-claro);
+[data-theme="dark"] .user-profile .user-role {
+    color: var(--text-secondary);
 }
 
-/* User profile modal modo oscuro */
-[data-theme="dark"] .user-profile-modal {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
-
+/* Aplicar modo oscuro a las secciones del perfil */
 [data-theme="dark"] .profile-section {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .profile-section h4 {
-    color: var(--text-primary);
+    color: var(--text-primary) !important;
 }
 
+[data-theme="dark"] .profile-avatar-section {
+    background: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .profile-info h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .user-email,
+[data-theme="dark"] .user-join-date,
+[data-theme="dark"] .user-last-access {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a elementos específicos que pueden quedar en blanco */
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-label,
+[data-theme="dark"] label {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .nav-link {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+    color: var(--verde-claro) !important;
+}
+
+/* Aplicar modo oscuro a los switches */
+[data-theme="dark"] .switch {
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .switch .slider {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .switch input:checked + .slider {
+    background: var(--verde-claro);
+}
+
+[data-theme="dark"] .switch .slider:before {
+    background: var(--text-primary);
+}
+
+/* Aplicar modo oscuro a los elementos de preferencias */
 [data-theme="dark"] .preference-item {
     background: var(--bg-secondary);
     border: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
 [data-theme="dark"] .preference-item:hover {
+    background: var(--bg-tertiary);
     border-color: var(--verde-claro);
 }
 
-/* Estilos para el perfil de usuario en el header */
-.user-profile {
-    cursor: pointer;
-    position: relative;
-    transition: all 0.3s ease;
+/* Aplicar modo oscuro a los elementos de seguridad */
+[data-theme="dark"] .security-options .btn {
+    border-color: var(--border-color);
+    color: var(--text-primary);
 }
 
-.user-profile:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-}
-
-.user-profile-arrow {
-    margin-left: 0.5rem;
-    transition: transform 0.3s ease;
-    color: var(--text-secondary);
-}
-
-.user-profile:hover .user-profile-arrow {
-    transform: translateY(-1px);
-}
-
-/* Modal de perfil de usuario - ELEGANTE Y PROPORCIONADO */
-.user-profile-modal {
-    max-width: 600px;
-    width: 90%;
-    max-height: 85vh;
-    border-radius: 1.5rem;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-    z-index: 100000 !important;
-    position: relative !important;
-    background: var(--bg-secondary) !important;
-    border: 1px solid var(--border-color) !important;
-    animation: slideIn 0.3s ease;
-    margin: 2rem;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-@keyframes slideIn {
-    from {
-        opacity: 0;
-        transform: translateY(-50px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
-/* Overlay del modal de perfil - PROFESIONAL */
-#userProfileModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    z-index: 99999;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease;
-    overflow-x: hidden;
-}
-
-#userProfileModal.show {
-    display: flex !important;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        backdrop-filter: blur(0px);
-    }
-    to {
-        opacity: 1;
-        backdrop-filter: blur(5px);
-    }
-}
-
-.user-profile-content {
-    padding: 2rem;
-    flex: 1;
-    overflow-y: auto;
-    overflow-x: hidden;
-    min-height: 0;
-    width: 100%;
-    box-sizing: border-box;
-}
-
-/* Header del modal profesional */
-.user-profile-modal .modal-header {
-    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario));
-    color: white;
-    padding: 1.25rem 1.5rem;
-    border-radius: 1.5rem 1.5rem 0 0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-}
-
-.user-profile-modal .modal-header h3 {
-    color: white;
-    font-size: 1.3rem;
-    font-weight: 600;
-    margin: 0;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-}
-
-.user-profile-modal .modal-header h3 i {
-    font-size: 1.2rem;
-}
-
-.user-profile-modal .close-btn {
-    background: rgba(255, 255, 255, 0.2);
-    border: none;
-    color: white;
-    font-size: 1.5rem;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.user-profile-modal .close-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: scale(1.1);
-}
-
-.profile-avatar-section {
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-    padding: 1.5rem;
+[data-theme="dark"] .security-options .btn:hover {
     background: var(--bg-tertiary);
-    border-radius: 1rem;
-    border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-sm);
-}
-
-.profile-section {
-    margin-bottom: 1.5rem;
-    padding: 1.5rem;
-    background: var(--bg-secondary);
-    border-radius: 1rem;
-    border: 1px solid var(--border-light);
-    box-shadow: var(--shadow-sm);
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-
-.profile-section:last-child {
-    margin-bottom: 0;
-}
-
-.profile-section h4 {
-    color: var(--text-primary);
-    font-size: 1.2rem;
-    font-weight: 600;
-    margin-bottom: 1.5rem;
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--border-light);
-}
-
-.profile-section h4 i {
-    color: var(--verde-primario);
-    font-size: 1.1rem;
-}
-
-.profile-avatar-large {
-    width: 60px;
-    height: 60px;
-    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario));
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    box-shadow: var(--shadow-md);
-}
-
-.profile-info h4 {
-    color: var(--text-primary);
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-}
-
-.user-role-badge {
-    background: var(--verde-primario);
-    color: white;
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.8rem;
-    font-weight: 500;
-    display: inline-block;
-    margin-bottom: 0.5rem;
-}
-
-.user-email, .user-join-date, .user-last-access {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 0.25rem;
-}
-
-.preferences-grid {
-    display: grid;
-    gap: 1rem;
-}
-
-.preference-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1.25rem;
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-light);
-    border-radius: 0.75rem;
-    transition: all 0.3s ease;
-    margin-bottom: 1rem;
-    width: 100%;
-    box-sizing: border-box;
-    overflow-x: hidden;
-}
-
-.preference-item:last-child {
-    margin-bottom: 0;
-}
-
-.preference-item:hover {
     border-color: var(--verde-claro);
-    background: var(--bg-tertiary);
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
 }
 
-.preference-content {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.preference-label {
-    color: var(--text-primary);
-    font-weight: 600;
-    font-size: 1rem;
-}
-
-.preference-description {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    font-weight: 400;
-}
-
-/* Switch personalizado */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 50px;
-    height: 24px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-}
-
-.slider {
-    position: absolute;
-    cursor: pointer;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: var(--border-color);
-    transition: 0.3s;
-    border-radius: 24px;
-}
-
-.slider:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: white;
-    transition: 0.3s;
-    border-radius: 50%;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-input:checked + .slider {
-    background-color: var(--verde-primario);
-}
-
-input:checked + .slider:before {
-    transform: translateX(26px);
-}
-
-/* Footer del modal profesional */
-.user-profile-modal .modal-footer {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    padding: 1.25rem 1.5rem;
-    border-top: 1px solid var(--border-light);
-    background: var(--bg-tertiary);
-    border-radius: 0 0 1.5rem 1.5rem;
-    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
-    flex-shrink: 0;
-}
-
-.btn-outline {
-    background: transparent;
-    border: 2px solid var(--verde-primario);
-    color: var(--verde-primario);
-    padding: 0.5rem 1rem;
-    border-radius: 0.5rem;
-    font-weight: 500;
-    transition: all 0.3s ease;
-}
-
-.btn-outline:hover {
-    background: var(--verde-primario);
-    color: white;
-}
-
-.btn-sm {
-    padding: 0.4rem 0.8rem;
-    font-size: 0.85rem;
-}
-
-/* Toast notifications */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--success);
-    color: white;
-    padding: 1rem 1.5rem;
-    border-radius: 0.5rem;
-    box-shadow: var(--shadow-lg);
-    z-index: 10000;
-    opacity: 0;
-    transform: translateY(-20px);
-    transition: all 0.3s ease;
-    font-weight: 500;
-}
-
-.toast.error {
-    background: var(--error);
-}
-
-.toast.warning {
-    background: var(--warning);
-}
-
-.toast.info {
-    background: var(--info);
-}
-
-/* Switch modo oscuro */
-[data-theme="dark"] .slider {
-    background-color: var(--border-color);
-}
-
-[data-theme="dark"] input:checked + .slider {
-    background-color: var(--verde-primario);
-}
-
-/* Reportes modo oscuro */
-[data-theme="dark"] .reportes-header {
-    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario));
-}
-
-[data-theme="dark"] .kpi-card {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .kpi-title h3 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .kpi-value {
-    color: var(--verde-primario);
-}
-
-[data-theme="dark"] .chart-container {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-}
-
-[data-theme="dark"] .chart-header h3 {
-    color: var(--text-primary);
-}
-
-[data-theme="dark"] .summary-table {
-    background: var(--bg-secondary);
-}
-
-[data-theme="dark"] .summary-table th {
-    background: var(--verde-primario);
-    color: var(--bg-primary);
-}
-
-[data-theme="dark"] .summary-table td {
-    color: var(--text-primary);
-    border-bottom: 1px solid var(--border-light);
-}
-
-[data-theme="dark"] .summary-table tr:hover {
-    background: var(--bg-tertiary);
-}
-
-/* Toggle de modo oscuro - REMOVIDO - Solo disponible en perfil de usuario */
-
-/* Animaciones suaves para transiciones */
+/* Transiciones suaves */
 * {
-    transition: background-color 0.3s ease, 
-                color 0.3s ease, 
-                border-color 0.3s ease,
-                box-shadow 0.3s ease;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
 
-/* Mejoras específicas para elementos problemáticos */
-[data-theme="dark"] .header-actions .header-btn {
-    color: var(--text-secondary);
+/* Aplicar modo oscuro a elementos específicos que pueden quedar en blanco */
+[data-theme="dark"] .content-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .header-actions .header-btn:hover {
-    background: var(--bg-tertiary);
-    color: var(--verde-claro);
+[data-theme="dark"] .dashboard-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .user-profile {
-    background: var(--bg-tertiary);
-    border: 1px solid var(--border-color);
+[data-theme="dark"] .ventas-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .user-profile:hover {
-    background: var(--border-color);
-    border-color: var(--verde-claro);
+[data-theme="dark"] .socios-section {
+    background: var(--bg-primary) !important;
 }
 
-/* Ajustes para elementos específicos del dashboard */
-[data-theme="dark"] .dashboard-header h2 {
-    color: var(--text-primary);
+[data-theme="dark"] .insumos-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .dashboard-header p {
-    color: var(--text-secondary);
+[data-theme="dark"] .produccion-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .welcome-section {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
+[data-theme="dark"] .reportes-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .welcome-section h2 {
-    color: var(--text-primary);
+[data-theme="dark"] .usuarios-section {
+    background: var(--bg-primary) !important;
 }
 
-[data-theme="dark"] .welcome-section p {
-    color: var(--text-secondary);
+[data-theme="dark"] .pagos-section {
+    background: var(--bg-primary) !important;
 }
 
-/* Mejoras adicionales para modo oscuro negro */
-[data-theme="dark"] .stat-card {
-    background: #0a0a0a;
-    border: 1px solid #333333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+/* Aplicar modo oscuro a elementos de texto específicos */
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div {
+    color: var(--text-primary) !important;
 }
 
-[data-theme="dark"] .stat-card:hover {
-    background: #1a1a1a;
-    border-color: #00ff00;
-    box-shadow: 0 8px 16px rgba(0, 255, 0, 0.2);
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
 }
 
-[data-theme="dark"] .table-container {
-    background: #0a0a0a;
-    border: 1px solid #333333;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.8);
+[data-theme="dark"] .text-secondary {
+    color: var(--text-secondary) !important;
 }
 
-[data-theme="dark"] .modal-content {
-    background: #0a0a0a;
-    border: 1px solid #333333;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9);
-}
-
-[data-theme="dark"] .form-control {
-    background: #1a1a1a;
-    border: 1px solid #333333;
-    color: #ffffff;
-}
-
-[data-theme="dark"] .form-control:focus {
-    border-color: #00ff00;
-    box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.2);
-    background: #0a0a0a;
-}
-
-[data-theme="dark"] .btn-primary {
-    background: linear-gradient(135deg, #00ff00, #00cc00);
-    color: #000000;
-    border: none;
-    box-shadow: 0 4px 8px rgba(0, 255, 0, 0.3);
-}
-
-[data-theme="dark"] .btn-primary:hover {
-    background: linear-gradient(135deg, #32ff32, #00ff00);
-    box-shadow: 0 6px 12px rgba(0, 255, 0, 0.4);
-    transform: translateY(-1px);
-}
-
-[data-theme="dark"] .btn-secondary {
-    background: #1a1a1a;
-    color: #ffffff;
-    border: 1px solid #333333;
-}
-
-[data-theme="dark"] .btn-secondary:hover {
-    background: #333333;
-    border-color: #00ff00;
-}
-
-/* Efectos de brillo para elementos importantes */
-[data-theme="dark"] .logo h1 {
-    color: #00ff00;
-    text-shadow: 0 0 10px rgba(0, 255, 0, 0.5);
-}
-
-[data-theme="dark"] .nav-item.active {
-    background: linear-gradient(135deg, #00ff00, #00cc00);
-    color: #000000;
-    box-shadow: 0 0 15px rgba(0, 255, 0, 0.4);
-}
-
-[data-theme="dark"] .nav-item:hover {
-    background: #1a1a1a;
-    color: #00ff00;
-    text-shadow: 0 0 5px rgba(0, 255, 0, 0.3);
-}
-
-/* Estilos específicos para modo oscuro del modal */
-[data-theme="dark"] .user-profile-modal {
-    background: #0a0a0a !important;
-    border: 1px solid #333333 !important;
-    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.8) !important;
-}
-
-/* Prevenir scroll horizontal en todo el modal */
-.user-profile-modal * {
-    box-sizing: border-box;
-    max-width: 100%;
-}
-
-.user-profile-modal .form-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.5rem;
-    width: 100%;
-    margin-bottom: 1rem;
-}
-
-.user-profile-modal .form-group {
-    flex: 1;
-    min-width: 0;
-    margin-bottom: 0;
-}
-
-.user-profile-modal .form-control {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-    padding: 0.75rem;
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-light);
-    background: var(--bg-primary);
-    color: var(--text-primary);
-    transition: all 0.3s ease;
-}
-
-.user-profile-modal .form-control:focus {
-    outline: none;
-    border-color: var(--verde-primario);
-    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
-}
-
-[data-theme="dark"] .user-profile-modal .modal-header {
-    background: linear-gradient(135deg, #00ff00, #00cc00) !important;
-}
-
-[data-theme="dark"] .user-profile-modal .modal-footer {
-    background: #1a1a1a !important;
-    border-top-color: #333333 !important;
-}
-
-[data-theme="dark"] #userProfileModal {
-    background: rgba(0, 0, 0, 0.9) !important;
-    backdrop-filter: blur(10px) !important;
-}
-
-/* Modal de Cambio de Contraseña - MISMO ESTILO ELEGANTE */
-#changePasswordModal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(5px);
-    z-index: 99999;
-    justify-content: center;
-    align-items: center;
-    animation: fadeIn 0.3s ease;
-    overflow-x: hidden;
-}
-
-#changePasswordModal.show {
-    display: flex !important;
-}
-
-/* Estilos para el formulario de contraseña */
-.form-text {
-    color: var(--text-secondary);
-    font-size: 0.875rem;
-    margin-top: 0.5rem;
-    display: block;
-}
-
-/* Tips de seguridad */
-.security-tips {
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-    margin-top: 1rem;
-}
-
-.tip-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem;
-    background: var(--bg-tertiary);
-    border-radius: 0.5rem;
-    border: 1px solid var(--border-light);
-    transition: all 0.3s ease;
-}
-
-.tip-item:hover {
-    background: var(--bg-secondary);
-    border-color: var(--verde-claro);
-    transform: translateY(-1px);
-}
-
-.tip-item i {
-    color: var(--verde-primario);
-    font-size: 1rem;
-}
-
-.tip-item span {
-    color: var(--text-primary);
-    font-size: 0.875rem;
-    line-height: 1.4;
-}
-
-/* Estilos específicos para modo oscuro del modal de contraseña */
-[data-theme="dark"] #changePasswordModal {
-    background: rgba(0, 0, 0, 0.9) !important;
-    backdrop-filter: blur(10px) !important;
-}
-
-[data-theme="dark"] .tip-item {
-    background: #1a1a1a !important;
-    border-color: #333333 !important;
-}
-
-[data-theme="dark"] .tip-item:hover {
-    background: #2a2a2a !important;
-    border-color: #00ff00 !important;
-}
-
-[data-theme="dark"] .tip-item i {
-    color: #00ff00 !important;
-}
-
-/* Responsive elegante - ANCHO PROPORCIONADO */
-@media (max-width: 768px) {
-    .user-profile-modal {
-        width: 95% !important;
-        max-width: 500px !important;
-        margin: 1rem !important;
-        max-height: 90vh !important;
-    }
-    
-    .user-profile-content {
-        padding: 1rem !important;
-        overflow-x: hidden !important;
-    }
-    
-    .user-profile-modal .modal-header {
-        padding: 1rem !important;
-    }
-    
-    .user-profile-modal .modal-footer {
-        padding: 1rem !important;
-    }
-    
-    .profile-section {
-        padding: 1rem !important;
-        margin-bottom: 1rem !important;
-        overflow-x: hidden !important;
-    }
-    
-    .preference-item {
-        padding: 0.75rem !important;
-        margin-bottom: 0.5rem !important;
-        overflow-x: hidden !important;
-    }
-}
-
-@media (max-width: 480px) {
-    .user-profile-modal {
-        width: 98% !important;
-        max-width: 450px !important;
-        margin: 0.5rem !important;
-        max-height: 95vh !important;
-    }
-    
-    .user-profile-content {
-        padding: 0.75rem !important;
-        overflow-x: hidden !important;
-    }
-    
-    .profile-section {
-        padding: 0.75rem !important;
-        overflow-x: hidden !important;
-    }
-    
-    .preference-item {
-        padding: 0.5rem !important;
-        overflow-x: hidden !important;
-    }
+/* Ocultar el toggle flotante del modo oscuro */
+.dark-mode-toggle {
+    display: none !important;
 }
