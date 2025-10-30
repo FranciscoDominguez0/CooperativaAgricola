@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Pagos con Dropdown de Ventas</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+        .feature h4 {
+            color: #1a3a2e;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .feature p {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+        .form-demo {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .form-demo h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #374151;
+        }
+        .form-control {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        .demo-select {
+            background: #e0f2fe;
+            border: 2px solid #0ea5e9;
+        }
+        .demo-option {
+            padding: 8px 12px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-option:last-child {
+            border-bottom: none;
+        }
+        .demo-option:hover {
+            background: #f0f9ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>💳 Test - Pagos con Dropdown de Ventas</h1>
+            <p>Ahora el campo "ID de Venta" es un dropdown que carga las ventas disponibles</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h4>📋 Dropdown de Ventas</h4>
+                <p>Selecciona ventas desde una lista</p>
+            </div>
+            <div class="feature">
+                <h4>🔍 Información Completa</h4>
+                <p>Muestra ID, cliente y total de la venta</p>
+            </div>
+            <div class="feature">
+                <h4>⚡ Carga Automática</h4>
+                <p>Se cargan al abrir el modal</p>
+            </div>
+            <div class="feature">
+                <h4>🎯 Opcional</h4>
+                <p>Puede dejarse vacío si no hay venta relacionada</p>
+            </div>
+        </div>
+        
+        <div class="form-demo">
+            <h3>📝 Formulario de Pago - Campo de Venta Mejorado</h3>
+            
+            <div class="form-group">
+                <label for="demo_socio">Socio *</label>
+                <select id="demo_socio" class="form-control">
+                    <option value="">Seleccionar socio</option>
+                    <option value="1">Juan Carlos Pérez</option>
+                    <option value="2">María Elena García</option>
+                    <option value="3">Carlos Alberto López</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="demo_tipo">Tipo de Pago *</label>
+                <select id="demo_tipo" class="form-control">
+                    <option value="">Seleccionar tipo</option>
+                    <option value="aporte_mensual">Aporte Mensual</option>
+                    <option value="cuota_especial">Cuota Especial</option>
+                    <option value="multa">Multa</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="demo_venta">Venta Relacionada (opcional)</label>
+                <select id="demo_venta" class="form-control demo-select">
+                    <option value="">Seleccionar venta</option>
+                    <option value="1">Venta #1 - Juan Pérez - $150.00</option>
+                    <option value="2">Venta #2 - María García - $275.50</option>
+                    <option value="3">Venta #3 - Carlos López - $320.75</option>
+                    <option value="4">Venta #4 - Ana Martínez - $180.25</option>
+                    <option value="5">Venta #5 - Roberto Silva - $450.00</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="demo_monto">Monto *</label>
+                <input type="number" id="demo_monto" class="form-control" placeholder="0.00" step="0.01">
+            </div>
+            
+            <div class="form-group">
+                <label for="demo_descripcion">Descripción</label>
+                <textarea id="demo_descripcion" class="form-control" rows="3" placeholder="Descripción del pago..."></textarea>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">✅ Mejoras Implementadas:</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Dropdown de ventas:</strong> Campo "ID de Venta" ahora es un select</li>
+                <li><strong>Información completa:</strong> Muestra ID, cliente y total de cada venta</li>
+                <li><strong>Carga automática:</strong> Se cargan las ventas al abrir el modal</li>
+                <li><strong>Formato legible:</strong> "Venta #ID - Cliente - $Total"</li>
+                <li><strong>Opcional:</strong> Puede dejarse vacío si no hay venta relacionada</li>
+                <li><strong>Consistencia:</strong> Mismo patrón que el dropdown de socios</li>
+                <li><strong>Validación:</strong> Solo acepta ventas existentes en el sistema</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">🔧 Funcionalidad Técnica:</h4>
+            <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                <strong>JavaScript:</strong> Se agregaron funciones <code>loadVentasForPagos()</code> y <code>populateVentasDropdownForPagos()</code> que cargan las ventas desde <code>php/ventas.php</code> y las muestran en el dropdown con formato legible.
+            </p>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #ecfdf5; border-radius: 8px; border-left: 4px solid #10b981;">
+            <h4 style="color: #065f46; margin-bottom: 10px;">📋 Cómo Usar:</h4>
+            <ol style="color: #065f46; font-size: 0.9rem; margin: 0; padding-left: 20px;">
+                <li>Abre el formulario de "Registrar Nuevo Pago"</li>
+                <li>Selecciona el socio correspondiente</li>
+                <li>Si el pago está relacionado con una venta, selecciona la venta del dropdown</li>
+                <li>Si no hay venta relacionada, deja el campo vacío</li>
+                <li>Completa el resto de la información y guarda</li>
+            </ol>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

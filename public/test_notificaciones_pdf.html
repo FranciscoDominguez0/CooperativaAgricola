@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Notificaciones PDF - Cooperativa Agrícola La Pintada</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #2d5016;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .test-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        .test-button:hover {
+            background: #4a7c59;
+        }
+        .test-button.secondary {
+            background: #6c757d;
+        }
+        .test-button.secondary:hover {
+            background: #5a6268;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .status.success { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        .status.info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+        }
+        .status.warning { 
+            background: #fff3cd; 
+            color: #856404; 
+        }
+        .status.error { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .instructions h3 {
+            color: #2d5016;
+            margin-bottom: 15px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test Notificaciones PDF</h1>
+            <p>Cooperativa Agrícola La Pintada - Verificación de notificaciones</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Instrucciones del Test</h3>
+            <ol>
+                <li><strong>Problema identificado:</strong> Las notificaciones del PDF aparecían 4 veces y duraban mucho</li>
+                <li><strong>Solución aplicada:</strong> Reducir a 1 notificación con duración más corta</li>
+                <li><strong>Duración nueva:</strong> 1.5 segundos para info, 2 segundos para success</li>
+                <li><strong>Limpieza automática:</strong> Se eliminan notificaciones duplicadas</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 Tests de Notificaciones</h3>
+            <p>Prueba las notificaciones corregidas para verificar que solo aparezca una y con duración apropiada:</p>
+            
+            <button class="test-button" onclick="testPDFNotification()">
+                📄 Test Notificación PDF
+            </button>
+            
+            <button class="test-button secondary" onclick="testMultipleNotifications()">
+                🔄 Test Múltiples Notificaciones
+            </button>
+            
+            <button class="test-button secondary" onclick="testNotificationCleanup()">
+                🧹 Test Limpieza Automática
+            </button>
+            
+            <button class="test-button secondary" onclick="clearAllNotifications()">
+                ❌ Limpiar Todas
+            </button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Estado de las Correcciones</h3>
+            <div class="status success">
+                ✅ <strong>Notificaciones duplicadas:</strong> Eliminadas
+            </div>
+            <div class="status success">
+                ✅ <strong>Duración reducida:</strong> 1.5-2 segundos
+            </div>
+            <div class="status success">
+                ✅ <strong>Limpieza automática:</strong> Implementada
+            </div>
+            <div class="status success">
+                ✅ <strong>Mensajes simplificados:</strong> Aplicados
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Funciones Corregidas</h3>
+            <ul>
+                <li><strong>exportToPDF():</strong> Solo 1 notificación de inicio y 1 de éxito</li>
+                <li><strong>exportProfessionalPDF():</strong> Mensajes simplificados</li>
+                <li><strong>showToast():</strong> Duración reducida y limpieza automática</li>
+                <li><strong>generateSalesReport():</strong> Notificaciones más cortas</li>
+                <li><strong>generateContributionsReport():</strong> Notificaciones más cortas</li>
+                <li><strong>generateInventoryReport():</strong> Notificaciones más cortas</li>
+                <li><strong>generateMarginReport():</strong> Notificaciones más cortas</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Enlaces de Prueba</h3>
+            <p>Prueba el módulo de reportes con las notificaciones corregidas:</p>
+            <a href="reportes.html" class="test-button" target="_blank">
+                📊 Abrir Módulo de Reportes
+            </a>
+            <a href="dashboard.html" class="test-button secondary" target="_blank">
+                🏠 Abrir Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" style="position: fixed; top: 20px; right: 20px; z-index: 10000;"></div>
+
+    <script>
+        // Función showToast corregida (copiada de reportes.js)
+        function showToast(message, type) {
+            // Limpiar notificaciones anteriores del mismo tipo
+            const existingToasts = document.querySelectorAll('.toast');
+            existingToasts.forEach(toast => {
+                if (toast.textContent.includes(message) || 
+                    (type === 'success' && toast.textContent.includes('PDF generado')) ||
+                    (type === 'info' && toast.textContent.includes('Generando PDF'))) {
+                    toast.remove();
+                }
+            });
+            
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.textContent = message;
+            
+            document.getElementById('toastContainer').appendChild(toast);
+            
+            setTimeout(() => toast.classList.add('show'), 100);
+            
+            // Duración más corta para notificaciones de PDF
+            const duration = type === 'success' ? 2000 : 1500;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+        
+        // Test 1: Notificación PDF
+        function testPDFNotification() {
+            showToast('Generando PDF...', 'info');
+            setTimeout(() => {
+                showToast('PDF generado exitosamente', 'success');
+            }, 2000);
+        }
+        
+        // Test 2: Múltiples notificaciones
+        function testMultipleNotifications() {
+            showToast('Generando PDF...', 'info');
+            showToast('Generando PDF...', 'info'); // Esta debería reemplazar la anterior
+            showToast('Procesando datos...', 'info');
+            
+            setTimeout(() => {
+                showToast('PDF generado exitosamente', 'success');
+                showToast('PDF generado exitosamente', 'success'); // Esta debería reemplazar la anterior
+            }, 2000);
+        }
+        
+        // Test 3: Limpieza automática
+        function testNotificationCleanup() {
+            showToast('Generando PDF...', 'info');
+            showToast('Procesando datos...', 'info');
+            showToast('Validando información...', 'info');
+            
+            setTimeout(() => {
+                showToast('PDF generado exitosamente', 'success');
+            }, 1500);
+        }
+        
+        // Limpiar todas las notificaciones
+        function clearAllNotifications() {
+            const toasts = document.querySelectorAll('.toast');
+            toasts.forEach(toast => toast.remove());
+        }
+        
+        // Aplicar estilos CSS para las notificaciones
+        const style = document.createElement('style');
+        style.textContent = `
+            .toast {
+                background: white;
+                border: 1px solid #dee2e6;
+                border-radius: 8px;
+                padding: 15px 20px;
+                margin-bottom: 10px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+                max-width: 300px;
+                font-weight: 500;
+            }
+            
+            .toast.show {
+                transform: translateX(0);
+            }
+            
+            .toast.success {
+                border-left: 4px solid #28a745;
+                background: #d4edda;
+                color: #155724;
+            }
+            
+            .toast.info {
+                border-left: 4px solid #17a2b8;
+                background: #d1ecf1;
+                color: #0c5460;
+            }
+            
+            .toast.warning {
+                border-left: 4px solid #ffc107;
+                background: #fff3cd;
+                color: #856404;
+            }
+            
+            .toast.error {
+                border-left: 4px solid #dc3545;
+                background: #f8d7da;
+                color: #721c24;
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

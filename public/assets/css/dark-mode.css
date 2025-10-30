@@ -1,0 +1,1295 @@
+/* ===== MODO OSCURO - COOPERATIVA AGRÍCOLA ===== */
+
+/* Variables para modo oscuro */
+:root {
+    /* Colores base */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f8f9fa;
+    --bg-tertiary: #e9ecef;
+    --text-primary: #1a3a2e;
+    --text-secondary: #6c757d;
+    --text-muted: #adb5bd;
+    --border-color: #dee2e6;
+    --border-light: #e9ecef;
+    
+    /* Colores agrícolas */
+    --verde-primario: #1a3a2e;
+    --verde-secundario: #2d5016;
+    --verde-claro: #d4ff00;
+    --verde-oscuro: #0f2419;
+    
+    /* Sombras */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.15);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.2);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.25);
+}
+
+/* Modo oscuro */
+[data-theme="dark"] {
+    /* Colores base oscuros */
+    --bg-primary: #000000;
+    --bg-secondary: #0a0a0a;
+    --bg-tertiary: #1a1a1a;
+    --text-primary: #ffffff;
+    --text-secondary: #cccccc;
+    --text-muted: #999999;
+    --border-color: #333333;
+    --border-light: #444444;
+    
+    /* Colores agrícolas oscuros - Más suaves y elegantes */
+    --verde-primario: #1a3a2e;
+    --verde-secundario: #2d5016;
+    --verde-claro: #4a7c59;
+    --verde-oscuro: #0f2419;
+    
+    /* Sombras oscuras */
+    --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.8);
+    --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.9);
+    --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.95);
+    --shadow-xl: 0 16px 32px rgba(0, 0, 0, 1);
+}
+
+/* Aplicar modo oscuro al body */
+[data-theme="dark"] body {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Aplicar modo oscuro al main wrapper */
+[data-theme="dark"] .main-wrapper {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro a todos los elementos principales */
+[data-theme="dark"] * {
+    color: inherit;
+}
+
+[data-theme="dark"] html {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .content-wrapper {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro al sidebar */
+[data-theme="dark"] .sidebar {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .sidebar .nav-link {
+    color: var(--text-secondary);
+}
+
+[data-theme="dark"] .sidebar .nav-link:hover,
+[data-theme="dark"] .sidebar .nav-link.active {
+    color: var(--verde-claro);
+    background: var(--bg-tertiary);
+}
+
+/* Aplicar modo oscuro al header */
+[data-theme="dark"] .header {
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .header h1 {
+    color: var(--text-primary);
+}
+
+/* Aplicar modo oscuro a las cards */
+[data-theme="dark"] .card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-header {
+    background: var(--bg-tertiary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-body {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-title {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .card-text {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a estadísticas y métricas */
+[data-theme="dark"] .stat-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .stat-card .stat-number {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .stat-card .stat-label {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .stat-card .stat-icon {
+    color: var(--verde-claro) !important;
+}
+
+/* Aplicar modo oscuro a elementos específicos de dashboard */
+[data-theme="dark"] .dashboard-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .dashboard-card.active {
+    background: var(--verde-primario) !important;
+    color: white !important;
+}
+
+[data-theme="dark"] .dashboard-card.active .stat-number {
+    color: white !important;
+}
+
+[data-theme="dark"] .dashboard-card.active .stat-label {
+    color: white !important;
+}
+
+/* Aplicar modo oscuro a las tablas - SIN BORDES */
+[data-theme="dark"] .table {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+    border-collapse: collapse !important;
+}
+
+[data-theme="dark"] .table thead th {
+    background: var(--bg-primary) !important;
+    border: none !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table tbody tr {
+    background: var(--bg-primary) !important;
+    border: none !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table tbody tr:hover {
+    background: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .table tbody td {
+    background: var(--bg-primary) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .table tbody tr:hover td {
+    background: var(--bg-secondary) !important;
+}
+
+/* Quitar todos los bordes de las tablas en modo oscuro */
+[data-theme="dark"] .table,
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td,
+[data-theme="dark"] .table tr {
+    border: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+[data-theme="dark"] .table-bordered {
+    border: none !important;
+}
+
+[data-theme="dark"] .table-bordered th,
+[data-theme="dark"] .table-bordered td {
+    border: none !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(odd) {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .table-striped tbody tr:nth-of-type(even) {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro a contenedores de tablas - SIN BORDES */
+[data-theme="dark"] .table-container {
+    background: var(--bg-primary) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .table-responsive {
+    background: var(--bg-primary) !important;
+    border: none !important;
+}
+
+/* Aplicar modo oscuro a badges y etiquetas en tablas - COLORES VARIADOS */
+[data-theme="dark"] .badge {
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    border: none !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+}
+
+/* Estados - Colores más brillantes para modo oscuro */
+[data-theme="dark"] .badge-success,
+[data-theme="dark"] .badge.bg-success,
+[data-theme="dark"] .status-active,
+[data-theme="dark"] .status-completed,
+[data-theme="dark"] .status-approved,
+[data-theme="dark"] .table td .badge-success,
+[data-theme="dark"] .table td .bg-success {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .badge-danger,
+[data-theme="dark"] .badge.bg-danger,
+[data-theme="dark"] .status-inactive,
+[data-theme="dark"] .status-cancelled,
+[data-theme="dark"] .status-rejected {
+    background: #ff0000 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .badge-warning,
+[data-theme="dark"] .badge.bg-warning,
+[data-theme="dark"] .status-pending,
+[data-theme="dark"] .status-waiting {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .badge-info,
+[data-theme="dark"] .badge.bg-info,
+[data-theme="dark"] .status-processing {
+    background: #00ffff !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Tipos - Colores específicos para modo oscuro */
+[data-theme="dark"] .badge-primary,
+[data-theme="dark"] .badge.bg-primary,
+[data-theme="dark"] .type-premium,
+[data-theme="dark"] .type-high {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .type-standard,
+[data-theme="dark"] .type-medium {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .type-basic,
+[data-theme="dark"] .type-low {
+    background: #ff8000 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Calidad - Colores específicos para modo oscuro */
+[data-theme="dark"] .quality-premium,
+[data-theme="dark"] .quality-excellent {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .quality-good,
+[data-theme="dark"] .quality-standard {
+    background: #00ffff !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .quality-fair,
+[data-theme="dark"] .quality-average {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+[data-theme="dark"] .quality-poor,
+[data-theme="dark"] .quality-bad {
+    background: #ff0000 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Estilos para elementos con colores inline o clases genéricas */
+[data-theme="dark"] .table td span[style*="background-color"],
+[data-theme="dark"] .table td div[style*="background-color"],
+[data-theme="dark"] .table td .badge[style*="background-color"] {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+    text-shadow: none !important;
+}
+
+/* Colores específicos para texto que contenga ciertas palabras */
+[data-theme="dark"] .table td:contains("Premium"),
+[data-theme="dark"] .table td:contains("Activo"),
+[data-theme="dark"] .table td:contains("Completado"),
+[data-theme="dark"] .table td:contains("Aprobado") {
+    background: #00ff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .table td:contains("Buena"),
+[data-theme="dark"] .table td:contains("Estándar"),
+[data-theme="dark"] .table td:contains("Procesando") {
+    background: #00ffff !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .table td:contains("Pendiente"),
+[data-theme="dark"] .table td:contains("Esperando"),
+[data-theme="dark"] .table td:contains("Regular") {
+    background: #ffff00 !important;
+    color: black !important;
+    font-weight: 700 !important;
+}
+
+[data-theme="dark"] .table td:contains("Inactivo"),
+[data-theme="dark"] .table td:contains("Cancelado"),
+[data-theme="dark"] .table td:contains("Rechazado"),
+[data-theme="dark"] .table td:contains("Malo") {
+    background: #ff0000 !important;
+    color: white !important;
+    font-weight: 700 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Colores suaves y profesionales para modo oscuro - TODAS LAS TABLAS */
+/* Estados - Colores suaves con buen contraste - TODAS LAS VARIACIONES */
+[data-theme="dark"] .table td .badge-success,
+[data-theme="dark"] .table td .badge.bg-success,
+[data-theme="dark"] .table td .status-active,
+[data-theme="dark"] .table td .status-completed,
+[data-theme="dark"] .table td .status-approved,
+[data-theme="dark"] .table td .status-activo,
+[data-theme="dark"] .table td .status-completado,
+[data-theme="dark"] .table td .status-aprobado,
+[data-theme="dark"] .table td .status-confirmado,
+[data-theme="dark"] .table td .status-entregado,
+[data-theme="dark"] .table td .status-delivered,
+[data-theme="dark"] .table td .status-finalizado,
+[data-theme="dark"] .table td .status-finished {
+    background: #2d5a2d !important; /* Verde suave */
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+}
+
+[data-theme="dark"] .table td .badge-danger,
+[data-theme="dark"] .table td .badge.bg-danger,
+[data-theme="dark"] .table td .status-inactive,
+[data-theme="dark"] .table td .status-cancelled,
+[data-theme="dark"] .table td .status-rejected,
+[data-theme="dark"] .table td .status-inactivo,
+[data-theme="dark"] .table td .status-cancelado,
+[data-theme="dark"] .table td .status-rechazado {
+    background: #5a2d2d !important; /* Rojo suave */
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+}
+
+[data-theme="dark"] .table td .badge-warning,
+[data-theme="dark"] .table td .badge.bg-warning,
+[data-theme="dark"] .table td .status-pending,
+[data-theme="dark"] .table td .status-waiting,
+[data-theme="dark"] .table td .status-pendiente,
+[data-theme="dark"] .table td .status-esperando {
+    background: #5a4a2d !important; /* Amarillo suave */
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+}
+
+[data-theme="dark"] .table td .badge-info,
+[data-theme="dark"] .table td .badge.bg-info,
+[data-theme="dark"] .table td .status-processing,
+[data-theme="dark"] .table td .status-procesando {
+    background: #2d4a5a !important; /* Azul suave */
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a6a7c !important;
+}
+
+/* Tipos - Colores suaves y profesionales - TODAS LAS VARIACIONES */
+[data-theme="dark"] .table td .badge-primary,
+[data-theme="dark"] .table td .badge.bg-primary,
+[data-theme="dark"] .table td .type-premium,
+[data-theme="dark"] .table td .type-high,
+[data-theme="dark"] .table td .type-premium,
+[data-theme="dark"] .table td .type-alto,
+[data-theme="dark"] .table td .type-pago-venta,
+[data-theme="dark"] .table td .type-pago,
+[data-theme="dark"] .table td .type-payment,
+[data-theme="dark"] .table td .type-venta,
+[data-theme="dark"] .table td .type-sale,
+[data-theme="dark"] .table td .type-insumo,
+[data-theme="dark"] .table td .type-supply,
+[data-theme="dark"] .table td .type-produccion,
+[data-theme="dark"] .table td .type-production {
+    background: #2d3a5a !important; /* Azul suave */
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+}
+
+[data-theme="dark"] .table td .type-standard,
+[data-theme="dark"] .table td .type-medium,
+[data-theme="dark"] .table td .type-estandar,
+[data-theme="dark"] .table td .type-medio {
+    background: #4a4a4a !important; /* Gris suave */
+    color: #d3d3d3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #6a6a6a !important;
+}
+
+[data-theme="dark"] .table td .type-basic,
+[data-theme="dark"] .table td .type-low,
+[data-theme="dark"] .table td .type-basico,
+[data-theme="dark"] .table td .type-bajo {
+    background: #5a3a2d !important; /* Naranja suave */
+    color: #ffb366 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c5a4a !important;
+}
+
+/* Aplicar colores a TODOS los elementos de tipo y estado en tablas */
+[data-theme="dark"] .table td span,
+[data-theme="dark"] .table td div,
+[data-theme="dark"] .table td .badge,
+[data-theme="dark"] .table td [class*="status"],
+[data-theme="dark"] .table td [class*="type"],
+[data-theme="dark"] .table td [class*="quality"] {
+    /* Aplicar estilos base para todos los elementos */
+}
+
+/* Forzar aplicación de colores a TODOS los badges en tablas */
+[data-theme="dark"] .table td * {
+    /* Resetear colores por defecto */
+}
+
+/* Aplicar colores específicos a badges de insumos */
+[data-theme="dark"] .table td .badge,
+[data-theme="dark"] .table td span.badge,
+[data-theme="dark"] .table td div.badge,
+[data-theme="dark"] .table td [class*="badge"] {
+    background: #2d3a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Estados específicos para badges */
+[data-theme="dark"] .table td .badge-success,
+[data-theme="dark"] .table td .badge.bg-success,
+[data-theme="dark"] .table td span:contains("DISPONIBLE"),
+[data-theme="dark"] .table td div:contains("DISPONIBLE") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    border: 1px solid #4a7c4a !important;
+}
+
+/* Estados específicos por texto */
+[data-theme="dark"] .table td:contains("CONFIRMADO"),
+[data-theme="dark"] .table td:contains("ACTIVO"),
+[data-theme="dark"] .table td:contains("COMPLETADO"),
+[data-theme="dark"] .table td:contains("APROBADO"),
+[data-theme="dark"] .table td:contains("ENTREGADO"),
+[data-theme="dark"] .table td:contains("FINALIZADO") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+[data-theme="dark"] .table td:contains("PENDIENTE"),
+[data-theme="dark"] .table td:contains("ESPERANDO"),
+[data-theme="dark"] .table td:contains("PROCESANDO") {
+    background: #5a4a2d !important;
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+[data-theme="dark"] .table td:contains("INACTIVO"),
+[data-theme="dark"] .table td:contains("CANCELADO"),
+[data-theme="dark"] .table td:contains("RECHAZADO") {
+    background: #5a2d2d !important;
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Tipos específicos por texto */
+[data-theme="dark"] .table td:contains("PAGO DE VENTA"),
+[data-theme="dark"] .table td:contains("VENTA"),
+[data-theme="dark"] .table td:contains("PAGO"),
+[data-theme="dark"] .table td:contains("INSUMO"),
+[data-theme="dark"] .table td:contains("PRODUCCION"),
+[data-theme="dark"] .table td:contains("PREMIUM"),
+[data-theme="dark"] .table td:contains("ALTO") {
+    background: #2d3a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Tipos específicos de insumos - COLORES DIFERENTES */
+/* Semillas - Verde */
+[data-theme="dark"] .table td:contains("semillas") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Fertilizantes - Azul */
+[data-theme="dark"] .table td:contains("fertilizantes") {
+    background: #2d3a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a5a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Pesticidas - Naranja */
+[data-theme="dark"] .table td:contains("pesticidas") {
+    background: #5a3a2d !important;
+    color: #ffb366 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c5a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Herramientas - Cian */
+[data-theme="dark"] .table td:contains("herramientas") {
+    background: #2d4a5a !important;
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a6a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Equipos - Púrpura */
+[data-theme="dark"] .table td:contains("equipos") {
+    background: #4a2d5a !important;
+    color: #dda0dd !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #6a4a7c !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Maquinaria - Gris */
+[data-theme="dark"] .table td:contains("maquinaria") {
+    background: #4a4a4a !important;
+    color: #d3d3d3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #6a6a6a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Estados específicos de insumos - COLORES DIFERENTES */
+/* Disponible - Verde */
+[data-theme="dark"] .table td:contains("DISPONIBLE") {
+    background: #2d5a2d !important;
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Agotado - Rojo */
+[data-theme="dark"] .table td:contains("AGOTADO") {
+    background: #5a2d2d !important;
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Reservado - Amarillo */
+[data-theme="dark"] .table td:contains("RESERVADO") {
+    background: #5a4a2d !important;
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Mantenimiento - Naranja */
+[data-theme="dark"] .table td:contains("MANTENIMIENTO") {
+    background: #5a3a2d !important;
+    color: #ffb366 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c5a4a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* No disponible - Rojo oscuro */
+[data-theme="dark"] .table td:contains("NO DISPONIBLE"),
+[data-theme="dark"] .table td:contains("DESCONTINUADO") {
+    background: #3d1a1a !important;
+    color: #ff9999 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #5a2a2a !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 0.25rem !important;
+    display: inline-block !important;
+}
+
+/* Calidad - Colores suaves */
+[data-theme="dark"] .table td .quality-premium,
+[data-theme="dark"] .table td .quality-excellent,
+[data-theme="dark"] .table td .quality-premium,
+[data-theme="dark"] .table td .quality-excelente {
+    background: #2d5a2d !important; /* Verde suave */
+    color: #90ee90 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a7c4a !important;
+}
+
+[data-theme="dark"] .table td .quality-good,
+[data-theme="dark"] .table td .quality-standard,
+[data-theme="dark"] .table td .quality-bueno,
+[data-theme="dark"] .table td .quality-estandar {
+    background: #2d4a5a !important; /* Azul suave */
+    color: #87ceeb !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #4a6a7c !important;
+}
+
+[data-theme="dark"] .table td .quality-fair,
+[data-theme="dark"] .table td .quality-average,
+[data-theme="dark"] .table td .quality-regular,
+[data-theme="dark"] .table td .quality-promedio {
+    background: #5a4a2d !important; /* Amarillo suave */
+    color: #ffd700 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c6a4a !important;
+}
+
+[data-theme="dark"] .table td .quality-poor,
+[data-theme="dark"] .table td .quality-bad,
+[data-theme="dark"] .table td .quality-malo,
+[data-theme="dark"] .table td .quality-pobre {
+    background: #5a2d2d !important; /* Rojo suave */
+    color: #ffb3b3 !important;
+    font-weight: 500 !important;
+    text-shadow: none !important;
+    border: 1px solid #7c4a4a !important;
+}
+
+/* Los botones de acción mantienen sus colores originales - SIN MODIFICACIONES */
+
+/* Aplicar modo oscuro a los formularios */
+[data-theme="dark"] .form-control {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .form-control:focus {
+    background: var(--bg-secondary);
+    border-color: var(--verde-claro);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 0.2rem rgba(0, 255, 0, 0.25);
+}
+
+[data-theme="dark"] .form-label {
+    color: var(--text-primary);
+}
+
+/* Aplicar modo oscuro a los botones */
+[data-theme="dark"] .btn-primary {
+    background: var(--verde-primario);
+    border-color: var(--verde-primario);
+    color: var(--bg-primary);
+}
+
+[data-theme="dark"] .btn-primary:hover {
+    background: var(--verde-secundario);
+    border-color: var(--verde-secundario);
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+    background: var(--border-color);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-outline {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .btn-outline:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+/* Aplicar modo oscuro a los modales */
+[data-theme="dark"] .modal-content {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .modal-header {
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .modal-footer {
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border-color);
+}
+
+/* Aplicar modo oscuro al perfil de usuario */
+[data-theme="dark"] .user-profile {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .user-profile .user-name {
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .user-profile .user-role {
+    color: var(--text-secondary);
+}
+
+/* Aplicar modo oscuro a las secciones del perfil */
+[data-theme="dark"] .profile-section {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .profile-section h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .profile-avatar-section {
+    background: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .profile-info h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .user-email,
+[data-theme="dark"] .user-join-date,
+[data-theme="dark"] .user-last-access {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a elementos específicos que pueden quedar en blanco */
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .card-title,
+[data-theme="dark"] h1,
+[data-theme="dark"] h2,
+[data-theme="dark"] h3,
+[data-theme="dark"] h4,
+[data-theme="dark"] h5,
+[data-theme="dark"] h6 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .table th,
+[data-theme="dark"] .table td {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-label,
+[data-theme="dark"] label {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .nav-link {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .nav-link:hover,
+[data-theme="dark"] .nav-link.active {
+    color: var(--verde-claro) !important;
+}
+
+/* Aplicar modo oscuro a los switches */
+[data-theme="dark"] .switch {
+    background: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .switch .slider {
+    background: var(--border-color);
+}
+
+[data-theme="dark"] .switch input:checked + .slider {
+    background: var(--verde-claro);
+}
+
+[data-theme="dark"] .switch .slider:before {
+    background: var(--text-primary);
+}
+
+/* Aplicar modo oscuro a los elementos de preferencias */
+[data-theme="dark"] .preference-item {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .preference-item:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--verde-claro);
+}
+
+/* Aplicar modo oscuro a los elementos de seguridad */
+[data-theme="dark"] .security-options .btn {
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] .security-options .btn:hover {
+    background: var(--bg-tertiary);
+    border-color: var(--verde-claro);
+}
+
+/* Transiciones suaves */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Aplicar modo oscuro a elementos específicos que pueden quedar en blanco */
+[data-theme="dark"] .content-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .dashboard-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .ventas-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .socios-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .insumos-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .produccion-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .reportes-section {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro al header de la sección de reportes del dashboard */
+[data-theme="dark"] .reportes-section .section-header {
+    background: linear-gradient(135deg, #1a3a2e 0%, #2d5016 100%) !important;
+    border-radius: 15px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(139, 195, 74, 0.2) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title i {
+    color: #ffffff !important;
+}
+
+/* Aplicar modo oscuro a las tarjetas de vista previa del dashboard */
+[data-theme="dark"] .preview-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-left: 4px solid var(--verde-claro) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .preview-card:hover {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-icon {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .preview-content h3 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .preview-value {
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-change.positive {
+    background: rgba(0, 255, 0, 0.1) !important;
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-change.negative {
+    background: rgba(255, 0, 0, 0.1) !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .preview-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .preview-chart {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .preview-chart h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .preview-chart h4 i {
+    color: var(--verde-claro) !important;
+}
+
+/* Aplicar modo oscuro al botón de ir a reportes completos en el dashboard */
+[data-theme="dark"] .reportes-section .btn-primary {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(26, 58, 46, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(26, 58, 46, 0.4) !important;
+    background: linear-gradient(135deg, #2d5016, #4a7c59) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary i {
+    margin-right: 0.5rem !important;
+}
+
+[data-theme="dark"] .usuarios-section {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro al botón de cerrar sesión */
+[data-theme="dark"] .logout-btn {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: #ffffff !important;
+    border: 1px solid #6c757d !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
+}
+
+[data-theme="dark"] .logout-btn:hover {
+    background: linear-gradient(135deg, #5a6268, #495057) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
+    border-color: #495057 !important;
+}
+
+[data-theme="dark"] .logout-btn i {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .logout-btn span {
+    color: #ffffff !important;
+}
+
+/* Aplicar modo oscuro al modal de confirmación de eliminación */
+[data-theme="dark"] .confirmation-modal {
+    background: rgba(0, 0, 0, 0.8) !important;
+}
+
+[data-theme="dark"] .confirmation-content {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .confirmation-icon {
+    background: rgba(220, 38, 38, 0.1) !important;
+    border: 2px solid rgba(220, 38, 38, 0.3) !important;
+}
+
+[data-theme="dark"] .confirmation-icon i {
+    color: #dc2626 !important;
+}
+
+[data-theme="dark"] .confirmation-title {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .confirmation-message {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a los botones del modal de confirmación */
+[data-theme="dark"] .confirmation-buttons .btn {
+    border: none !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3) !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-secondary:hover {
+    background: linear-gradient(135deg, #5a6268, #495057) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4) !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-danger {
+    background: linear-gradient(135deg, #dc3545, #c82333) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3) !important;
+}
+
+[data-theme="dark"] .confirmation-buttons .btn-danger:hover {
+    background: linear-gradient(135deg, #c82333, #bd2130) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 6px 16px rgba(220, 53, 69, 0.4) !important;
+}
+
+[data-theme="dark"] .pagos-section {
+    background: var(--bg-primary) !important;
+}
+
+/* ===== MODO OSCURO PARA LOGIN Y REGISTER ===== */
+
+/* Solo cambiar el fondo del body */
+[data-theme="dark"] body {
+    background: linear-gradient(135deg, #0f2419 0%, #1a3a2e 50%, #2d5016 100%) !important;
+}
+
+/* Solo cambiar colores del contenedor */
+[data-theme="dark"] .login-container,
+[data-theme="dark"] .register-container {
+    background: rgba(26, 58, 46, 0.95) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+}
+
+/* Solo cambiar colores del texto */
+[data-theme="dark"] .header h1 {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .header p {
+    color: #e8f5e8 !important;
+}
+
+/* Solo cambiar colores de los campos */
+[data-theme="dark"] .form-control {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* Solo cambiar colores de los botones */
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, #4a7c59, #2d5016) !important;
+    color: #ffffff !important;
+}
+
+/* Solo cambiar colores de los enlaces */
+[data-theme="dark"] .links a {
+    color: #4a7c59 !important;
+}
+
+[data-theme="dark"] .links a:hover {
+    color: #6bc34a !important;
+}
+
+/* Solo cambiar colores de la sección Acceso Seguro */
+[data-theme="dark"] .agricultural-badge {
+    background: linear-gradient(135deg, rgba(26, 58, 46, 0.8), rgba(45, 80, 22, 0.8)) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .agricultural-badge h4 {
+    color: #ffffff !important;
+}
+
+[data-theme="dark"] .agricultural-badge p {
+    color: #e8f5e8 !important;
+}
+
+/* Aplicar modo oscuro a elementos de texto específicos */
+[data-theme="dark"] p,
+[data-theme="dark"] span,
+[data-theme="dark"] div {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* Estilos para el toggle de modo oscuro */
+.dark-mode-toggle {
+    display: block !important;
+    position: fixed !important;
+    top: 20px !important;
+    right: 20px !important;
+    z-index: 1000 !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border: 1px solid rgba(139, 195, 74, 0.3) !important;
+    color: #2d5016 !important;
+    padding: 0.75rem !important;
+    border-radius: 50% !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.dark-mode-toggle:hover {
+    background: rgba(139, 195, 74, 0.9) !important;
+    color: #ffffff !important;
+    transform: scale(1.1) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2) !important;
+}

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Tabla Pagos - Mejorada</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .feature {
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #d4ff00;
+        }
+        .feature h3 {
+            color: #1a3a2e;
+            margin-bottom: 8px;
+        }
+        .feature p {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🎨 Test - Tabla de Pagos Mejorada</h1>
+            <p>Nueva disposición vertical de acciones con scroll</p>
+        </div>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📱 Acciones Verticales</h3>
+                <p>Los botones de acción se apilan verticalmente para mejor organización</p>
+            </div>
+            <div class="feature">
+                <h3>📜 Scroll Inteligente</h3>
+                <p>Si hay muchas acciones, aparece scroll automático</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 Columna Fija</h3>
+                <p>La columna de acciones permanece visible al hacer scroll horizontal</p>
+            </div>
+            <div class="feature">
+                <h3>✨ Efectos Hover</h3>
+                <p>Animaciones suaves al pasar el mouse sobre los botones</p>
+            </div>
+        </div>
+        
+        <div class="pagos-section">
+            <div class="table-header">
+                <h3>💳 Gestión de Pagos</h3>
+                <p>Tabla con acciones mejoradas estéticamente</p>
+            </div>
+            
+            <div class="table-container">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Socio</th>
+                            <th>Tipo</th>
+                            <th>Monto</th>
+                            <th>Fecha</th>
+                            <th>Estado</th>
+                            <th>Método</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>Juan Pérez</td>
+                            <td><span class="tipo-badge tipo-aporte">Aporte Mensual</span></td>
+                            <td>$150.00</td>
+                            <td>2024-01-15</td>
+                            <td><span class="status-confirmado">Confirmado</span></td>
+                            <td>Efectivo</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-primary btn-sm" onclick="alert('Editar pago 1')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="alert('Ver detalles pago 1')">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="alert('Imprimir pago 1')">
+                                        <i class="fas fa-print"></i> Imprimir
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="alert('Eliminar pago 1')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>María García</td>
+                            <td><span class="tipo-badge tipo-cuota">Cuota Especial</span></td>
+                            <td>$200.00</td>
+                            <td>2024-01-16</td>
+                            <td><span class="status-pendiente">Pendiente</span></td>
+                            <td>Transferencia</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-primary btn-sm" onclick="alert('Editar pago 2')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="alert('Ver detalles pago 2')">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="alert('Confirmar pago 2')">
+                                        <i class="fas fa-check"></i> Confirmar
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="alert('Imprimir pago 2')">
+                                        <i class="fas fa-print"></i> Imprimir
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="alert('Eliminar pago 2')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>Carlos López</td>
+                            <td><span class="tipo-badge tipo-multa">Multa</span></td>
+                            <td>$50.00</td>
+                            <td>2024-01-17</td>
+                            <td><span class="status-confirmado">Confirmado</span></td>
+                            <td>Efectivo</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-primary btn-sm" onclick="alert('Editar pago 3')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="alert('Ver detalles pago 3')">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="alert('Imprimir pago 3')">
+                                        <i class="fas fa-print"></i> Imprimir
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="alert('Eliminar pago 3')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>Ana Martínez</td>
+                            <td><span class="tipo-badge tipo-aporte">Aporte Mensual</span></td>
+                            <td>$120.00</td>
+                            <td>2024-01-18</td>
+                            <td><span class="status-pendiente">Pendiente</span></td>
+                            <td>Efectivo</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-primary btn-sm" onclick="alert('Editar pago 4')">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="alert('Ver detalles pago 4')">
+                                        <i class="fas fa-eye"></i> Ver
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="alert('Confirmar pago 4')">
+                                        <i class="fas fa-check"></i> Confirmar
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="alert('Imprimir pago 4')">
+                                        <i class="fas fa-print"></i> Imprimir
+                                    </button>
+                                    <button class="btn btn-secondary btn-sm" onclick="alert('Historial pago 4')">
+                                        <i class="fas fa-history"></i> Historial
+                                    </button>
+                                    <button class="btn btn-danger btn-sm" onclick="alert('Eliminar pago 4')">
+                                        <i class="fas fa-trash"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f8f9fa; border-radius: 8px;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">🎯 Características Implementadas:</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Acciones verticales:</strong> Los botones se apilan uno debajo del otro</li>
+                <li><strong>Scroll automático:</strong> Si hay más de 3-4 acciones, aparece scroll</li>
+                <li><strong>Columna fija:</strong> La columna de acciones permanece visible al hacer scroll horizontal</li>
+                <li><strong>Botones mejorados:</strong> Efectos hover, iconos y mejor espaciado</li>
+                <li><strong>Responsive:</strong> Se adapta a pantallas pequeñas</li>
+                <li><strong>Scroll personalizado:</strong> Barras de scroll estilizadas</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

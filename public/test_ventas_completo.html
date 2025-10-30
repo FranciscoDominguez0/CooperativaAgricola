@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Ventas Completo</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <h1>Test Ventas Completo</h1>
+    
+    <button class="btn btn-primary" id="addVentaBtn">
+        <i class="fas fa-plus"></i> Registrar Venta
+    </button>
+    
+    <!-- Modal para agregar/editar venta -->
+    <div class="modal" id="ventaModal">
+        <div class="modal-content">
+            <h3 id="ventaModalTitle">Registrar Nueva Venta</h3>
+            <form id="ventaForm">
+                <input type="hidden" id="ventaId" name="id_venta">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="socioSelect">Socio *</label>
+                        <select id="socioSelect" name="id_socio" class="form-control" required>
+                            <option value="">Seleccionar socio</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="producto">Producto *</label>
+                        <input type="text" id="producto" name="producto" class="form-control" placeholder="Nombre del producto" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad *</label>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_unitario">Precio Unitario *</label>
+                        <input type="number" id="precio_unitario" name="precio_unitario" class="form-control" step="0.01" min="0" placeholder="0.00" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="cliente">Cliente *</label>
+                        <input type="text" id="cliente" name="cliente" class="form-control" placeholder="Nombre del cliente" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_venta">Fecha de Venta *</label>
+                        <input type="date" id="fecha_venta" name="fecha_venta" class="form-control" required>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_entrega">Fecha de Entrega</label>
+                        <input type="date" id="fecha_entrega" name="fecha_entrega" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="estado">Estado</label>
+                        <select id="estado" name="estado" class="form-control">
+                            <option value="pendiente">Pendiente</option>
+                            <option value="entregado">Entregado</option>
+                            <option value="pagado">Pagado</option>
+                            <option value="cancelado">Cancelado</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="metodo_pago">Método de Pago</label>
+                        <select id="metodo_pago" name="metodo_pago" class="form-control">
+                            <option value="efectivo">Efectivo</option>
+                            <option value="transferencia">Transferencia</option>
+                            <option value="cheque">Cheque</option>
+                            <option value="credito">Crédito</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion_entrega">Dirección de Entrega</label>
+                        <input type="text" id="direccion_entrega" name="direccion_entrega" class="form-control" placeholder="Dirección completa">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" class="form-control" rows="3" placeholder="Notas adicionales..."></textarea>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancelVentaBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveVentaBtn">Guardar Venta</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        let sociosList = [];
+
+        // Función para abrir modal
+        function openVentaModal(venta = null) {
+            const modal = document.getElementById('ventaModal');
+            const form = document.getElementById('ventaForm');
+            const title = document.getElementById('ventaModalTitle');
+            
+            if (venta) {
+                title.textContent = 'Editar Venta';
+                // Establecer valores...
+            } else {
+                title.textContent = 'Registrar Nueva Venta';
+                form.reset();
+                document.getElementById('ventaId').value = '';
+                document.getElementById('fecha_venta').value = new Date().toISOString().split('T')[0];
+                document.getElementById('estado').value = 'pendiente';
+                document.getElementById('metodo_pago').value = 'efectivo';
+            }
+            
+            // Cargar socios
+            loadSociosForVentas();
+            
+            modal.style.display = 'flex';
+        }
+
+        // Función para cerrar modal
+        function closeVentaModal() {
+            document.getElementById('ventaModal').style.display = 'none';
+        }
+
+        // Cargar socios
+        async function loadSociosForVentas() {
+            try {
+                const response = await fetch('php/socios.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    sociosList = data.data;
+                    populateSociosDropdownForVentas();
+                }
+            } catch (error) {
+                console.error('Error cargando socios:', error);
+                // Datos de prueba si no hay conexión
+                sociosList = [
+                    { id_socio: 1, nombre: 'Juan Pérez' },
+                    { id_socio: 2, nombre: 'María García' },
+                    { id_socio: 3, nombre: 'Carlos López' }
+                ];
+                populateSociosDropdownForVentas();
+            }
+        }
+
+        // Poblar dropdown de socios
+        function populateSociosDropdownForVentas() {
+            const select = document.getElementById('socioSelect');
+            if (!select) return;
+            
+            select.innerHTML = '<option value="">Seleccionar socio</option>';
+            
+            sociosList.forEach(socio => {
+                const option = document.createElement('option');
+                option.value = socio.id_socio;
+                option.textContent = socio.nombre;
+                select.appendChild(option);
+            });
+        }
+
+        // Event listeners
+        document.getElementById('addVentaBtn').addEventListener('click', function() {
+            console.log('Botón clickeado');
+            openVentaModal();
+        });
+
+        document.getElementById('cancelVentaBtn').addEventListener('click', function() {
+            console.log('Cancelar clickeado');
+            closeVentaModal();
+        });
+
+        document.getElementById('ventaForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            console.log('Formulario enviado');
+            alert('Venta guardada (simulado)');
+            closeVentaModal();
+        });
+
+        document.getElementById('ventaModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                console.log('Clic fuera del modal');
+                closeVentaModal();
+            }
+        });
+    </script>
+</body>
+</html>
