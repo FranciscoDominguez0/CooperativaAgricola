@@ -120,12 +120,44 @@ function setupEventListeners() {
     document.getElementById('exportInventoryReport').addEventListener('click', () => exportReport('inventory'));
     document.getElementById('exportMarginReport').addEventListener('click', () => exportReport('margin'));
 
-    // Logout
-    document.getElementById('logoutBtn').addEventListener('click', function() {
-        if (confirm('¿Estás seguro de que deseas cerrar sesión?')) {
-            window.location.href = 'php/logout.php';
-        }
-    });
+    // Logout (custom modal)
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.addEventListener('click', function() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.style.display = 'flex';
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+        });
+    }
+
+    const confirmLogout = document.getElementById('confirmLogout');
+    if (confirmLogout) {
+        confirmLogout.addEventListener('click', async function() {
+            try {
+                const res = await fetch('php/logout.php', { method: 'POST' });
+                // Ignorar el contenido; redirigir siempre al login
+            } catch (e) {
+                // Si falla el fetch igual redirigimos
+            } finally {
+                window.location.href = 'login.html';
+            }
+        });
+    }
+
+    const cancelLogout = document.getElementById('cancelLogout');
+    if (cancelLogout) {
+        cancelLogout.addEventListener('click', function() {
+            const modal = document.getElementById('logoutModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.remove('show');
+                document.body.style.overflow = 'auto';
+            }
+        });
+    }
 
     // Navegación optimizada
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -210,52 +242,30 @@ function getFilterParams() {
 
 async function loadKPIData() {
     try {
-        // Primero intentar con el endpoint de debug
-        const debugResponse = await fetch('debug_reportes_simple.php', {
+        const params = new URLSearchParams({
+            action: 'kpis',
+            ...getFilterParams()
+        });
+        const response = await fetch(`php/reportes.php?${params}`, {
             signal: abortController.signal
         });
-        const debugData = await debugResponse.json();
-        
-        console.log('Debug data:', debugData);
-        
-        if (debugData.success) {
-            updateKPICards(debugData.kpis);
-            
-            // Solo mostrar información de debug en consola (sin notificaciones)
-            if (debugData.debug_info) {
-                console.log('Información de debug:', debugData.debug_info);
-            }
+        const data = await response.json();
+        if (data.success) {
+            updateKPICards(data.kpis);
         } else {
-            // Fallback al endpoint original
-            const params = new URLSearchParams({
-                action: 'kpis',
-                ...getFilterParams()
+            console.warn('Error loading KPI data:', data.message);
+            updateKPICards({
+                totalIncome: 0,
+                incomeChange: 0,
+                totalContributions: 0,
+                activeMembers: 0,
+                inventoryValue: 0,
+                availableItems: 0,
+                grossMargin: 0
             });
-            
-            const response = await fetch(`php/reportes.php?${params}`, {
-                signal: abortController.signal
-            });
-            const data = await response.json();
-            
-            if (data.success) {
-                updateKPICards(data.kpis);
-            } else {
-                console.warn('Error loading real data:', data.message);
-                // Mostrar valores en cero si hay error (sin notificación)
-                updateKPICards({
-                    totalIncome: 0,
-                    incomeChange: 0,
-                    totalContributions: 0,
-                    activeMembers: 0,
-                    inventoryValue: 0,
-                    availableItems: 0,
-                    grossMargin: 0
-                });
-            }
         }
     } catch (error) {
         console.error('Error loading KPI data:', error);
-        // Mostrar valores en cero si hay error (sin notificación)
         updateKPICards({
             totalIncome: 0,
             incomeChange: 0,
@@ -271,8 +281,12 @@ async function loadKPIData() {
 function updateKPICards(kpis) {
     // Actualizar tarjetas de KPIs
     document.getElementById('totalIncome').textContent = formatCurrency(kpis.totalIncome);
-    document.getElementById('incomeChange').textContent = `${kpis.incomeChange > 0 ? '+' : ''}${kpis.incomeChange}% vs mes anterior`;
-    document.getElementById('incomeChange').className = `kpi-change ${kpis.incomeChange >= 0 ? 'positive' : 'negative'}`;
+    const incomeChangeValue = Number(kpis.incomeChange || 0);
+    const incomeChangeRounded = Math.round(incomeChangeValue * 10) / 10; // 1 decimal
+    const incomeChangeText = `${incomeChangeRounded > 0 ? '+' : ''}${incomeChangeRounded.toFixed(1)}% vs mes anterior`;
+    const incomeChangeEl = document.getElementById('incomeChange');
+    incomeChangeEl.textContent = incomeChangeText;
+    incomeChangeEl.className = `kpi-change ${incomeChangeValue >= 0 ? 'positive' : 'negative'}`;
     
     document.getElementById('totalContributions').textContent = formatCurrency(kpis.totalContributions);
     document.getElementById('activeMembers').textContent = `${kpis.activeMembers} miembros activos`;
