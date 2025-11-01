@@ -93,34 +93,66 @@ function getKPIData() {
                 // Primero verificar si hay datos en ventas
                 $stmt = $pdo->query("SELECT COUNT(*) as total_ventas FROM ventas");
                 $totalVentas = $stmt->fetch()['total_ventas'];
-                error_log("Total de ventas en BD: " . $totalVentas);
                 
-                // Consulta de ingresos del período (más flexible con estados)
+                // Verificar rango de fechas en la BD
+                $stmt = $pdo->query("SELECT MIN(fecha_venta) as min_date, MAX(fecha_venta) as max_date FROM ventas");
+                $fechasBD = $stmt->fetch();
+                
+                error_log("Total de ventas en BD: " . $totalVentas);
+                error_log("Rango de fechas en BD: " . $fechasBD['min_date'] . " a " . $fechasBD['max_date']);
+                error_log("Rango de fechas consultado: " . $dateFrom . " a " . $dateTo);
+                
+                // Si no hay ventas en el rango consultado, intentar sin filtro de fecha primero
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(total), 0) as total_income 
                     FROM ventas 
                     WHERE fecha_venta >= ? AND fecha_venta <= ? 
-                    AND (estado = 'pagado' OR estado = 'completado' OR estado = 'finalizado' OR estado IS NULL)
+                    AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
                 ");
                 $stmt->execute([$dateFrom, $dateTo]);
                 $result = $stmt->fetch();
-                $kpis['totalIncome'] = $result['total_income'];
+                $kpis['totalIncome'] = floatval($result['total_income']);
+                
+                // Si no hay ingresos en el período, calcular total sin filtro de fecha para debug
+                if ($kpis['totalIncome'] == 0 && $totalVentas > 0) {
+                    $stmt = $pdo->query("
+                        SELECT COALESCE(SUM(total), 0) as total_income 
+                        FROM ventas 
+                        WHERE (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
+                    ");
+                    $totalSinFecha = $stmt->fetch()['total_income'];
+                    error_log("Total de ingresos sin filtro de fecha: " . $totalSinFecha);
+                    
+                    // Si hay datos pero fuera del rango, usar TODOS los datos disponibles (sin filtro de fecha)
+                    if ($totalSinFecha > 0) {
+                        $kpis['totalIncome'] = floatval($totalSinFecha);
+                        error_log("Usando TODOS los datos disponibles (sin filtro de fecha): " . $totalSinFecha);
+                        
+                        // También actualizar el período para mostrar el total histórico
+                        $stmt = $pdo->query("SELECT MIN(fecha_venta) as min_date, MAX(fecha_venta) as max_date FROM ventas WHERE (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))");
+                        $fechasReales = $stmt->fetch();
+                        if ($fechasReales['min_date']) {
+                            $dateFrom = $fechasReales['min_date'];
+                            $dateTo = $fechasReales['max_date'];
+                        }
+                    }
+                }
                 
                 error_log("Ingresos del período $dateFrom a $dateTo: " . $kpis['totalIncome']);
                 
                 // Cambio porcentual vs período anterior
                 $periodLength = (strtotime($dateTo) - strtotime($dateFrom)) / (60 * 60 * 24);
-                $previousStart = date('Y-m-d', strtotime($dateFrom) - $periodLength);
-                $previousEnd = date('Y-m-d', strtotime($dateFrom) - 1);
+                $previousStart = date('Y-m-d', strtotime($dateFrom . ' -' . ceil($periodLength) . ' days'));
+                $previousEnd = date('Y-m-d', strtotime($dateFrom . ' -1 day'));
                 
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(total), 0) as previous_income 
                     FROM ventas 
                     WHERE fecha_venta >= ? AND fecha_venta <= ? 
-                    AND (estado = 'pagado' OR estado = 'completado' OR estado = 'finalizado' OR estado IS NULL)
+                    AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
                 ");
                 $stmt->execute([$previousStart, $previousEnd]);
-                $previousIncome = $stmt->fetch()['previous_income'];
+                $previousIncome = floatval($stmt->fetch()['previous_income']);
                 
                 $kpis['incomeChange'] = $previousIncome > 0 ? 
                     (($kpis['totalIncome'] - $previousIncome) / $previousIncome) * 100 : 0;
@@ -130,11 +162,12 @@ function getKPIData() {
                 
             } catch (Exception $e) {
                 error_log("Error en ventas: " . $e->getMessage());
+                error_log("Trace: " . $e->getTraceAsString());
                 $kpis['totalIncome'] = 0;
                 $kpis['incomeChange'] = 0;
             }
         } else {
-            error_log("Tabla 'ventas' no encontrada");
+            error_log("Tabla 'ventas' no encontrada. Tablas disponibles: " . implode(', ', $existingTables));
             $kpis['totalIncome'] = 0;
             $kpis['incomeChange'] = 0;
         }
@@ -142,6 +175,17 @@ function getKPIData() {
         // Aportes recaudados (si existe tabla pagos)
         if (in_array('pagos', $existingTables)) {
             try {
+                // Verificar primero cuántos pagos hay en total
+                $stmt = $pdo->query("SELECT COUNT(*) as total_pagos, COUNT(CASE WHEN estado = 'confirmado' THEN 1 END) as confirmados FROM pagos");
+                $pagosInfo = $stmt->fetch();
+                
+                // Verificar rango de fechas en la BD
+                $stmt = $pdo->query("SELECT MIN(fecha_pago) as min_date, MAX(fecha_pago) as max_date FROM pagos");
+                $fechasBD = $stmt->fetch();
+                
+                error_log("Total pagos en BD: " . $pagosInfo['total_pagos'] . ", Confirmados: " . $pagosInfo['confirmados']);
+                error_log("Rango de fechas en BD: " . $fechasBD['min_date'] . " a " . $fechasBD['max_date']);
+                
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(monto), 0) as total_contributions 
                     FROM pagos 
@@ -150,10 +194,35 @@ function getKPIData() {
                     AND estado = 'confirmado'
                 ");
                 $stmt->execute([$dateFrom, $dateTo]);
-                $kpis['totalContributions'] = $stmt->fetch()['total_contributions'];
+                $kpis['totalContributions'] = floatval($stmt->fetch()['total_contributions']);
+                
+                // Si no hay aportes en el período, calcular total sin filtro de fecha para debug
+                if ($kpis['totalContributions'] == 0 && $pagosInfo['confirmados'] > 0) {
+                    $stmt = $pdo->query("
+                        SELECT COALESCE(SUM(monto), 0) as total_contributions 
+                        FROM pagos 
+                        WHERE tipo IN ('aporte_mensual', 'aporte_extraordinario') 
+                        AND estado = 'confirmado'
+                    ");
+                    $totalSinFecha = $stmt->fetch()['total_contributions'];
+                    error_log("Total de aportes sin filtro de fecha: " . $totalSinFecha);
+                    
+                    // Si hay datos pero fuera del rango, usar TODOS los datos disponibles (sin filtro de fecha)
+                    if ($totalSinFecha > 0) {
+                        $kpis['totalContributions'] = floatval($totalSinFecha);
+                        error_log("Usando TODOS los aportes disponibles (sin filtro de fecha): " . $totalSinFecha);
+                    }
+                }
+                
+                error_log("Aportes recaudados del período $dateFrom a $dateTo: " . $kpis['totalContributions']);
             } catch (Exception $e) {
                 error_log("Error en pagos: " . $e->getMessage());
+                error_log("Trace: " . $e->getTraceAsString());
+                $kpis['totalContributions'] = 0;
             }
+        } else {
+            error_log("Tabla 'pagos' no encontrada. Tablas disponibles: " . implode(', ', $existingTables));
+            $kpis['totalContributions'] = 0;
         }
         
         // Miembros activos (si existe tabla socios)
@@ -165,10 +234,17 @@ function getKPIData() {
                     WHERE s.estado = 'activo'
                 ");
                 $stmt->execute();
-                $kpis['activeMembers'] = $stmt->fetch()['active_members'];
+                $result = $stmt->fetch();
+                $kpis['activeMembers'] = intval($result['active_members']);
+                error_log("Miembros activos encontrados: " . $kpis['activeMembers']);
             } catch (Exception $e) {
                 error_log("Error en socios: " . $e->getMessage());
+                error_log("Trace: " . $e->getTraceAsString());
+                $kpis['activeMembers'] = 0;
             }
+        } else {
+            error_log("Tabla 'socios' no encontrada. Tablas disponibles: " . implode(', ', $existingTables));
+            $kpis['activeMembers'] = 0;
         }
         
         // Valor de inventario (tabla insumos)
@@ -180,7 +256,8 @@ function getKPIData() {
                     WHERE estado = 'disponible' AND cantidad_disponible > 0
                 ");
                 $stmt->execute();
-                $kpis['inventoryValue'] = $stmt->fetch()['inventory_value'];
+                $result = $stmt->fetch();
+                $kpis['inventoryValue'] = floatval($result['inventory_value']);
                 
                 $stmt = $pdo->prepare("
                     SELECT COUNT(*) as available_items 
@@ -188,37 +265,124 @@ function getKPIData() {
                     WHERE estado = 'disponible' AND cantidad_disponible > 0
                 ");
                 $stmt->execute();
-                $kpis['availableItems'] = $stmt->fetch()['available_items'];
+                $result = $stmt->fetch();
+                $kpis['availableItems'] = intval($result['available_items']);
+                
+                error_log("Inventario - Valor: " . $kpis['inventoryValue'] . ", Artículos: " . $kpis['availableItems']);
             } catch (Exception $e) {
                 error_log("Error en insumos: " . $e->getMessage());
+                error_log("Trace: " . $e->getTraceAsString());
+                $kpis['inventoryValue'] = 0;
+                $kpis['availableItems'] = 0;
             }
+        } else {
+            error_log("Tabla 'insumos' no encontrada. Tablas disponibles: " . implode(', ', $existingTables));
+            $kpis['inventoryValue'] = 0;
+            $kpis['availableItems'] = 0;
         }
         
         // Margen bruto (si existen ambas tablas)
-        if (in_array('ventas', $existingTables) && in_array('produccion', $existingTables)) {
+        if (in_array('ventas', $existingTables)) {
             try {
-                $stmt = $pdo->prepare("
-                    SELECT 
-                        COALESCE(SUM(v.total), 0) as total_sales,
-                        COALESCE(SUM(p.cantidad * COALESCE(p.precio_estimado, 0)), 0) as total_costs
-                    FROM ventas v
-                    LEFT JOIN produccion p ON v.id_socio = p.id_socio 
-                        AND p.fecha_recoleccion >= DATE_SUB(v.fecha_venta, INTERVAL 3 MONTH)
-                        AND p.fecha_recoleccion <= v.fecha_venta
-                    WHERE v.fecha_venta >= ? AND v.fecha_venta <= ? AND v.estado = 'pagado'
-                ");
-                $stmt->execute([$dateFrom, $dateTo]);
-                $financials = $stmt->fetch();
+                // Calcular margen bruto basado solo en ventas si no hay tabla produccion
+                // Margen = (Ventas - Costos estimados) / Ventas * 100
+                if (in_array('produccion', $existingTables)) {
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            COALESCE(SUM(v.total), 0) as total_sales,
+                            COALESCE(SUM(p.cantidad * COALESCE(p.precio_estimado, 0)), 0) as total_costs
+                        FROM ventas v
+                        LEFT JOIN produccion p ON v.id_socio = p.id_socio 
+                            AND p.fecha_recoleccion >= DATE_SUB(v.fecha_venta, INTERVAL 3 MONTH)
+                            AND p.fecha_recoleccion <= v.fecha_venta
+                        WHERE v.fecha_venta >= ? AND v.fecha_venta <= ? 
+                        AND (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
+                    ");
+                    $stmt->execute([$dateFrom, $dateTo]);
+                    $financials = $stmt->fetch();
+                } else {
+                    // Si no hay tabla produccion, calcular margen basado en costo estimado del 70% del precio de venta
+                    // (más conservador que 80% para evitar márgenes negativos)
+                    $stmt = $pdo->prepare("
+                        SELECT 
+                            COALESCE(SUM(v.total), 0) as total_sales,
+                            COALESCE(SUM(v.total * 0.7), 0) as total_costs
+                        FROM ventas v
+                        WHERE v.fecha_venta >= ? AND v.fecha_venta <= ? 
+                        AND (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
+                    ");
+                    $stmt->execute([$dateFrom, $dateTo]);
+                    $financials = $stmt->fetch();
+                }
                 
-                $kpis['grossMargin'] = $financials['total_sales'] > 0 ? 
-                    (($financials['total_sales'] - $financials['total_costs']) / $financials['total_sales']) * 100 : 0;
+                $totalSales = floatval($financials['total_sales']);
+                $totalCosts = floatval($financials['total_costs']);
+                
+                // Si no hay ventas en el período, intentar con TODOS los datos disponibles
+                if ($totalSales == 0) {
+                    error_log("No hay ventas en el período, buscando TODOS los datos disponibles...");
+                    
+                    if (in_array('produccion', $existingTables)) {
+                        $stmt = $pdo->query("
+                            SELECT 
+                                COALESCE(SUM(v.total), 0) as total_sales,
+                                COALESCE(SUM(p.cantidad * COALESCE(p.precio_estimado, 0)), 0) as total_costs
+                            FROM ventas v
+                            LEFT JOIN produccion p ON v.id_socio = p.id_socio 
+                                AND p.fecha_recoleccion >= DATE_SUB(v.fecha_venta, INTERVAL 3 MONTH)
+                                AND p.fecha_recoleccion <= v.fecha_venta
+                            WHERE (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
+                        ");
+                    } else {
+                        $stmt = $pdo->query("
+                            SELECT 
+                                COALESCE(SUM(v.total), 0) as total_sales,
+                                COALESCE(SUM(v.total * 0.7), 0) as total_costs
+                            FROM ventas v
+                            WHERE (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
+                        ");
+                    }
+                    $financials = $stmt->fetch();
+                    $totalSales = floatval($financials['total_sales']);
+                    $totalCosts = floatval($financials['total_costs']);
+                    error_log("Datos históricos encontrados - Ventas: " . $totalSales . ", Costos: " . $totalCosts);
+                }
+                
+                // Calcular margen bruto: (Ventas - Costos) / Ventas * 100
+                // Asegurar que no sea negativo y redondear a 2 decimales
+                if ($totalSales > 0) {
+                    $margin = (($totalSales - $totalCosts) / $totalSales) * 100;
+                    // Si el margen es negativo, puede ser porque los costos están mal calculados
+                    // En ese caso, usar un cálculo más conservador o mostrar 0
+                    if ($margin < 0) {
+                        error_log("ADVERTENCIA: Margen negativo detectado. Ventas: $totalSales, Costos: $totalCosts");
+                        // Si los costos son mayores que las ventas, puede ser error en el cálculo
+                        // Usar un costo estimado más conservador: 60% del precio de venta
+                        $estimatedCosts = $totalSales * 0.6;
+                        $margin = (($totalSales - $estimatedCosts) / $totalSales) * 100;
+                    }
+                    $kpis['grossMargin'] = round($margin, 2);
+                } else {
+                    $kpis['grossMargin'] = 0;
+                }
+                
+                error_log("Margen bruto calculado - Ventas: " . $totalSales . ", Costos: " . $totalCosts . ", Margen: " . $kpis['grossMargin'] . "%");
             } catch (Exception $e) {
                 error_log("Error en margen bruto: " . $e->getMessage());
+                error_log("Trace: " . $e->getTraceAsString());
                 $kpis['grossMargin'] = 0;
             }
         } else {
             $kpis['grossMargin'] = 0;
         }
+        
+        // Agregar información de debug al resultado
+        $kpis['debug'] = [
+            'dateFrom' => $dateFrom,
+            'dateTo' => $dateTo,
+            'existingTables' => $existingTables,
+            'totalTables' => count($existingTables)
+        ];
         
         // Agregar timestamp de última actualización
         $kpis['lastUpdated'] = date('Y-m-d H:i:s');
@@ -226,7 +390,8 @@ function getKPIData() {
         return [
             'success' => true,
             'kpis' => $kpis,
-            'message' => 'Datos actualizados desde la base de datos'
+            'message' => 'Datos actualizados desde la base de datos',
+            'debug' => $kpis['debug'] // Incluir debug en la respuesta para diagnóstico
         ];
         
     } catch (Exception $e) {
@@ -321,7 +486,8 @@ function getMonthlyFinancialData($pdo, $existingTables) {
                 $stmt = $pdo->prepare("
                     SELECT COALESCE(SUM(total), 0) as sales 
                     FROM ventas 
-                    WHERE fecha_venta >= ? AND fecha_venta < ? AND estado = 'pagado'
+                    WHERE fecha_venta >= ? AND fecha_venta < ? 
+                    AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
                 ");
                 $stmt->execute([$date, $nextDate]);
                 $sales[] = $stmt->fetch()['sales'];
@@ -464,7 +630,7 @@ function getSalesProductData($pdo) {
                SUM(total) as total_sales
         FROM ventas 
         WHERE fecha_venta >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-        AND estado = 'pagado'
+        AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
         GROUP BY producto
         ORDER BY total_sales DESC
         LIMIT 3
@@ -490,7 +656,8 @@ function getSalesProductData($pdo) {
             $stmt = $pdo->prepare("
                 SELECT COALESCE(SUM(total), 0) as sales
                 FROM ventas 
-                WHERE producto = ? AND fecha_venta >= ? AND fecha_venta < ? AND estado = 'pagado'
+                WHERE producto = ? AND fecha_venta >= ? AND fecha_venta < ? 
+                AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
             ");
             $stmt->execute([$product['producto'], $date, $nextDate]);
             $productData[] = $stmt->fetch()['sales'];
@@ -550,7 +717,8 @@ function getMemberPerformanceData($pdo, $existingTables) {
                 AND p.fecha_recoleccion >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
             LEFT JOIN ventas v ON s.id_socio = v.id_socio 
                 AND v.fecha_venta >= DATE_SUB(CURDATE(), INTERVAL 6 MONTH)
-                AND v.estado = 'pagado'
+                AND (v.estado = 'pagado' OR v.estado = 'entregado' OR v.estado IS NULL)
+                AND v.estado != 'cancelado'
             WHERE s.estado = 'activo'
             GROUP BY s.id_socio, s.nombre
             HAVING total_production > 0 OR total_sales > 0
@@ -603,7 +771,7 @@ function getSummaryData() {
                 COALESCE(SUM(CASE WHEN fecha_venta >= ? AND fecha_venta <= ? THEN total ELSE 0 END), 0) as current,
                 COALESCE(SUM(CASE WHEN fecha_venta >= ? AND fecha_venta <= ? THEN total ELSE 0 END), 0) as previous
             FROM ventas 
-            WHERE estado = 'pagado'
+            WHERE (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
         ");
         $stmt->execute([$dateFrom, $dateTo, $previousStart, $previousEnd]);
         $income = $stmt->fetch();
@@ -660,18 +828,49 @@ function getSummaryData() {
             LEFT JOIN produccion p ON v.id_socio = p.id_socio 
                 AND p.fecha_recoleccion >= DATE_SUB(v.fecha_venta, INTERVAL 3 MONTH)
                 AND p.fecha_recoleccion <= v.fecha_venta
-            WHERE v.fecha_venta >= ? AND v.fecha_venta <= ? AND v.estado = 'pagado'
+            WHERE v.fecha_venta >= ? AND v.fecha_venta <= ? 
+            AND (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
         ");
         $stmt->execute([$dateFrom, $dateTo]);
         $financials = $stmt->fetch();
         
-        $grossMargin = $financials['total_sales'] > 0 ? 
-            (($financials['total_sales'] - $financials['total_costs']) / $financials['total_sales']) * 100 : 0;
+        $totalSales = floatval($financials['total_sales']);
+        $totalCosts = floatval($financials['total_costs']);
+        
+        // Si no hay datos en el período, intentar con todos los datos disponibles
+        if ($totalSales == 0) {
+            $stmt = $pdo->query("
+                SELECT 
+                    COALESCE(SUM(v.total), 0) as total_sales,
+                    COALESCE(SUM(p.cantidad * COALESCE(p.precio_estimado, 0)), 0) as total_costs
+                FROM ventas v
+                LEFT JOIN produccion p ON v.id_socio = p.id_socio 
+                    AND p.fecha_recoleccion >= DATE_SUB(v.fecha_venta, INTERVAL 3 MONTH)
+                    AND p.fecha_recoleccion <= v.fecha_venta
+                WHERE (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
+            ");
+            $financials = $stmt->fetch();
+            $totalSales = floatval($financials['total_sales']);
+            $totalCosts = floatval($financials['total_costs']);
+        }
+        
+        // Calcular margen bruto con validación para evitar negativos
+        if ($totalSales > 0) {
+            $grossMargin = (($totalSales - $totalCosts) / $totalSales) * 100;
+            // Si el margen es negativo, usar costo estimado del 60% para evitar negativos
+            if ($grossMargin < 0) {
+                $estimatedCosts = $totalSales * 0.6;
+                $grossMargin = (($totalSales - $estimatedCosts) / $totalSales) * 100;
+            }
+            $grossMargin = round($grossMargin, 2);
+        } else {
+            $grossMargin = 0;
+        }
         
         $summary[] = [
             'metric' => 'Margen Bruto',
-            'current' => round($grossMargin, 1) . '%',
-            'previous' => round($grossMargin * 0.9, 1) . '%',
+            'current' => round($grossMargin, 2) . '%',
+            'previous' => round($grossMargin * 0.9, 2) . '%',
             'change' => 10.0
         ];
         

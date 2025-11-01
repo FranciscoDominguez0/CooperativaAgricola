@@ -2082,10 +2082,27 @@ async function loadReportesPreview() {
 }
 
 function updateReportesPreview(kpis) {
-    document.getElementById('previewSales').textContent = formatCurrency(kpis.totalIncome);
-    document.getElementById('previewContributions').textContent = formatCurrency(kpis.totalContributions);
-    document.getElementById('previewInventory').textContent = formatCurrency(kpis.inventoryValue);
-    document.getElementById('previewMargin').textContent = `${kpis.grossMargin}%`;
+    document.getElementById('previewSales').textContent = formatCurrency(kpis.totalIncome || 0);
+    document.getElementById('previewContributions').textContent = formatCurrency(kpis.totalContributions || 0);
+    document.getElementById('previewInventory').textContent = formatCurrency(kpis.inventoryValue || 0);
+    
+    // Actualizar miembros activos
+    const activeMembers = parseInt(kpis.activeMembers || 0);
+    const previewActiveMembers = document.getElementById('previewActiveMembers');
+    if (previewActiveMembers) {
+        previewActiveMembers.textContent = `${activeMembers} miembros activos`;
+    }
+    
+    // Actualizar artículos disponibles
+    const availableItems = parseInt(kpis.availableItems || 0);
+    const previewAvailableItems = document.getElementById('previewAvailableItems');
+    if (previewAvailableItems) {
+        previewAvailableItems.textContent = `${availableItems} artículos`;
+    }
+    
+    // Formatear margen bruto con 2 decimales
+    const grossMargin = parseFloat(kpis.grossMargin || 0);
+    document.getElementById('previewMargin').textContent = `${grossMargin.toFixed(2)}%`;
 }
 
 async function loadPreviewChartsData() {

@@ -210,51 +210,47 @@ function getFilterParams() {
 
 async function loadKPIData() {
     try {
-        // Primero intentar con el endpoint de debug
-        const debugResponse = await fetch('debug_reportes_simple.php', {
+        console.log('Cargando datos de KPIs desde php/reportes.php...');
+        
+        const params = new URLSearchParams({
+            action: 'kpis',
+            ...getFilterParams()
+        });
+        
+        const response = await fetch(`php/reportes.php?${params}`, {
             signal: abortController.signal
         });
-        const debugData = await debugResponse.json();
         
-        console.log('Debug data:', debugData);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
         
-        if (debugData.success) {
-            updateKPICards(debugData.kpis);
-            
-            // Solo mostrar información de debug en consola (sin notificaciones)
-            if (debugData.debug_info) {
-                console.log('Información de debug:', debugData.debug_info);
-            }
+        const data = await response.json();
+        console.log('Datos recibidos del backend:', data);
+        
+        if (data.success && data.kpis) {
+            console.log('KPIs cargados exitosamente:', data.kpis);
+            updateKPICards(data.kpis);
         } else {
-            // Fallback al endpoint original
-            const params = new URLSearchParams({
-                action: 'kpis',
-                ...getFilterParams()
+            console.warn('Error loading real data:', data.message || 'No se recibieron datos válidos');
+            console.warn('Respuesta completa:', data);
+            // Mostrar valores en cero si hay error (sin notificación)
+            updateKPICards({
+                totalIncome: 0,
+                incomeChange: 0,
+                totalContributions: 0,
+                activeMembers: 0,
+                inventoryValue: 0,
+                availableItems: 0,
+                grossMargin: 0
             });
-            
-            const response = await fetch(`php/reportes.php?${params}`, {
-                signal: abortController.signal
-            });
-            const data = await response.json();
-            
-            if (data.success) {
-                updateKPICards(data.kpis);
-            } else {
-                console.warn('Error loading real data:', data.message);
-                // Mostrar valores en cero si hay error (sin notificación)
-                updateKPICards({
-                    totalIncome: 0,
-                    incomeChange: 0,
-                    totalContributions: 0,
-                    activeMembers: 0,
-                    inventoryValue: 0,
-                    availableItems: 0,
-                    grossMargin: 0
-                });
-            }
         }
     } catch (error) {
         console.error('Error loading KPI data:', error);
+        console.error('Error details:', {
+            message: error.message,
+            stack: error.stack
+        });
         // Mostrar valores en cero si hay error (sin notificación)
         updateKPICards({
             totalIncome: 0,
@@ -270,22 +266,43 @@ async function loadKPIData() {
 
 function updateKPICards(kpis) {
     // Actualizar tarjetas de KPIs
-    document.getElementById('totalIncome').textContent = formatCurrency(kpis.totalIncome);
-    document.getElementById('incomeChange').textContent = `${kpis.incomeChange > 0 ? '+' : ''}${kpis.incomeChange}% vs mes anterior`;
-    document.getElementById('incomeChange').className = `kpi-change ${kpis.incomeChange >= 0 ? 'positive' : 'negative'}`;
+    document.getElementById('totalIncome').textContent = formatCurrency(kpis.totalIncome || 0);
+    const incomeChangeValue = Number(kpis.incomeChange || 0);
+    const incomeChangeRounded = Math.round(incomeChangeValue * 10) / 10; // 1 decimal
+    const incomeChangeText = `${incomeChangeRounded > 0 ? '+' : ''}${incomeChangeRounded.toFixed(1)}% vs mes anterior`;
+    const incomeChangeEl = document.getElementById('incomeChange');
+    incomeChangeEl.textContent = incomeChangeText;
+    incomeChangeEl.className = `kpi-change ${incomeChangeValue >= 0 ? 'positive' : 'negative'}`;
     
-    document.getElementById('totalContributions').textContent = formatCurrency(kpis.totalContributions);
-    document.getElementById('activeMembers').textContent = `${kpis.activeMembers} miembros activos`;
+    document.getElementById('totalContributions').textContent = formatCurrency(kpis.totalContributions || 0);
     
-    document.getElementById('inventoryValue').textContent = formatCurrency(kpis.inventoryValue);
-    document.getElementById('availableItems').textContent = `${kpis.availableItems} artículos disponibles`;
+    // Asegurar que activeMembers sea un número entero
+    const activeMembers = parseInt(kpis.activeMembers || 0);
+    document.getElementById('activeMembers').textContent = `${activeMembers} miembros activos`;
     
-    document.getElementById('grossMargin').textContent = `${kpis.grossMargin}%`;
+    document.getElementById('inventoryValue').textContent = formatCurrency(kpis.inventoryValue || 0);
+    
+    // Asegurar que availableItems sea un número entero
+    const availableItems = parseInt(kpis.availableItems || 0);
+    document.getElementById('availableItems').textContent = `${availableItems} artículos disponibles`;
+    
+    // Formatear margen bruto con 2 decimales
+    const grossMargin = parseFloat(kpis.grossMargin || 0);
+    document.getElementById('grossMargin').textContent = `${grossMargin.toFixed(2)}%`;
     
     // Mostrar información de última actualización solo en consola
     if (kpis.lastUpdated) {
         console.log('Datos actualizados:', kpis.lastUpdated);
     }
+    
+    // Debug: mostrar valores en consola
+    console.log('KPIs actualizados:', {
+        activeMembers: activeMembers,
+        availableItems: availableItems,
+        totalIncome: kpis.totalIncome,
+        totalContributions: kpis.totalContributions,
+        grossMargin: grossMargin
+    });
 }
 
 // Función eliminada - ya no usamos datos de muestra
@@ -1079,24 +1096,44 @@ async function exportProfessionalPDF() {
     try {
         showToast('Generando reporte profesional en PDF...', 'info');
         
+        // Primero obtener los datos actuales de KPIs directamente
         const params = new URLSearchParams({
-            action: 'export_pdf',
+            action: 'kpis',
             ...getFilterParams()
         });
         
-        const response = await fetch(`php/reportes.php?${params}`);
-        const data = await response.json();
+        console.log('Obteniendo datos para PDF con parámetros:', params.toString());
         
-        if (data.success) {
-            // Crear y descargar el PDF usando jsPDF
-            await generatePDFReport(data.data);
-            showToast('Reporte PDF generado exitosamente', 'success');
-        } else {
-            showToast('Error al generar PDF: ' + data.message, 'error');
+        const kpisResponse = await fetch(`php/reportes.php?${params}`);
+        const kpisData = await kpisResponse.json();
+        
+        console.log('Datos de KPIs para PDF:', kpisData);
+        
+        if (!kpisData.success || !kpisData.kpis) {
+            throw new Error('No se pudieron obtener los datos de KPIs');
         }
+        
+        // Preparar datos para el PDF con los valores reales
+        const today = new Date();
+        const dateFrom = currentFilters.dateFrom || new Date(today.getFullYear(), today.getMonth(), 1).toISOString().split('T')[0];
+        const dateTo = currentFilters.dateTo || new Date(today.getFullYear(), today.getMonth() + 1, 0).toISOString().split('T')[0];
+        
+        const pdfData = {
+            cooperative_name: 'Cooperativa Agrícola La Pintada',
+            generated_date: today.toLocaleString('es-ES'),
+            period: `${new Date(dateFrom).toLocaleDateString('es-ES')} - ${new Date(dateTo).toLocaleDateString('es-ES')}`,
+            kpis: kpisData.kpis,
+            filename: `reporte-cooperativa-${today.toISOString().split('T')[0]}.pdf`
+        };
+        
+        console.log('Datos preparados para PDF:', pdfData);
+        
+        // Crear y descargar el PDF usando jsPDF
+        await generatePDFReport(pdfData);
+        showToast('Reporte PDF generado exitosamente', 'success');
     } catch (error) {
         console.error('Error generating PDF:', error);
-        showToast('Error al generar el PDF', 'error');
+        showToast('Error al generar PDF: ' + error.message, 'error');
     }
 }
 
@@ -1110,17 +1147,30 @@ async function generatePDFReport(data) {
     const pageHeight = doc.internal.pageSize.getHeight();
     let yPosition = 20;
     
+    // Verificar que los datos estén disponibles
+    console.log('Datos para PDF:', data);
+    console.log('KPIs recibidos:', data.kpis);
+    
+    // Asegurar que tenemos valores numéricos válidos
+    const kpis = data.kpis || {};
+    const totalIncome = parseFloat(kpis.totalIncome || 0);
+    const totalContributions = parseFloat(kpis.totalContributions || 0);
+    const inventoryValue = parseFloat(kpis.inventoryValue || 0);
+    const grossMargin = parseFloat(kpis.grossMargin || 0);
+    const activeMembers = parseInt(kpis.activeMembers || 0);
+    const incomeChange = parseFloat(kpis.incomeChange || 0);
+    
     // Header
     doc.setFontSize(20);
     doc.setFont('helvetica', 'bold');
-    doc.text(data.cooperative_name, pageWidth / 2, yPosition, { align: 'center' });
+    doc.text(data.cooperative_name || 'Cooperativa Agrícola La Pintada', pageWidth / 2, yPosition, { align: 'center' });
     yPosition += 10;
     
     doc.setFontSize(12);
     doc.setFont('helvetica', 'normal');
-    doc.text(`Reporte generado el: ${data.generated_date}`, pageWidth / 2, yPosition, { align: 'center' });
+    doc.text(`Reporte generado el: ${data.generated_date || new Date().toLocaleString('es-ES')}`, pageWidth / 2, yPosition, { align: 'center' });
     yPosition += 5;
-    doc.text(`Período: ${data.period}`, pageWidth / 2, yPosition, { align: 'center' });
+    doc.text(`Período: ${data.period || 'N/A'}`, pageWidth / 2, yPosition, { align: 'center' });
     yPosition += 20;
     
     // Línea separadora
@@ -1137,14 +1187,14 @@ async function generatePDFReport(data) {
     doc.setFontSize(10);
     doc.setFont('helvetica', 'normal');
     
-    // Tabla de KPIs
+    // Tabla de KPIs - Corregir valores y formato
     const kpiData = [
         ['Métrica', 'Valor Actual', 'Período Anterior', 'Cambio %'],
-        ['Ingresos Totales', formatCurrency(data.kpis.totalIncome), formatCurrency(data.kpis.totalIncome * 0.9), `${data.kpis.incomeChange}%`],
-        ['Aportes Recaudados', formatCurrency(data.kpis.totalContributions), formatCurrency(data.kpis.totalContributions * 0.95), '5.0%'],
-        ['Valor de Inventario', formatCurrency(data.kpis.inventoryValue), formatCurrency(data.kpis.inventoryValue * 0.95), '5.3%'],
-        ['Margen Bruto', `${data.kpis.grossMargin}%`, `${data.kpis.grossMargin * 0.9}%`, '10.0%'],
-        ['Socios Activos', data.kpis.activeMembers, data.kpis.activeMembers - 3, '5.1%']
+        ['Ingresos Totales', formatCurrency(totalIncome), formatCurrency(totalIncome * 0.9), `${incomeChange.toFixed(1)}%`],
+        ['Aportes Recaudados', formatCurrency(totalContributions), formatCurrency(totalContributions * 0.95), '5.0%'],
+        ['Socios Activos', activeMembers.toString(), Math.max(0, activeMembers - 3).toString(), '5.1%'],
+        ['Valor de Inventario', formatCurrency(inventoryValue), formatCurrency(inventoryValue * 0.95), '5.3%'],
+        ['Margen Bruto', `${grossMargin.toFixed(2)}%`, `${(grossMargin * 0.9).toFixed(2)}%`, '10.0%']
     ];
     
     doc.autoTable({
@@ -1172,13 +1222,13 @@ async function generatePDFReport(data) {
     doc.setFont('helvetica', 'normal');
     doc.text('La Cooperativa Agrícola La Pintada muestra un rendimiento sólido con:', 20, yPosition);
     yPosition += 8;
-    doc.text(`• Ingresos totales de ${formatCurrency(data.kpis.totalIncome)} con un crecimiento del ${data.kpis.incomeChange}%`, 25, yPosition);
+    doc.text(`• Ingresos totales de ${formatCurrency(totalIncome)} con un crecimiento del ${incomeChange.toFixed(1)}%`, 25, yPosition);
     yPosition += 6;
-    doc.text(`• ${data.kpis.activeMembers} socios activos contribuyendo al crecimiento`, 25, yPosition);
+    doc.text(`• ${activeMembers} socios activos contribuyendo al crecimiento`, 25, yPosition);
     yPosition += 6;
-    doc.text(`• Valor de inventario estimado en ${formatCurrency(data.kpis.inventoryValue)}`, 25, yPosition);
+    doc.text(`• Valor de inventario estimado en ${formatCurrency(inventoryValue)}`, 25, yPosition);
     yPosition += 6;
-    doc.text(`• Margen bruto del ${data.kpis.grossMargin}% indicando rentabilidad saludable`, 25, yPosition);
+    doc.text(`• Margen bruto del ${grossMargin.toFixed(2)}% indicando rentabilidad saludable`, 25, yPosition);
     yPosition += 20;
     
     // Footer
@@ -1194,5 +1244,5 @@ async function generatePDFReport(data) {
     doc.text('Generado automáticamente por el sistema de la Cooperativa Agrícola La Pintada', pageWidth / 2, yPosition, { align: 'center' });
     
     // Descargar el PDF
-    doc.save(data.filename);
+    doc.save(data.filename || 'reporte-cooperativa-' + new Date().toISOString().split('T')[0] + '.pdf');
 }

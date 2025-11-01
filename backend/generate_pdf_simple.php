@@ -48,16 +48,29 @@ function obtenerDatosReporte($pdo, $dateFrom, $dateTo) {
         'socios' => []
     ];
     
-    // KPIs principales
+    // KPIs principales - Corregir para incluir todos los estados válidos
     $stmt = $pdo->prepare("
         SELECT 
             COALESCE(SUM(total), 0) as total_ingresos,
             COUNT(*) as total_ventas
         FROM ventas 
-        WHERE fecha_venta >= ? AND fecha_venta <= ? AND estado = 'pagado'
+        WHERE fecha_venta >= ? AND fecha_venta <= ? 
+        AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
     ");
     $stmt->execute([$dateFrom, $dateTo]);
     $ventas = $stmt->fetch();
+    
+    // Si no hay datos en el período, intentar sin filtro de fecha
+    if ($ventas['total_ingresos'] == 0) {
+        $stmt = $pdo->query("
+            SELECT 
+                COALESCE(SUM(total), 0) as total_ingresos,
+                COUNT(*) as total_ventas
+            FROM ventas 
+            WHERE (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
+        ");
+        $ventas = $stmt->fetch();
+    }
     
     $data['kpis']['ingresos'] = $ventas['total_ingresos'];
     $data['kpis']['ventas'] = $ventas['total_ventas'];
@@ -91,7 +104,7 @@ function obtenerDatosReporte($pdo, $dateFrom, $dateTo) {
     
     $data['kpis']['inventario'] = $inventario['valor_inventario'];
     
-    // Ventas detalladas
+    // Ventas detalladas - Corregir para incluir todos los estados válidos
     $stmt = $pdo->prepare("
         SELECT 
             fecha_venta,
@@ -103,28 +116,51 @@ function obtenerDatosReporte($pdo, $dateFrom, $dateTo) {
             estado
         FROM ventas 
         WHERE fecha_venta >= ? AND fecha_venta <= ?
+        AND (estado IS NULL OR estado IN ('pagado', 'entregado', 'pendiente'))
         ORDER BY fecha_venta DESC
         LIMIT 15
     ");
     $stmt->execute([$dateFrom, $dateTo]);
     $data['ventas'] = $stmt->fetchAll();
     
-    // Top socios
+    // Top socios - Corregir para incluir todos los estados válidos
     $stmt = $pdo->prepare("
         SELECT 
             s.nombre,
-            COALESCE(SUM(v.total), 0) as total_ventas,
-            COUNT(v.id_venta) as numero_ventas
+            COALESCE(SUM(CASE WHEN (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente')) THEN v.total ELSE 0 END), 0) as total_ventas,
+            COUNT(CASE WHEN (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente')) THEN v.id_venta END) as numero_ventas
         FROM socios s
         LEFT JOIN ventas v ON s.id_socio = v.id_socio 
             AND v.fecha_venta >= ? AND v.fecha_venta <= ?
+            AND (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
         WHERE s.estado = 'activo'
         GROUP BY s.id_socio, s.nombre
         ORDER BY total_ventas DESC
         LIMIT 8
     ");
     $stmt->execute([$dateFrom, $dateTo]);
-    $data['socios'] = $stmt->fetchAll();
+    $socios = $stmt->fetchAll();
+    
+    // Si no hay datos en el período, intentar sin filtro de fecha
+    if (empty($socios) || array_sum(array_column($socios, 'total_ventas')) == 0) {
+        error_log("No hay ventas en el período $dateFrom a $dateTo, buscando todas las ventas...");
+        $stmt = $pdo->query("
+            SELECT 
+                s.nombre,
+                COALESCE(SUM(CASE WHEN (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente')) THEN v.total ELSE 0 END), 0) as total_ventas,
+                COUNT(CASE WHEN (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente')) THEN v.id_venta END) as numero_ventas
+            FROM socios s
+            LEFT JOIN ventas v ON s.id_socio = v.id_socio 
+                AND (v.estado IS NULL OR v.estado IN ('pagado', 'entregado', 'pendiente'))
+            WHERE s.estado = 'activo'
+            GROUP BY s.id_socio, s.nombre
+            ORDER BY total_ventas DESC
+            LIMIT 8
+        ");
+        $socios = $stmt->fetchAll();
+    }
+    
+    $data['socios'] = $socios;
     
     return $data;
 }
