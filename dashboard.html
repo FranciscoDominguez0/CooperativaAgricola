@@ -1350,35 +1350,7 @@
         const saveChangePassword = document.getElementById('saveChangePassword');
         if (saveChangePassword) {
             saveChangePassword.addEventListener('click', function() {
-                const currentPassword = document.getElementById('currentPassword').value;
-                const newPassword = document.getElementById('newPassword').value;
-                const confirmPassword = document.getElementById('confirmPassword').value;
-                
-                // Validaciones básicas
-                if (!currentPassword || !newPassword || !confirmPassword) {
-                    showToast('Por favor, completa todos los campos', 'error');
-                    return;
-                }
-                
-                if (newPassword !== confirmPassword) {
-                    showToast('Las contraseñas nuevas no coinciden', 'error');
-                    return;
-                }
-                
-                if (newPassword.length < 8) {
-                    showToast('La nueva contraseña debe tener al menos 8 caracteres', 'error');
-                    return;
-                }
-                
-                // Aquí puedes agregar lógica para cambiar la contraseña
-                showToast('Contraseña cambiada correctamente', 'success');
-                const modal = document.getElementById('changePasswordModal');
-                modal.style.display = 'none';
-                modal.classList.remove('show');
-                document.body.style.overflow = 'auto';
-                
-                // Limpiar formulario
-                document.getElementById('changePasswordForm').reset();
+                changePassword();
             });
         }
         

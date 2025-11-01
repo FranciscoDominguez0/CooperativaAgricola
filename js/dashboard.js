@@ -307,7 +307,12 @@ function setupEventListeners() {
     });
 
     document.getElementById('changePasswordBtn').addEventListener('click', function() {
-        showChangePasswordModal();
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.style.display = 'flex';
+            modal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
     });
 
     document.getElementById('changeAvatarBtn').addEventListener('click', function() {
@@ -904,15 +909,21 @@ async function loadSociosForProduccion() {
         
         if (data.success) {
             sociosList = data.data;
-            populateSociosDropdown();
+            return Promise.resolve();
+        } else {
+            console.error('Error al cargar socios:', data.message);
+            return Promise.resolve();
         }
     } catch (error) {
         console.error('Error al cargar socios:', error);
+        return Promise.resolve();
     }
 }
 
-function populateSociosDropdown() {
+function populateSociosDropdown(selectedSocioId = null) {
     const select = document.getElementById('id_socio');
+    if (!select) return;
+    
     select.innerHTML = '<option value="">Seleccionar socio</option>';
     
     sociosList.forEach(socio => {
@@ -921,6 +932,12 @@ function populateSociosDropdown() {
         option.textContent = socio.nombre;
         select.appendChild(option);
     });
+    
+    // Establecer el valor seleccionado después de poblar el dropdown
+    if (selectedSocioId) {
+        select.value = selectedSocioId;
+        console.log(`Socio seleccionado establecido: ${selectedSocioId}`);
+    }
 }
 
 async function loadProduccion(page = 1, search = '') {
@@ -1051,9 +1068,15 @@ function openProduccionModal(produccion = null) {
     const form = document.getElementById('produccionForm');
     const title = document.getElementById('produccionModalTitle');
     
+    // Guardar el id_socio antes de resetear o poblar el dropdown
+    let selectedSocioId = null;
+    
     if (produccion) {
         title.textContent = 'Editar Producción';
         console.log('Estableciendo datos en el formulario:', produccion);
+        
+        // Guardar el id_socio antes de establecer los valores
+        selectedSocioId = produccion.id_socio || null;
         
         Object.keys(produccion).forEach(key => {
             let fieldId = key;
@@ -1062,10 +1085,13 @@ function openProduccionModal(produccion = null) {
                 fieldId = 'produccionId';
             }
             
-            const field = document.getElementById(fieldId);
-            if (field) {
-                field.value = produccion[key];
-                console.log(`Campo ${key} (${fieldId}) establecido con valor:`, produccion[key]);
+            // No establecer id_socio aquí porque el dropdown se poblará después
+            if (key !== 'id_socio') {
+                const field = document.getElementById(fieldId);
+                if (field) {
+                    field.value = produccion[key];
+                    console.log(`Campo ${key} (${fieldId}) establecido con valor:`, produccion[key]);
+                }
             }
         });
     } else {
@@ -1077,11 +1103,13 @@ function openProduccionModal(produccion = null) {
         document.getElementById('unidad').value = 'quintales';
     }
     
-    // Cargar socios si no están cargados
+    // Cargar socios si no están cargados, y luego establecer el valor seleccionado
     if (sociosList.length === 0) {
-        loadSociosForProduccion();
+        loadSociosForProduccion().then(() => {
+            populateSociosDropdown(selectedSocioId);
+        });
     } else {
-        populateSociosDropdown();
+        populateSociosDropdown(selectedSocioId);
     }
     
     modal.style.display = 'flex';
@@ -1310,14 +1338,18 @@ async function loadSociosForVentas() {
         
         if (data.success) {
             sociosList = data.data;
-            populateSociosDropdownForVentas();
+            return Promise.resolve();
+        } else {
+            console.error('Error cargando socios para ventas:', data.message);
+            return Promise.resolve();
         }
     } catch (error) {
         console.error('Error cargando socios para ventas:', error);
+        return Promise.resolve();
     }
 }
 
-function populateSociosDropdownForVentas() {
+function populateSociosDropdownForVentas(selectedSocioId = null) {
     const select = document.getElementById('socioSelect');
     if (!select) return;
     
@@ -1329,6 +1361,12 @@ function populateSociosDropdownForVentas() {
         option.textContent = socio.nombre;
         select.appendChild(option);
     });
+    
+    // Establecer el valor seleccionado después de poblar el dropdown
+    if (selectedSocioId) {
+        select.value = selectedSocioId;
+        console.log(`Socio seleccionado establecido en ventas: ${selectedSocioId}`);
+    }
 }
 
 async function loadVentas(page = 1, search = '') {
@@ -1453,15 +1491,21 @@ function openVentaModal(venta = null) {
     const form = document.getElementById('ventaForm');
     const title = document.getElementById('ventaModalTitle');
     
+    // Guardar el id_socio antes de poblar el dropdown
+    let selectedSocioId = null;
+    let ventaData = null;
+    
     if (venta) {
         title.textContent = 'Editar Venta';
+        console.log('Estableciendo datos en el formulario de venta:', venta);
         
-        // Establecer valores específicos
+        // Guardar todos los datos de la venta para establecerlos después
+        ventaData = venta;
+        selectedSocioId = venta.id_socio || null;
+        
+        // Establecer valores inmediatos primero
         document.getElementById('ventaId').value = venta.id_venta || '';
-        document.getElementById('socioSelect').value = venta.id_socio || '';
         document.getElementById('producto').value = venta.producto || '';
-        document.getElementById('cantidad').value = venta.cantidad || '';
-        document.getElementById('precio_unitario').value = venta.precio_unitario || '';
         document.getElementById('cliente').value = venta.cliente || '';
         document.getElementById('fecha_venta').value = venta.fecha_venta || '';
         document.getElementById('fecha_entrega').value = venta.fecha_entrega || '';
@@ -1478,11 +1522,69 @@ function openVentaModal(venta = null) {
         document.getElementById('metodo_pago').value = 'efectivo';
     }
     
-    // Cargar socios si no están cargados
+    // Función para establecer valores numéricos después de que el dropdown esté listo
+    const setNumericValues = () => {
+        if (ventaData) {
+            // Establecer cantidad y precio_unitario después de que el DOM esté listo
+            const cantidadField = document.getElementById('cantidad');
+            const precioField = document.getElementById('precio_unitario');
+            
+            // Convertir y establecer cantidad
+            if (cantidadField) {
+                const cantidadValue = ventaData.cantidad;
+                if (cantidadValue !== null && cantidadValue !== undefined && cantidadValue !== '') {
+                    // Convertir a número y luego a string para asegurar formato correcto
+                    const cantidadNum = parseFloat(cantidadValue);
+                    if (!isNaN(cantidadNum)) {
+                        cantidadField.value = cantidadNum;
+                        console.log(`Cantidad establecida: ${cantidadNum} (original: ${cantidadValue})`);
+                    } else {
+                        console.warn(`Valor de cantidad inválido: ${cantidadValue}`);
+                    }
+                } else {
+                    console.warn('Cantidad es null, undefined o vacío');
+                }
+            } else {
+                console.error('Campo cantidad no encontrado');
+            }
+            
+            // Convertir y establecer precio_unitario
+            if (precioField) {
+                const precioValue = ventaData.precio_unitario;
+                if (precioValue !== null && precioValue !== undefined && precioValue !== '') {
+                    // Convertir a número y luego a string para asegurar formato correcto
+                    const precioNum = parseFloat(precioValue);
+                    if (!isNaN(precioNum)) {
+                        precioField.value = precioNum;
+                        console.log(`Precio unitario establecido: ${precioNum} (original: ${precioValue})`);
+                    } else {
+                        console.warn(`Valor de precio_unitario inválido: ${precioValue}`);
+                    }
+                } else {
+                    console.warn('Precio unitario es null, undefined o vacío');
+                }
+            } else {
+                console.error('Campo precio_unitario no encontrado');
+            }
+            
+            // Verificación final
+            console.log('Verificación final de campos:');
+            console.log('  - cantidad:', cantidadField?.value);
+            console.log('  - precio_unitario:', precioField?.value);
+        }
+    };
+    
+    // Cargar socios si no están cargados, y luego establecer el valor seleccionado
     if (sociosList.length === 0) {
-        loadSociosForVentas();
+        loadSociosForVentas().then(() => {
+            populateSociosDropdownForVentas(selectedSocioId);
+            // Establecer valores numéricos después de poblar el dropdown
+            setTimeout(setNumericValues, 100);
+        });
     } else {
-        populateSociosDropdownForVentas();
+        populateSociosDropdownForVentas(selectedSocioId);
+        // Establecer valores numéricos después de poblar el dropdown
+        setTimeout(setNumericValues, 100);
     }
     
     modal.style.display = 'flex';
@@ -1725,14 +1827,18 @@ async function loadSociosForPagos() {
         
         if (data.success) {
             sociosListPagos = data.data;
-            populateSociosDropdownForPagos();
+            return Promise.resolve();
+        } else {
+            console.error('Error cargando socios para pagos:', data.message);
+            return Promise.resolve();
         }
     } catch (error) {
         console.error('Error cargando socios para pagos:', error);
+        return Promise.resolve();
     }
 }
 
-function populateSociosDropdownForPagos() {
+function populateSociosDropdownForPagos(selectedSocioId = null) {
     const select = document.getElementById('pagoSocioSelect');
     if (!select) return;
     
@@ -1744,6 +1850,12 @@ function populateSociosDropdownForPagos() {
         option.textContent = socio.nombre;
         select.appendChild(option);
     });
+    
+    // Establecer el valor seleccionado después de poblar el dropdown
+    if (selectedSocioId) {
+        select.value = selectedSocioId;
+        console.log(`Socio seleccionado establecido en pagos: ${selectedSocioId}`);
+    }
 }
 
 async function loadPagos(page = 1, search = '') {
@@ -1877,38 +1989,158 @@ function openPagoModal(pago = null) {
     const form = document.getElementById('pagoForm');
     const title = document.getElementById('pagoModalTitle');
     
+    // NO resetear el formulario si estamos editando
+    if (pago) {
+        // NO hacer form.reset() para evitar que se pierdan los valores
+    } else {
+        // Solo resetear si es un nuevo pago
+        form.reset();
+    }
+    
+    // Guardar el id_socio, tipo y otros datos antes de poblar el dropdown
+    let selectedSocioId = null;
+    let selectedTipo = null;
+    let pagoData = null;
+    
     if (pago) {
         title.textContent = 'Editar Pago';
+        console.log('Estableciendo datos en el formulario de pago:', pago);
+        console.log('Tipo recibido del servidor:', pago.tipo, 'Tipo de dato:', typeof pago.tipo);
+        console.log('Descripción recibida del servidor:', pago.descripcion);
         
-        // Establecer valores específicos
+        // Guardar todos los datos del pago
+        selectedSocioId = pago.id_socio || null;
+        selectedTipo = pago.tipo || null;
+        pagoData = pago;
+        
+        // Establecer valores inmediatos (excepto pagoSocioSelect y tipo que se establecerán después)
         document.getElementById('pagoId').value = pago.id_pago || '';
-        document.getElementById('pagoSocioSelect').value = pago.id_socio || '';
-        document.getElementById('tipo').value = pago.tipo || '';
         document.getElementById('monto').value = pago.monto || '';
         document.getElementById('fecha_pago').value = pago.fecha_pago || '';
         document.getElementById('metodo_pago').value = pago.metodo_pago || 'efectivo';
         document.getElementById('estado').value = pago.estado || 'pendiente';
         document.getElementById('numero_comprobante').value = pago.numero_comprobante || '';
         document.getElementById('id_venta').value = pago.id_venta || '';
-        document.getElementById('descripcion').value = pago.descripcion || '';
         document.getElementById('observaciones').value = pago.observaciones || '';
+        
+        console.log(`Tipo guardado: ${selectedTipo}, Socio guardado: ${selectedSocioId}`);
     } else {
         title.textContent = 'Registrar Nuevo Pago';
-        form.reset();
         document.getElementById('pagoId').value = '';
         document.getElementById('fecha_pago').value = new Date().toISOString().split('T')[0];
         document.getElementById('estado').value = 'pendiente';
         document.getElementById('metodo_pago').value = 'efectivo';
     }
     
-    // Cargar socios si no están cargados
-    if (sociosListPagos.length === 0) {
-        loadSociosForPagos();
-    } else {
-        populateSociosDropdownForPagos();
-    }
-    
+    // Abrir el modal primero
     modal.style.display = 'flex';
+    
+    // Función para establecer tipo después de que el dropdown esté listo
+    const setTipoValue = () => {
+        if (selectedTipo) {
+            const tipoField = modal.querySelector('#tipo');
+            if (tipoField) {
+                // Limpiar espacios en blanco y convertir a string
+                const tipoClean = String(selectedTipo).trim();
+                
+                // Verificar que el valor existe en las opciones
+                const options = Array.from(tipoField.options);
+                const hasValue = options.some(opt => opt.value === tipoClean);
+                
+                console.log(`Intentando establecer tipo: "${tipoClean}"`);
+                console.log('Opciones disponibles:', options.map(opt => `"${opt.value}"`));
+                
+                if (hasValue) {
+                    // Establecer el valor directamente
+                    tipoField.value = tipoClean;
+                    
+                    // Verificar inmediatamente
+                    if (tipoField.value === tipoClean) {
+                        console.log(`✓ Tipo establecido correctamente: ${tipoClean}`);
+                    } else {
+                        console.warn(`⚠ Tipo no coincide después de establecer. Esperado: "${tipoClean}", Actual: "${tipoField.value}"`);
+                        
+                        // Intentar establecer usando selectedIndex
+                        for (let i = 0; i < options.length; i++) {
+                            if (options[i].value === tipoClean) {
+                                tipoField.selectedIndex = i;
+                                console.log(`✓ Tipo establecido usando selectedIndex: ${i}`);
+                                
+                                // Verificar de nuevo
+                                if (tipoField.value === tipoClean) {
+                                    console.log(`✓ Tipo confirmado después de selectedIndex: ${tipoField.value}`);
+                                } else {
+                                    console.error(`✗ Tipo aún no coincide después de selectedIndex`);
+                                    // Último intento: establecer directamente la propiedad value
+                                    options[i].selected = true;
+                                    tipoField.value = tipoClean;
+                                }
+                                break;
+                            }
+                        }
+                    }
+                    
+                    // Forzar el cambio del evento para asegurar que el valor se establezca
+                    tipoField.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    // Verificación final
+                    setTimeout(() => {
+                        if (tipoField.value !== tipoClean) {
+                            console.error(`✗ VERIFICACIÓN FINAL: Tipo no coincide. Esperado: "${tipoClean}", Actual: "${tipoField.value}"`);
+                        } else {
+                            console.log(`✓ VERIFICACIÓN FINAL: Tipo correctamente establecido: "${tipoField.value}"`);
+                        }
+                    }, 100);
+                } else {
+                    console.error(`✗ Valor de tipo no encontrado en las opciones: "${tipoClean}"`);
+                    console.log('Opciones disponibles:', options.map(opt => `"${opt.value}": ${opt.textContent}`));
+                }
+            } else {
+                console.error('Campo tipo no encontrado en el modal de pagos');
+            }
+        } else {
+            console.warn('selectedTipo es null o undefined');
+        }
+    };
+    
+    // Función para establecer descripción después de que el modal esté completamente visible
+    const setDescripcionValue = () => {
+        if (pagoData && pagoData.descripcion !== undefined && pagoData.descripcion !== null) {
+            // Buscar el campo de descripción dentro del modal de pagos específicamente
+            const descripcionField = modal.querySelector('#descripcion');
+            if (descripcionField) {
+                descripcionField.value = pagoData.descripcion || '';
+                console.log(`✓ Descripción establecida: "${pagoData.descripcion}"`);
+            } else {
+                console.error('Campo descripción no encontrado en el modal de pagos');
+            }
+        }
+    };
+    
+    // Cargar socios si no están cargados, y luego establecer el valor seleccionado
+    if (sociosListPagos.length === 0) {
+        loadSociosForPagos().then(() => {
+            populateSociosDropdownForPagos(selectedSocioId);
+            // Establecer tipo y descripción después de poblar el dropdown con múltiples intentos
+            setTimeout(setTipoValue, 100);
+            setTimeout(setTipoValue, 200);
+            setTimeout(setTipoValue, 300);
+            setTimeout(setTipoValue, 400);
+            setTimeout(setDescripcionValue, 100);
+            setTimeout(setDescripcionValue, 200);
+            setTimeout(setDescripcionValue, 300);
+        });
+    } else {
+        populateSociosDropdownForPagos(selectedSocioId);
+        // Establecer tipo y descripción después de poblar el dropdown con múltiples intentos
+        setTimeout(setTipoValue, 100);
+        setTimeout(setTipoValue, 200);
+        setTimeout(setTipoValue, 300);
+        setTimeout(setTipoValue, 400);
+        setTimeout(setDescripcionValue, 100);
+        setTimeout(setDescripcionValue, 200);
+        setTimeout(setDescripcionValue, 300);
+    }
 }
 
 function closePagoModal() {
@@ -2422,77 +2654,25 @@ async function saveUserProfile() {
     }
 }
 
-function showChangePasswordModal() {
-    console.log('Abriendo modal de cambiar contraseña');
-    // Crear modal para cambiar contraseña
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.id = 'changePasswordModal';
-    modal.innerHTML = `
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3><i class="fas fa-key"></i> Cambiar Contraseña</h3>
-                <button class="close-btn" id="closePasswordModal">&times;</button>
-            </div>
-            <div style="padding: 20px;">
-                <form id="changePasswordForm">
-                    <div class="form-group">
-                        <label for="currentPassword">Contraseña Actual</label>
-                        <input type="password" id="currentPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="newPassword">Nueva Contraseña</label>
-                        <input type="password" id="newPassword" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="confirmPassword">Confirmar Nueva Contraseña</label>
-                        <input type="password" id="confirmPassword" required>
-                    </div>
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="cancelPassword">Cancelar</button>
-                <button class="btn btn-primary" id="savePassword">Cambiar Contraseña</button>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    modal.style.display = 'flex';
-    
-    // Event listeners para el modal de contraseña
-    document.getElementById('closePasswordModal').addEventListener('click', () => {
-        modal.remove();
-    });
-    
-    document.getElementById('cancelPassword').addEventListener('click', () => {
-        modal.remove();
-    });
-    
-    document.getElementById('savePassword').addEventListener('click', async () => {
-        await changePassword();
-        modal.remove();
-    });
-    
-    modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-            modal.remove();
-        }
-    });
-}
+// Función eliminada - Ya no se usa porque el modal está en el HTML
 
 async function changePassword() {
     const currentPassword = document.getElementById('currentPassword').value;
     const newPassword = document.getElementById('newPassword').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
     
-    if (newPassword !== confirmPassword) {
-        showToast('Las contraseñas no coinciden', 'error');
+    if (!currentPassword || !newPassword || !confirmPassword) {
+        showToast('Por favor, completa todos los campos', 'error');
         return;
     }
     
-    if (newPassword.length < 6) {
-        showToast('La contraseña debe tener al menos 6 caracteres', 'error');
+    if (newPassword !== confirmPassword) {
+        showToast('Las contraseñas nuevas no coinciden', 'error');
+        return;
+    }
+    
+    if (newPassword.length < 8) {
+        showToast('La nueva contraseña debe tener al menos 8 caracteres', 'error');
         return;
     }
     
@@ -2506,7 +2686,21 @@ async function changePassword() {
         //     body: JSON.stringify({ currentPassword, newPassword })
         // });
         
-        showToast('Contraseña cambiada exitosamente', 'success');
+        showToast('Contraseña cambiada correctamente', 'success');
+        
+        // Cerrar el modal
+        const modal = document.getElementById('changePasswordModal');
+        if (modal) {
+            modal.style.display = 'none';
+            modal.classList.remove('show');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Limpiar formulario
+        const form = document.getElementById('changePasswordForm');
+        if (form) {
+            form.reset();
+        }
         
     } catch (error) {
         console.error('Error al cambiar contraseña:', error);
