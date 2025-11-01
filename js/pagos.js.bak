@@ -1,0 +1,703 @@
+// ===== FUNCIONES DE PAGOS =====
+
+console.log('✅ Script pagos.js cargado correctamente');
+
+let currentPagosPage = 1;
+let totalPagosPages = 1;
+let sociosListPagos = [];
+let searchInstance = null;
+
+// Verificar sesión al cargar la página
+async function checkSession() {
+    try {
+        const response = await fetch('php/verificar_sesion.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            document.getElementById('userName').textContent = data.user.nombre;
+            document.getElementById('userRole').textContent = data.user.rol;
+            loadPagosPage();
+        } else {
+            window.location.href = 'login.html';
+        }
+    } catch (error) {
+        console.error('Error verificando sesión:', error);
+        window.location.href = 'login.html';
+    }
+}
+
+// Cargar página de pagos
+async function loadPagosPage() {
+    await loadPagosStatistics();
+    await loadSociosForPagos();
+    initializeSearch();
+    await loadPagos();
+}
+
+async function loadPagosStatistics() {
+    try {
+        const response = await fetch('php/pagos.php?action=statistics');
+        const data = await response.json();
+        
+        if (data.success) {
+            updatePagosStatistics(data.statistics);
+        }
+    } catch (error) {
+        console.error('Error al cargar estadísticas de pagos:', error);
+    }
+}
+
+function updatePagosStatistics(stats) {
+    const ingresosTotales = parseFloat(stats.ingresos_totales || 0);
+    const formattedTotal = `$${ingresosTotales.toLocaleString()}`;
+    
+    const ingresosTotalesElement = document.getElementById('ingresosTotales');
+    ingresosTotalesElement.textContent = formattedTotal;
+    
+    // Detectar si el número es muy largo y aplicar clase especial
+    if (formattedTotal.length > 12) {
+        ingresosTotalesElement.classList.add('long-number');
+    } else {
+        ingresosTotalesElement.classList.remove('long-number');
+    }
+    
+    document.getElementById('pagosPendientes').textContent = stats.pagos_pendientes || '0';
+    document.getElementById('pagosConfirmados').textContent = stats.pagos_confirmados || '0';
+    document.getElementById('aportesMensuales').textContent = stats.aportes_mensuales || '0';
+}
+
+async function loadSociosForPagos() {
+    try {
+        const response = await fetch('php/socios.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            sociosListPagos = data.data;
+            populateSociosDropdownForPagos();
+        }
+    } catch (error) {
+        console.error('Error cargando socios para pagos:', error);
+    }
+}
+
+function populateSociosDropdownForPagos() {
+    const select = document.getElementById('pagoSocioSelect');
+    if (!select) return;
+    
+    select.innerHTML = '<option value="">Seleccionar socio</option>';
+    
+    sociosListPagos.forEach(socio => {
+        const option = document.createElement('option');
+        option.value = socio.id_socio;
+        option.textContent = socio.nombre;
+        select.appendChild(option);
+    });
+}
+
+async function loadPagos(page = 1, search = '') {
+    try {
+        // Use enhanced search API if search term is provided
+        if (search && search.trim().length > 0) {
+            const params = new URLSearchParams({
+                module: 'pagos',
+                search: search,
+                page: page,
+                limit: 10
+            });
+            
+            console.log('Using enhanced search API for payments:', params.toString());
+            const response = await fetch(`php/search.php?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log('Payments search results loaded:', data.data);
+                displayPagos(data.data);
+                displayPagosPagination(data.pagination);
+                currentPagosPage = data.pagination.current_page;
+                totalPagosPages = data.pagination.total_pages;
+            } else {
+                console.error('Payments search error:', data.message);
+                showToast('Error en la búsqueda: ' + data.message, 'error');
+            }
+        } else {
+            // Use standard API for no search
+            const params = new URLSearchParams({
+                page: page,
+                limit: 10,
+                search: search
+            });
+            
+            const response = await fetch(`php/pagos.php?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                displayPagos(data.data);
+                displayPagosPagination(data.pagination);
+                currentPagosPage = data.pagination.current_page;
+                totalPagosPages = data.pagination.total_pages;
+            } else {
+                showToast('Error al cargar pagos: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error de conexión', 'error');
+    }
+}
+
+function displayPagos(pagos) {
+    const tbody = document.getElementById('pagosTableBody');
+    tbody.innerHTML = '';
+    
+    if (pagos.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="no-data">
+                    <div class="no-data-content">
+                        <i class="fas fa-money-bill-wave"></i>
+                        <p>No hay registros de pagos</p>
+                        <small>Comienza registrando el primer pago</small>
+                    </div>
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    pagos.forEach((item, index) => {
+        const row = document.createElement('tr');
+        row.className = 'table-row-enter';
+        row.style.setProperty('--row-index', index);
+        
+        row.innerHTML = `
+            <td>${item.id_pago}</td>
+            <td>${item.nombre_socio || '-'}</td>
+            <td><span class="tipo-badge tipo-${item.tipo}">${getTipoDisplay(item.tipo)}</span></td>
+            <td>${item.descripcion || '-'}</td>
+            <td>$${parseFloat(item.monto).toLocaleString()}</td>
+            <td>${formatDate(item.fecha_pago)}</td>
+            <td><span class="status-badge status-${item.estado}">${getEstadoDisplayPagos(item.estado)}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-edit" onclick="editPago(${item.id_pago})" title="Editar pago">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeletePago(${item.id_pago}, '${item.descripcion || item.tipo}')" title="Eliminar pago">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function getTipoDisplay(tipo) {
+    const tipos = {
+        'aporte_mensual': 'Aporte Mensual',
+        'aporte_extraordinario': 'Aporte Extraordinario',
+        'pago_venta': 'Pago de Venta',
+        'prestamo': 'Préstamo',
+        'devolucion': 'Devolución'
+    };
+    return tipos[tipo] || tipo;
+}
+
+function getEstadoDisplayPagos(estado) {
+    const estados = {
+        'pendiente': 'Pendiente',
+        'confirmado': 'Confirmado',
+        'rechazado': 'Rechazado'
+    };
+    return estados[estado] || estado;
+}
+
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
+// Función auxiliar para obtener el término de búsqueda activo
+function getActiveSearchTermPagos() {
+    const historialSearch = document.getElementById('searchInputHistorial_pagos');
+    const mainSearch = document.getElementById('searchInput_pagos');
+    
+    if (historialSearch && historialSearch.value.trim()) {
+        return historialSearch.value;
+    }
+    if (mainSearch && mainSearch.value.trim()) {
+        return mainSearch.value;
+    }
+    return '';
+}
+
+function displayPagosPagination(pagination) {
+    const paginationDiv = document.getElementById('pagosPagination');
+    paginationDiv.innerHTML = '';
+    
+    if (pagination.total_pages <= 1) return;
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.textContent = 'Anterior';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => loadPagos(pagination.current_page - 1, getActiveSearchTermPagos());
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.textContent = i;
+            pageBtn.className = i === pagination.current_page ? 'active' : '';
+            pageBtn.onclick = () => loadPagos(i, getActiveSearchTermPagos());
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.textContent = 'Siguiente';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => loadPagos(pagination.current_page + 1, getActiveSearchTermPagos());
+    paginationDiv.appendChild(nextBtn);
+}
+
+// Función solo para crear nuevo pago
+function openPagoModal() {
+    const modal = document.getElementById('pagoModal');
+    const form = document.getElementById('pagoForm');
+    const title = document.getElementById('pagoModalTitle');
+    
+    // MODO CREAR NUEVO
+    title.textContent = 'Registrar Nuevo Pago';
+    form.reset();
+    document.getElementById('pagoId').value = '';
+    document.getElementById('fecha_pago').value = new Date().toISOString().split('T')[0];
+    document.getElementById('estado').value = 'pendiente';
+    document.getElementById('metodo_pago').value = 'efectivo';
+    
+    modal.style.display = 'flex';
+}
+
+function closePagoModal() {
+    const modal = document.getElementById('pagoModal');
+    const form = document.getElementById('pagoForm');
+    
+    // Ocultar modal
+    modal.style.display = 'none';
+    
+    // Limpiar formulario solo al cerrar
+    form.reset();
+    document.getElementById('pagoId').value = '';
+    
+    console.log('Modal cerrado y formulario limpiado');
+}
+
+async function savePago() {
+    const form = document.getElementById('pagoForm');
+    const pagoId = document.getElementById('pagoId').value;
+    
+    try {
+        if (pagoId) {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_pago' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch(`php/pagos.php?action=update&id=${pagoId}`, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closePagoModal();
+                loadPagos(currentPagosPage, getActiveSearchTermPagos());
+                loadPagosStatistics();
+                showToast('Pago actualizado exitosamente', 'success');
+            } else {
+                showToast('Error al actualizar pago: ' + data.message, 'error');
+            }
+        } else {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_pago' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch('php/pagos.php?action=create', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closePagoModal();
+                loadPagos(currentPagosPage, getActiveSearchTermPagos());
+                loadPagosStatistics();
+                showToast('Nuevo pago registrado exitosamente', 'success');
+            } else {
+                showToast('Error al registrar pago: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar el pago', 'error');
+    }
+}
+
+// Exponer función globalmente para onclick
+window.editPago = async function(pagoId) {
+    console.log('🎯 EDITAR PAGO - ID:', pagoId);
+    
+    try {
+        // Obtener datos del pago
+        const response = await fetch(`php/pagos.php?action=get&id=${pagoId}`);
+        const data = await response.json();
+        
+        if (!data.success || !data.data) {
+            alert('Error al cargar el pago: ' + (data.message || 'Datos no encontrados'));
+            return;
+        }
+        
+        const pago = data.data;
+        console.log('📦 Datos del pago:', pago);
+        
+        // Abrir modal y llenar datos
+        await llenarModalConDatos(pago);
+        
+    } catch (error) {
+        console.error('❌ Error:', error);
+        alert('Error al cargar el pago: ' + error.message);
+    }
+}
+
+// Nueva función específica para llenar el modal
+async function llenarModalConDatos(pago) {
+    console.log('🔄 LLENANDO MODAL CON DATOS');
+    
+    // Asegurar que los socios estén cargados
+    if (sociosListPagos.length === 0) {
+        console.log('📥 Cargando socios...');
+        await loadSociosForPagos();
+    }
+    
+    // Obtener elementos del modal
+    const modal = document.getElementById('pagoModal');
+    const form = document.getElementById('pagoForm');
+    const title = document.getElementById('pagoModalTitle');
+    
+    // Configurar título
+    title.textContent = 'Editar Pago';
+    
+    // Limpiar formulario
+    form.reset();
+    
+    // Establecer ID
+    document.getElementById('pagoId').value = pago.id_pago || '';
+    
+    // Establecer socio
+    const socioSelect = document.getElementById('pagoSocioSelect');
+    const socioId = String(pago.id_socio || '');
+    
+    console.log('👤 Configurando socio ID:', socioId);
+    console.log('👤 Opciones disponibles:', socioSelect.options.length);
+    
+    // Buscar el socio en las opciones
+    let socioIndex = -1;
+    for (let i = 0; i < socioSelect.options.length; i++) {
+        if (socioSelect.options[i].value === socioId) {
+            socioIndex = i;
+            break;
+        }
+    }
+    
+    if (socioIndex >= 0) {
+        socioSelect.selectedIndex = socioIndex;
+        console.log('✅ Socio seleccionado:', socioSelect.options[socioIndex].text);
+    } else {
+        console.error('❌ Socio no encontrado en dropdown');
+    }
+    
+    // Establecer todos los demás campos
+    document.getElementById('tipo').value = pago.tipo || '';
+    document.getElementById('monto').value = pago.monto || '';
+    document.getElementById('fecha_pago').value = pago.fecha_pago || '';
+    document.getElementById('metodo_pago').value = pago.metodo_pago || 'efectivo';
+    document.getElementById('estado').value = pago.estado || 'pendiente';
+    document.getElementById('numero_comprobante').value = pago.numero_comprobante || '';
+    document.getElementById('id_venta').value = pago.id_venta || '';
+    
+    // Textareas
+    document.getElementById('descripcion').value = pago.descripcion || '';
+    document.getElementById('observaciones').value = pago.observaciones || '';
+    
+    console.log('📝 Campos llenados:');
+    console.log('  - Socio:', socioSelect.value, '(', socioSelect.options[socioSelect.selectedIndex]?.text, ')');
+    console.log('  - Tipo:', document.getElementById('tipo').value);
+    console.log('  - Descripción:', document.getElementById('descripcion').value);
+    console.log('  - Observaciones:', document.getElementById('observaciones').value);
+    
+    // Mostrar modal
+    modal.style.display = 'flex';
+    console.log('✅ Modal mostrado');
+}
+
+// Exponer función globalmente para onclick
+window.confirmDeletePago = function(pagoId, descripcion) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Pago?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar el pago de <strong>"${descripcion}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deletePago(pagoId);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
+
+async function deletePago(pagoId) {
+    try {
+        const response = await fetch(`php/pagos.php?action=delete&id=${pagoId}`, {
+            method: 'DELETE'
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            loadPagos(currentPagosPage, getActiveSearchTermPagos());
+            loadPagosStatistics();
+            showToast(data.message, 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar el pago', 'error');
+    }
+}
+
+// Función para mostrar notificaciones
+function showNotifications() {
+    showToast('Tienes 3 notificaciones nuevas', 'info');
+}
+
+// Función para mostrar mensajes
+function showMessages() {
+    showToast('Tienes 5 mensajes sin leer', 'info');
+}
+
+// Función para mostrar toasts
+function showToast(message, type = 'info') {
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `
+        <div class="toast-content">
+            <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+            <span>${message}</span>
+        </div>
+    `;
+    
+    document.getElementById('toastContainer').appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add('toast-enter');
+    }, 100);
+    
+    setTimeout(() => {
+        toast.classList.add('toast-exit');
+        setTimeout(() => {
+            toast.remove();
+        }, 300);
+    }, 3000);
+}
+
+// Event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    checkSession();
+    
+    // Event listeners para pagos
+    document.getElementById('addPagoBtn').addEventListener('click', function() {
+        openPagoModal();
+    });
+
+    document.getElementById('pagoForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await savePago();
+    });
+
+    document.getElementById('cancelPagoBtn').addEventListener('click', function() {
+        closePagoModal();
+    });
+
+    document.getElementById('pagoModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closePagoModal();
+        }
+    });
+
+    // Event listeners para logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'flex';
+    });
+
+    document.getElementById('confirmLogout').addEventListener('click', function() {
+        window.location.href = 'php/logout.php';
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'none';
+    });
+
+    // Event listeners para los botones del header
+    const notificationsBtn = document.getElementById('notificationsBtn');
+    const messagesBtn = document.getElementById('messagesBtn');
+
+    if (notificationsBtn) {
+        notificationsBtn.addEventListener('click', showNotifications);
+    }
+
+    if (messagesBtn) {
+        messagesBtn.addEventListener('click', showMessages);
+    }
+    
+    // Buscador del historial (similar al de socios)
+    const searchInputHistorial = document.getElementById('searchInputHistorial_pagos');
+    if (searchInputHistorial) {
+        searchInputHistorial.addEventListener('input', function() {
+            const searchTerm = this.value;
+            loadPagos(1, searchTerm);
+        });
+    }
+});
+
+// Initialize search functionality
+function initializeSearch() {
+    if (typeof CooperativeSearch !== 'undefined') {
+        searchInstance = new CooperativeSearch({
+            module: 'pagos',
+            searchFields: ['tipo', 'estado', 'metodo_pago', 'comprobante'],
+            tableBodyId: 'pagosTableBody',
+            loadFunction: loadPagos,
+            debounceTime: 300,
+            minSearchLength: 2
+        });
+    } else {
+        // Fallback: Initialize search manually if CooperativeSearch is not available
+        initializeManualSearchPagos();
+    }
+}
+
+function initializeManualSearchPagos() {
+    const searchInput = document.getElementById('searchInput_pagos');
+    const searchClear = document.getElementById('searchClear_pagos');
+    const searchReset = document.getElementById('searchReset_pagos');
+    const filterButtons = document.querySelectorAll('#searchFilters_pagos .filter-btn');
+    
+    if (!searchInput) {
+        console.error('Search input not found for payments module');
+        return;
+    }
+    
+    let searchTimeout = null;
+    
+    // Search input events
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        
+        // Show/hide clear button
+        if (searchClear) {
+            searchClear.style.display = searchTerm.length > 0 ? 'block' : 'none';
+        }
+        
+        // Debounce search
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        searchTimeout = setTimeout(() => {
+            loadPagos(1, searchTerm);
+        }, 300);
+    });
+    
+    // Clear search button
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            loadPagos(1, '');
+        });
+    }
+    
+    // Reset search button
+    if (searchReset) {
+        searchReset.addEventListener('click', () => {
+            searchInput.value = '';
+            if (searchClear) searchClear.style.display = 'none';
+            loadPagos(1, '');
+        });
+    }
+    
+    // Filter buttons
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filter = e.currentTarget.dataset.filter;
+            searchInput.placeholder = `Filtrando por ${filter}...`;
+            searchInput.focus();
+            
+            // Update filter button states
+            filterButtons.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+        });
+    });
+}

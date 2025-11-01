@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Producción - Cooperativa Agrícola La Pintada</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/creative-messages.css">
+    <link rel="stylesheet" href="css/search.css">
+    <link rel="stylesheet" href="css/dark-mode.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1>Cooperativa Agrícola La Pintada</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Usuario</div>
+                    <div class="user-role" id="userRole">Miembro</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <div class="nav-item" data-section="socios">
+                <i class="fas fa-users"></i>
+                Socios
+            </div>
+            <div class="nav-item" data-section="insumos">
+                <i class="fas fa-seedling"></i>
+                Insumos
+            </div>
+            <div class="nav-item active" data-section="produccion">
+                <i class="fas fa-chart-bar"></i>
+                Producción
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Cargando producción...</p>
+            <p style="font-size: 12px; color: #666; margin-top: 10px;" id="debugInfo">Verificando sesión...</p>
+        </div>
+
+        <!-- Producción Section -->
+        <section class="content-section active" id="produccionSection">
+            <div class="produccion-section">
+                <div class="section-header animate-fade-in-up">
+                    <h2 class="section-title">
+                        <i class="fas fa-chart-bar"></i>
+                        Gestión de Producción
+                    </h2>
+                    <div class="search-container stagger-animation">
+                        <div class="search-wrapper">
+                            <div class="search-input-group">
+                                <i class="fas fa-search search-icon"></i>
+                                <input 
+                                    type="text" 
+                                    id="searchInput_produccion" 
+                                    class="search-input" 
+                                    placeholder="Buscar por cultivo, variedad, calidad o socio..."
+                                    autocomplete="off"
+                                >
+                                <button class="search-clear-btn" id="searchClear_produccion" style="display: none;">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                            <div class="search-filters" id="searchFilters_produccion">
+                                <button class="filter-btn" data-filter="cultivo" title="Filtrar por Cultivo">
+                                    <i class="fas fa-seedling"></i>
+                                    <span>Cultivo</span>
+                                </button>
+                                <button class="filter-btn" data-filter="variedad" title="Filtrar por Variedad">
+                                    <i class="fas fa-leaf"></i>
+                                    <span>Variedad</span>
+                                </button>
+                                <button class="filter-btn" data-filter="calidad" title="Filtrar por Calidad">
+                                    <i class="fas fa-star"></i>
+                                    <span>Calidad</span>
+                                </button>
+                                <button class="filter-btn" data-filter="socio" title="Filtrar por Socio">
+                                    <i class="fas fa-user"></i>
+                                    <span>Socio</span>
+                                </button>
+                            </div>
+                            <div class="search-results-info" id="searchResults_produccion" style="display: none;">
+                                <span class="search-count"></span>
+                                <button class="search-reset-btn" id="searchReset_produccion">
+                                    <i class="fas fa-undo"></i> Limpiar búsqueda
+                                </button>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-animate hover-lift" id="addProduccionBtn">
+                            <i class="fas fa-plus"></i> Registrar Producción
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid animate-fade-in-up" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="totalProduccion">0</div>
+                            <div class="stat-label">Producción Total</div>
+                            <div class="stat-unit" id="totalProduccionUnit">quintales</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-seedling"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="cultivosActivos">0</div>
+                            <div class="stat-label">Cultivos Activos</div>
+                        </div>
+                    </div>
+                    <div class="stat-card stat-card-dark">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="productoresActivos">0</div>
+                            <div class="stat-label">Productores Activos</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="calidadPremium">0%</div>
+                            <div class="stat-label">Calidad Premium</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-container animate-slide-in-right">
+                    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; width: 100%; padding: 1rem 0;">
+                        <div>
+                            <h3>Registro de Producción</h3>
+                            <p>Historial de cosechas registradas por socio</p>
+                        </div>
+                        <div style="display: flex; align-items: center; background: #f8fafc; border: 2px solid #e5e7eb; border-radius: 10px; padding: 0.5rem 0.75rem; min-width: 250px; max-width: 400px; flex: 1;">
+                            <i class="fas fa-search" style="color: #6b7280; margin-right: 0.5rem; font-size: 0.875rem;"></i>
+                            <input type="text" id="searchInputHistorial_produccion" class="search-input smooth-transition" placeholder="Buscar en historial..." style="flex: 1; border: none; outline: none; background: transparent; font-size: 0.875rem; color: #1f2937; width: 100%;">
+                        </div>
+                    </div>
+                    <table class="table" id="produccionTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Cultivo</th>
+                                <th>Variedad</th>
+                                <th>Cantidad</th>
+                                <th>Fecha</th>
+                                <th>Calidad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="produccionTableBody">
+                            <!-- Los datos se cargarán aquí -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination animate-fade-in-up" id="pagination">
+                    <!-- La paginación se generará aquí -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Modal para agregar/editar producción -->
+    <div class="modal" id="produccionModal">
+        <div class="modal-content modal-enter">
+            <h3 id="modalTitle">Registrar Nueva Producción</h3>
+            <form id="produccionForm">
+                <input type="hidden" id="produccionId" name="id_produccion">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="id_socio">Socio *</label>
+                        <select id="id_socio" name="id_socio" class="form-control" required>
+                            <option value="">Seleccionar socio</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="cultivo">Cultivo *</label>
+                        <input type="text" id="cultivo" name="cultivo" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="variedad">Variedad</label>
+                        <input type="text" id="variedad" name="variedad" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="cantidad">Cantidad *</label>
+                        <input type="number" id="cantidad" name="cantidad" class="form-control" step="0.01" min="0" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="unidad">Unidad *</label>
+                        <select id="unidad" name="unidad" class="form-control" required>
+                            <option value="quintales">Quintales</option>
+                            <option value="toneladas">Toneladas</option>
+                            <option value="libras">Libras</option>
+                            <option value="sacos">Sacos</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="area_cultivada">Área Cultivada (hectáreas)</label>
+                        <input type="number" id="area_cultivada" name="area_cultivada" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fecha_siembra">Fecha de Siembra</label>
+                        <input type="date" id="fecha_siembra" name="fecha_siembra" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label for="fecha_recoleccion">Fecha de Recolección *</label>
+                        <input type="date" id="fecha_recoleccion" name="fecha_recoleccion" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="calidad">Calidad *</label>
+                        <select id="calidad" name="calidad" class="form-control" required>
+                            <option value="premium">Premium</option>
+                            <option value="buena">Buena</option>
+                            <option value="regular">Regular</option>
+                            <option value="baja">Baja</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="precio_estimado">Precio Estimado</label>
+                        <input type="number" id="precio_estimado" name="precio_estimado" class="form-control" step="0.01" min="0">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="observaciones">Observaciones</label>
+                    <textarea id="observaciones" name="observaciones" class="form-control" rows="3"></textarea>
+                </div>
+
+                <div class="modal-buttons stagger-animation">
+                    <button type="button" class="btn btn-secondary btn-animate hover-lift" id="cancelBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary btn-animate hover-lift" id="saveBtn">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Logout Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <h3>¿Cerrar Sesión?</h3>
+            <p>¿Estás seguro de que deseas cerrar tu sesión?</p>
+            <div class="modal-buttons">
+                <button class="btn btn-primary" id="confirmLogout">Sí, Cerrar Sesión</button>
+                <button class="btn btn-secondary" id="cancelLogout">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <script src="js/search.js"></script>
+    <script src="js/produccion.js"></script>
+    <script src="js/dark-mode.js"></script>
+</body>
+</html>

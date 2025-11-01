@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Tablas Mejoradas con Scroll</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .section {
+            margin: 30px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #d4ff00;
+        }
+        .section h2 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+        .feature {
+            padding: 10px;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #3b82f6;
+        }
+        .feature h4 {
+            color: #1a3a2e;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+        .feature p {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>📊 Test - Tablas Mejoradas con Scroll</h1>
+            <p>Mejoras en visualización y scroll para Socios e Insumos</p>
+        </div>
+        
+        <!-- Tabla de Socios -->
+        <div class="section">
+            <h2><i class="fas fa-users"></i> Tabla de Socios - Con Scroll Horizontal</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <h4>📏 Scroll Horizontal</h4>
+                    <p>Tabla con ancho mínimo de 1000px</p>
+                </div>
+                <div class="feature">
+                    <h4>📌 Columna Fija</h4>
+                    <p>Acciones siempre visibles</p>
+                </div>
+                <div class="feature">
+                    <h4>📜 Scroll Vertical</h4>
+                    <p>En acciones si hay muchas</p>
+                </div>
+                <div class="feature">
+                    <h4>📱 Responsive</h4>
+                    <p>Se adapta a pantallas pequeñas</p>
+                </div>
+            </div>
+            
+            <div class="socios-section">
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                                <th>Estado</th>
+                                <th>Aportes</th>
+                                <th>Deudas</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span class="socio-id">1</span></td>
+                                <td>
+                                    <div class="socio-info">
+                                        <div class="socio-nombre">Juan Carlos Pérez</div>
+                                        <div class="socio-direccion">Calle 123, Barrio Centro</div>
+                                    </div>
+                                </td>
+                                <td><span class="cedula-info">12345678</span></td>
+                                <td>
+                                    <a href="tel:555-0101" class="contact-link" title="Llamar">
+                                        <i class="fas fa-phone"></i> 555-0101
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="mailto:juan@email.com" class="contact-link" title="Enviar email">
+                                        <i class="fas fa-envelope"></i> juan@email.com
+                                    </a>
+                                </td>
+                                <td><span class="status-badge status-activo">Activo</span></td>
+                                <td>
+                                    <span class="amount positive has-amount">
+                                        <i class="fas fa-arrow-up"></i> $2,500
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="amount negative no-debt">
+                                        <i class="fas fa-arrow-down"></i> $0
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar socio 1')" title="Editar socio">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles socio 1')" title="Ver detalles">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>
+                                        <button class="btn btn-sm btn-warning btn-animate hover-scale micro-bounce" onclick="alert('Historial socio 1')" title="Historial">
+                                            <i class="fas fa-history"></i> Historial
+                                        </button>
+                                        <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar socio 1')" title="Eliminar socio">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><span class="socio-id">2</span></td>
+                                <td>
+                                    <div class="socio-info">
+                                        <div class="socio-nombre">María Elena García</div>
+                                        <div class="socio-direccion">Avenida Principal 456</div>
+                                    </div>
+                                </td>
+                                <td><span class="cedula-info">87654321</span></td>
+                                <td>
+                                    <a href="tel:555-0202" class="contact-link" title="Llamar">
+                                        <i class="fas fa-phone"></i> 555-0202
+                                    </a>
+                                </td>
+                                <td>
+                                    <a href="mailto:maria@email.com" class="contact-link" title="Enviar email">
+                                        <i class="fas fa-envelope"></i> maria@email.com
+                                    </a>
+                                </td>
+                                <td><span class="status-badge status-activo">Activo</span></td>
+                                <td>
+                                    <span class="amount positive has-amount">
+                                        <i class="fas fa-arrow-up"></i> $1,800
+                                    </span>
+                                </td>
+                                <td>
+                                    <span class="amount negative has-debt">
+                                        <i class="fas fa-arrow-down"></i> $500
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar socio 2')" title="Editar socio">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles socio 2')" title="Ver detalles">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>
+                                        <button class="btn btn-sm btn-warning btn-animate hover-scale micro-bounce" onclick="alert('Historial socio 2')" title="Historial">
+                                            <i class="fas fa-history"></i> Historial
+                                        </button>
+                                        <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar socio 2')" title="Eliminar socio">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Tabla de Insumos -->
+        <div class="section">
+            <h2><i class="fas fa-boxes"></i> Tabla de Insumos - Más Compacta</h2>
+            
+            <div class="features">
+                <div class="feature">
+                    <h4>📦 Más Compacta</h4>
+                    <p>Ancho mínimo de 900px</p>
+                </div>
+                <div class="feature">
+                    <h4>📊 Datos Visuales</h4>
+                    <p>Cantidades y precios destacados</p>
+                </div>
+                <div class="feature">
+                    <h4>📌 Acciones Fijas</h4>
+                    <p>Columna de acciones siempre visible</p>
+                </div>
+                <div class="feature">
+                    <h4>📱 Responsive</h4>
+                    <p>Se adapta a móviles</p>
+                </div>
+            </div>
+            
+            <div class="insumos-section">
+                <div class="table-container">
+                    <table class="table" id="insumosTable">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Tipo</th>
+                                <th>Cant. Disponible</th>
+                                <th>Precio Unitario</th>
+                                <th>Proveedor</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><span class="insumo-nombre">Fertilizante NPK</span></td>
+                                <td><span class="type-badge type-fertilizante">Fertilizante</span></td>
+                                <td><span class="insumo-cantidad">150 kg</span></td>
+                                <td><span class="insumo-precio">$25.50</span></td>
+                                <td><span class="insumo-proveedor">AgroSupply</span></td>
+                                <td><span class="status-badge status-disponible">Disponible</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar insumo 1')" title="Editar insumo">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles insumo 1')" title="Ver detalles">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>
+                                        <button class="btn btn-sm btn-warning btn-animate hover-scale micro-bounce" onclick="alert('Ajustar stock insumo 1')" title="Ajustar stock">
+                                            <i class="fas fa-warehouse"></i> Stock
+                                        </button>
+                                        <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar insumo 1')" title="Eliminar insumo">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><span class="insumo-nombre">Semillas de Maíz</span></td>
+                                <td><span class="type-badge type-semilla">Semilla</span></td>
+                                <td><span class="insumo-cantidad">500 kg</span></td>
+                                <td><span class="insumo-precio">$8.75</span></td>
+                                <td><span class="insumo-proveedor">SeedCorp</span></td>
+                                <td><span class="status-badge status-disponible">Disponible</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar insumo 2')" title="Editar insumo">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles insumo 2')" title="Ver detalles">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>
+                                        <button class="btn btn-sm btn-warning btn-animate hover-scale micro-bounce" onclick="alert('Ajustar stock insumo 2')" title="Ajustar stock">
+                                            <i class="fas fa-warehouse"></i> Stock
+                                        </button>
+                                        <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar insumo 2')" title="Eliminar insumo">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td><span class="insumo-nombre">Herbicida Glifosato</span></td>
+                                <td><span class="type-badge type-herbicida">Herbicida</span></td>
+                                <td><span class="insumo-cantidad">25 L</span></td>
+                                <td><span class="insumo-precio">$45.00</span></td>
+                                <td><span class="insumo-proveedor">ChemAgro</span></td>
+                                <td><span class="status-badge status-bajo-stock">Bajo Stock</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-sm btn-primary btn-animate hover-scale micro-bounce" onclick="alert('Editar insumo 3')" title="Editar insumo">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-sm btn-info btn-animate hover-scale micro-bounce" onclick="alert('Ver detalles insumo 3')" title="Ver detalles">
+                                            <i class="fas fa-eye"></i> Ver
+                                        </button>
+                                        <button class="btn btn-sm btn-warning btn-animate hover-scale micro-bounce" onclick="alert('Ajustar stock insumo 3')" title="Ajustar stock">
+                                            <i class="fas fa-warehouse"></i> Stock
+                                        </button>
+                                        <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="alert('Eliminar insumo 3')" title="Eliminar insumo">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">✅ Mejoras Implementadas:</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Scroll horizontal:</strong> Ambas tablas tienen scroll cuando no caben en pantalla</li>
+                <li><strong>Columnas fijas:</strong> Las acciones permanecen visibles al hacer scroll</li>
+                <li><strong>Scroll vertical en acciones:</strong> Si hay muchas acciones, aparece scroll</li>
+                <li><strong>Anchos optimizados:</strong> Columnas con anchos mínimos y máximos</li>
+                <li><strong>Datos visuales:</strong> Cantidades, precios y montos destacados</li>
+                <li><strong>Scroll personalizado:</strong> Barras de scroll estilizadas</li>
+                <li><strong>Responsive:</strong> Se adapta a pantallas pequeñas</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">🔍 Instrucciones de Prueba:</h4>
+            <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                <strong>1.</strong> Haz scroll horizontal en las tablas para ver todas las columnas<br>
+                <strong>2.</strong> Observa que la columna de acciones permanece fija<br>
+                <strong>3.</strong> En pantallas pequeñas, las tablas se adaptan automáticamente<br>
+                <strong>4.</strong> Los datos se ven mejor organizados y más legibles
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+

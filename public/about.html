@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sobre Nosotros - Cooperativa Agrícola</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #f8f9fa;
+      color: #333;
+      overflow-x: hidden;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, #1a3d0f 0%, #2d5a1e 50%, #4a8c2a 100%);
+      min-height: 85vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      padding: 40px 20px;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -200px;
+      right: -200px;
+      animation: pulse 8s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.2); opacity: 0.8; }
+    }
+
+    .hero-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .hero-text {
+      padding-right: 20px;
+    }
+
+    .hero-image {
+      position: relative;
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: auto;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      transition: transform 0.3s ease;
+    }
+
+    .hero-image:hover img {
+      transform: scale(1.05);
+    }
+
+    .hero-badge {
+      display: inline-block;
+      color: rgba(255, 255, 255, 0.9);
+      font-size: 0.95rem;
+      margin-bottom: 20px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      color: white;
+      margin-bottom: 25px;
+      line-height: 1.1;
+      max-width: 800px;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1rem, 2vw, 1.3rem);
+      color: rgba(255, 255, 255, 0.85);
+      max-width: 600px;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .hero-buttons {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      padding: 16px 40px;
+      background: white;
+      color: #2d5a1e;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+      background: #8bc34a;
+      color: white;
+    }
+
+    .btn-secondary {
+      padding: 16px 40px;
+      background: transparent;
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+      border-color: white;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* Ticker Banner */
+    .ticker-banner {
+      background: #8bc34a;
+      padding: 18px 0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .ticker-content {
+      display: flex;
+      animation: scroll 30s linear infinite;
+      white-space: nowrap;
+    }
+
+    @keyframes scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 0 30px;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+
+    .ticker-star {
+      font-size: 1.5rem;
+    }
+
+    /* About Section */
+    .about-section {
+      padding: 100px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .about-images {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .image-card {
+      background: linear-gradient(135deg, #e8f5e9, #c5e1a5);
+      border-radius: 20px;
+      padding: 20px;
+      aspect-ratio: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      overflow: hidden;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .image-card:hover {
+      transform: translateY(-10px);
+    }
+
+    .image-card.large {
+      grid-column: 1 / -1;
+      aspect-ratio: 2 / 1;
+    }
+
+    .image-card.emoji-fallback {
+      font-size: 3rem;
+    }
+
+    .decorative-circle {
+      position: absolute;
+      width: 150px;
+      height: 150px;
+      background: linear-gradient(135deg, #8bc34a, #4a7c59);
+      border-radius: 50%;
+      bottom: -30px;
+      right: -30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      box-shadow: 0 10px 30px rgba(139, 195, 74, 0.4);
+      overflow: hidden; /* ensure image is clipped to the circle */
+      padding: 0; /* remove inner spacing so image fills the circle */
+    }
+
+    /* Make any image inside the decorative circle fill and be cropped to the circle */
+    .decorative-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover; /* crop and fill */
+      display: block;
+      -webkit-user-drag: none;
+    }
+
+    .about-content {
+      padding: 20px 0;
+    }
+
+    .section-badge {
+      color: #8bc34a;
+      font-weight: 600;
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+      letter-spacing: 0.5px;
+    }
+
+    .about-content h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      color: #1a3d0f;
+      margin-bottom: 25px;
+      line-height: 1.2;
+    }
+
+    .about-content h2 span {
+      color: #8bc34a;
+    }
+
+    .about-content p {
+      color: #555;
+      line-height: 1.8;
+      margin-bottom: 30px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      margin-top: 40px;
+    }
+
+    .stat-item {
+      text-align: left;
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #8bc34a;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .stat-label {
+      color: #666;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .signature {
+      margin-top: 40px;
+      font-style: italic;
+      color: #333;
+    }
+
+    .signature-name {
+      font-weight: 600;
+      color: #2d5a1e;
+      font-size: 1.1rem;
+    }
+
+    /* Services Section */
+    .services-section {
+      background: linear-gradient(135deg, #f1f8e9, #ffffff);
+      padding: 100px 20px;
+    }
+
+    .services-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .services-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 60px;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .services-header h2 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: #1a3d0f;
+    }
+
+    .services-header h2 span {
+      color: #8bc34a;
+    }
+
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+
+    .service-card {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      border: 2px solid #e8f5e9;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .service-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: linear-gradient(90deg, #8bc34a, #4a7c59);
+      transform: scaleX(0);
+      transition: transform 0.3s ease;
+    }
+
+    .service-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .service-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 20px 40px rgba(139, 195, 74, 0.2);
+      border-color: #8bc34a;
+    }
+
+    .service-icon {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, #8bc34a, #4a7c59);
+      border-radius: 15px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      margin-bottom: 25px;
+      box-shadow: 0 5px 15px rgba(139, 195, 74, 0.3);
+    }
+
+    .service-card h3 {
+      font-size: 1.4rem;
+      color: #1a3d0f;
+      margin-bottom: 15px;
+      font-weight: 700;
+    }
+
+    .service-card p {
+      color: #666;
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .learn-more {
+      color: #8bc34a;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: gap 0.3s ease;
+    }
+
+    .learn-more:hover {
+      gap: 12px;
+    }
+
+    /* Process Section */
+    .process-section {
+      padding: 100px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .process-section h2 {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      color: #1a3d0f;
+      margin-bottom: 60px;
+    }
+
+    .process-section h2 span {
+      color: #8bc34a;
+    }
+
+    .process-steps {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 40px;
+      position: relative;
+    }
+
+    .process-step {
+      position: relative;
+    }
+
+    .step-number {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #8bc34a, #4a7c59);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 800;
+      margin: 0 auto 25px;
+      box-shadow: 0 8px 20px rgba(139, 195, 74, 0.3);
+      position: relative;
+    }
+
+    .step-number::after {
+      content: '✓';
+      position: absolute;
+      font-size: 1.2rem;
+      background: white;
+      color: #8bc34a;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      bottom: -5px;
+      right: -5px;
+      font-weight: 900;
+    }
+
+    .process-step h3 {
+      font-size: 1.3rem;
+      color: #1a3d0f;
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+
+    .process-step p {
+      color: #666;
+      line-height: 1.6;
+    }
+
+    /* Bottom Ticker */
+    .bottom-ticker {
+      background: linear-gradient(90deg, #8bc34a, #4a7c59);
+      padding: 18px 0;
+    }
+
+    /* Footer CTA */
+    .footer-cta {
+      background: linear-gradient(135deg, #1a3d0f, #2d5a1e);
+      padding: 80px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .footer-cta h2 {
+      font-size: clamp(2rem, 4vw, 3rem);
+      margin-bottom: 20px;
+      font-weight: 800;
+    }
+
+    .footer-cta p {
+      font-size: 1.2rem;
+      margin-bottom: 40px;
+      opacity: 0.9;
+    }
+
+    footer {
+      background: #0d1f0a;
+      padding: 30px 20px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.6);
+    }
+
+    @media (max-width: 768px) {
+      .about-section {
+        grid-template-columns: 1fr;
+        padding: 60px 20px;
+      }
+      .hero-content {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .hero-text {
+        padding-right: 0;
+      }
+      .hero-buttons { 
+        justify-content: center; 
+        flex-direction: column;
+      }
+      .hero-buttons a {
+        width: 100%;
+        text-align: center;
+        justify-content: center;
+      }
+      .services-header { 
+        flex-direction: column; 
+        text-align: center; 
+      }
+      .stats { 
+        grid-template-columns: 1fr; 
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-text">
+        <div class="hero-badge">// Del Aula a la Tierra 🌱</div>
+        <h1>Cooperativa agrícola<br>La Pintada</h1>
+        <p class="hero-subtitle">Transformando el campo con soluciones digitales construidas por y para la comunidad. Una plataforma nacida de la colaboración entre estudiantes y agricultores.</p>
+        <div class="hero-buttons">
+          <a href="#about" class="btn-primary">Conoce Más →</a>
+          <a href="#contact" class="btn-secondary">Contáctanos</a>
+        </div>
+      </div>
+      <div class="hero-image">
+        <img src="responsive/images/about-hero-2.png" alt="Cooperativa Agrícola" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Ticker Banner -->
+  <div class="ticker-banner">
+    <div class="ticker-content">
+      <div class="ticker-item"><span class="ticker-star">✦</span> Gestión de Cosechas</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Control de Ventas</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Reportes en Tiempo Real</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Comunidad Colaborativa</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Gestión de Cosechas</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Control de Ventas</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Reportes en Tiempo Real</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Comunidad Colaborativa</div>
+    </div>
+  </div>
+
+  <!-- About Section -->
+  <section class="about-section" id="about">
+    <div class="about-images">
+      <div class="image-card">
+        <img src="responsive/images/story-1.png" alt="Campo y Cosechas" />
+      </div>
+      <div class="image-card">
+        <img src="responsive/images/story-2.png" alt="Tecnología" />
+      </div>
+      <div class="image-card large">
+        <img src="responsive/images/story-3.png" alt="Colaboración y Café" />
+      </div>
+      <div class="decorative-circle">
+        <img src="responsive/images/about-hero-1.png" alt="Colaboración y Café" />
+      </div>
+    </div>
+    <div class="about-content">
+      <div class="section-badge">// Nuestra Historia</div>
+      <h2>Transformando <span>Ideas</span> en Realidad Digital</h2>
+      <p>Lo que comenzó como un proyecto universitario entre tres estudiantes de Ingeniería —Santiago Martínez, Rubén Henrriquez y Francisco Domínguez— se convirtió en una plataforma que hoy impulsa a toda una comunidad agrícola.</p>
+      <p>Entre tazas de café y conversaciones con agricultores, construimos una herramienta que realmente responde a las necesidades del campo.</p>
+      
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-number">150+</span>
+          <span class="stat-label">Miembros Activos</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">2000+</span>
+          <span class="stat-label">Registros Procesados</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">99%</span>
+          <span class="stat-label">Satisfacción</span>
+        </div>
+      </div>
+
+      <div class="signature">
+        <div class="signature-name">Equipo Fundador</div>
+        Santiago, Rubén y Francisco
+      </div>
+    </div>
+  </section>
+
+  <!-- Services Section -->
+  <section class="services-section">
+    <div class="services-container">
+      <div class="services-header">
+        <div>
+          <div class="section-badge">// Nuestros Valores</div>
+          <h2>Servicios que <span>Impulsan</span><br>tu Cooperativa</h2>
+        </div>
+        <a href="#" class="btn-primary">Ver Todo</a>
+      </div>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">📊</div>
+          <h3>Gestión de Cosechas</h3>
+          <p>Registra y monitorea todas tus cosechas con reportes detallados y análisis en tiempo real para mejores decisiones.</p>
+          <a href="#" class="learn-more">Conoce más →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">💰</div>
+          <h3>Control de Ventas</h3>
+          <p>Administra tus ventas, clientes y pagos desde una plataforma centralizada y fácil de usar.</p>
+          <a href="#" class="learn-more">Conoce más →</a>
+        </div>
+
+        <div class="service-card">
+          <div class="service-icon">📈</div>
+          <h3>Reportes Inteligentes</h3>
+          <p>Genera reportes automáticos con insights valiosos para optimizar tu producción y rentabilidad.</p>
+          <a href="#" class="learn-more">Conoce más →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Process Section -->
+  <section class="process-section">
+    <div class="section-badge">// Nuestro Proceso</div>
+    <h2>Cómo <span>Trabajamos</span> Contigo</h2>
+
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-number">01</div>
+        <h3>Escuchar</h3>
+        <p>Entendemos tus necesidades específicas y los retos de tu cooperativa</p>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">02</div>
+        <h3>Diseñar</h3>
+        <p>Creamos soluciones adaptadas a tu flujo de trabajo existente</p>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">03</div>
+        <h3>Implementar</h3>
+        <p>Desarrollamos y desplegamos la plataforma con tu retroalimentación</p>
+      </div>
+
+      <div class="process-step">
+        <div class="step-number">04</div>
+        <h3>Crecer Juntos</h3>
+        <p>Mejoramos continuamente con el apoyo de toda la comunidad</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom Ticker -->
+  <div class="bottom-ticker">
+    <div class="ticker-content">
+      <div class="ticker-item"><span class="ticker-star">✦</span> Tecnología Accesible</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Soporte Comunitario</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Innovación Continua</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Sostenibilidad</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Tecnología Accesible</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Soporte Comunitario</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Innovación Continua</div>
+      <div class="ticker-item"><span class="ticker-star">✦</span> Sostenibilidad</div>
+    </div>
+  </div>
+
+  <!-- Footer CTA -->
+  <section class="footer-cta" id="contact">
+    <h2>¿Listo para Transformar tu Cooperativa?</h2>
+    <p>Únete a nosotros y lleva tu gestión agrícola al siguiente nivel</p>
+    <p><strong>📧 admin@cooperativalapintada.org</strong></p>
+    <a href="dashboard.html" class="btn-primary">Volver al Inicio</a>
+  </section>
+
+  <footer>
+    <p>© 2025 Cooperativa Agrícola La Pintada</p>
+    <p>Construido por la comunidad, para la comunidad 🌱</p>
+  </footer>
+
+  <script>
+    // Duplicar contenido del ticker para loop infinito
+    document.querySelectorAll('.ticker-content').forEach(ticker => {
+      const items = ticker.innerHTML;
+      ticker.innerHTML = items + items;
+    });
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+
+    // Animación de entrada
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.style.opacity = '1';
+          entry.target.style.transform = 'translateY(0)';
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.service-card, .process-step, .stat-item').forEach(el => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateY(30px)';
+      el.style.transition = 'all 0.6s ease';
+      observer.observe(el);
+    });
+  </script>
+</body>
+</html>

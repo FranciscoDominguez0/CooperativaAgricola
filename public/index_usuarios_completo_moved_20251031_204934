@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Usuarios - Cooperativa Agrícola La Pintada</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #2d5016, #4a7c59);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+        }
+        .header p {
+            font-size: 1.3rem;
+            opacity: 0.9;
+        }
+        .modules-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .module-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .module-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        .module-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 15px;
+        }
+        .module-card p {
+            margin-bottom: 25px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .btn {
+            background: #fff;
+            color: #2d5016;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            transition: all 0.3s ease;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+        }
+        .btn-primary {
+            background: #2d5016;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #4a7c59;
+        }
+        .status {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+        .status h3 {
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        .status-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .status-item:last-child {
+            border-bottom: none;
+        }
+        .status-ok {
+            color: #90EE90;
+            font-weight: bold;
+        }
+        .status-error {
+            color: #FFB6C1;
+            font-weight: bold;
+        }
+        .instructions {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 25px;
+            border-radius: 15px;
+            margin: 25px 0;
+        }
+        .instructions h3 {
+            margin-bottom: 20px;
+        }
+        .instructions ol {
+            text-align: left;
+            line-height: 1.8;
+        }
+        .instructions li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Cooperativa Agrícola La Pintada</h1>
+            <p>Módulo de Gestión de Usuarios - Centro de Control</p>
+        </div>
+        
+        <div class="status">
+            <h3>📊 Estado del Sistema</h3>
+            <div class="status-item">
+                <span>Archivo usuarios.html (Completo)</span>
+                <span class="status-ok">✅ Disponible</span>
+            </div>
+            <div class="status-item">
+                <span>Archivo usuarios_simple.html (Simplificado)</span>
+                <span class="status-ok">✅ Disponible</span>
+            </div>
+            <div class="status-item">
+                <span>Backend php/usuarios.php</span>
+                <span class="status-ok">✅ Disponible</span>
+            </div>
+            <div class="status-item">
+                <span>JavaScript js/usuarios.js</span>
+                <span class="status-ok">✅ Disponible</span>
+            </div>
+            <div class="status-item">
+                <span>Estilos CSS integrados</span>
+                <span class="status-ok">✅ Disponible</span>
+            </div>
+            <div class="status-item">
+                <span>Enlaces de navegación</span>
+                <span class="status-ok">✅ Agregados</span>
+            </div>
+        </div>
+        
+        <div class="modules-grid">
+            <div class="module-card">
+                <h3>👥 Módulo Completo</h3>
+                <p>Módulo de usuarios con todas las funcionalidades: estadísticas, roles, permisos, gestión completa de usuarios</p>
+                <a href="usuarios.html" class="btn btn-primary">🚀 Abrir Módulo Completo</a>
+            </div>
+            
+            <div class="module-card">
+                <h3>🔧 Módulo Simplificado</h3>
+                <p>Versión simplificada para pruebas rápidas y verificación de funcionalidad básica</p>
+                <a href="usuarios_simple.html" class="btn">🧪 Abrir Módulo Simple</a>
+            </div>
+            
+            <div class="module-card">
+                <h3>🔍 Debug del Sistema</h3>
+                <p>Herramientas de diagnóstico para verificar la conexión y funcionamiento del backend</p>
+                <a href="debug_usuarios.php" class="btn">🔧 Ejecutar Debug</a>
+            </div>
+            
+            <div class="module-card">
+                <h3>🧪 Tests Automáticos</h3>
+                <p>Suite completa de pruebas automáticas del módulo de usuarios</p>
+                <a href="tests/orphaned_root/test_usuarios_directo.html" class="btn">⚡ Ejecutar Tests</a>
+            </div>
+            
+            <div class="module-card">
+                <h3>📊 Dashboard Principal</h3>
+                <p>Volver al dashboard principal del sistema con navegación completa</p>
+                <a href="dashboard.html" class="btn">🏠 Abrir Dashboard</a>
+            </div>
+            
+            <div class="module-card">
+                <h3>🛒 Otros Módulos</h3>
+                <p>Acceder a otros módulos del sistema (Ventas, Pagos, etc.)</p>
+                <a href="ventas.html" class="btn">🛒 Ventas</a>
+                <a href="pagos.html" class="btn">💳 Pagos</a>
+            </div>
+        </div>
+        
+        <div class="instructions">
+            <h3>🎯 Instrucciones de Uso</h3>
+            <ol>
+                <li><strong>Para uso normal:</strong> Usa el "Módulo Completo" que tiene todas las funcionalidades</li>
+                <li><strong>Si hay problemas:</strong> Usa el "Módulo Simplificado" para verificar la funcionalidad básica</li>
+                <li><strong>Para diagnóstico:</strong> Ejecuta el "Debug del Sistema" para verificar la conexión</li>
+                <li><strong>Para pruebas:</strong> Usa los "Tests Automáticos" para verificar todas las funciones</li>
+                <li><strong>Navegación:</strong> Desde el Dashboard principal puedes acceder a todos los módulos</li>
+            </ol>
+        </div>
+        
+        <div class="status">
+            <h3>🎯 Funcionalidades del Módulo de Usuarios</h3>
+            <div class="status-item">
+                <span>📊 Dashboard de estadísticas</span>
+                <span class="status-ok">✅ Total usuarios, activos, por rol</span>
+            </div>
+            <div class="status-item">
+                <span>👥 Gestión de usuarios</span>
+                <span class="status-ok">✅ Crear, editar, eliminar usuarios</span>
+            </div>
+            <div class="status-item">
+                <span>🔐 Sistema de roles</span>
+                <span class="status-ok">✅ Administrador, Productor, Cliente, Contador</span>
+            </div>
+            <div class="status-item">
+                <span>🛡️ Permisos granulares</span>
+                <span class="status-ok">✅ Control de acceso por módulo</span>
+            </div>
+            <div class="status-item">
+                <span>📱 Diseño responsive</span>
+                <span class="status-ok">✅ Adaptable a móviles y tablets</span>
+            </div>
+            <div class="status-item">
+                <span>🔍 Filtros y búsqueda</span>
+                <span class="status-ok">✅ Filtrar por rol y estado</span>
+            </div>
+        </div>
+    </div>
+    <script src="js/dark-mode.js"></script>
+</body>
+</html>
+

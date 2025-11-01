@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Formulario</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .form-group {
+            flex: 1;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn {
+            background: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <h2>Test - Formulario de Ventas</h2>
+        <form>
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="socio">Socio *</label>
+                    <select id="socio" name="id_socio" required>
+                        <option value="">Seleccionar socio</option>
+                        <option value="1">Juan Pérez</option>
+                        <option value="2">María García</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="producto">Producto *</label>
+                    <input type="text" id="producto" name="producto" placeholder="Nombre del producto" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="tipo_producto">Tipo de Producto *</label>
+                    <select id="tipo_producto" name="tipo_producto" required>
+                        <option value="">Seleccionar tipo</option>
+                        <option value="semillas">🌱 Semillas</option>
+                        <option value="fertilizantes">🌿 Fertilizantes</option>
+                        <option value="pesticidas">⚠️ Pesticidas</option>
+                        <option value="herramientas">🔧 Herramientas</option>
+                        <option value="maquinaria">🚜 Maquinaria</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="cantidad">Cantidad *</label>
+                    <input type="number" id="cantidad" name="cantidad" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="precio_unitario">Precio Unitario *</label>
+                    <input type="number" id="precio_unitario" name="precio_unitario" step="0.01" min="0" placeholder="0.00" required>
+                </div>
+                <div class="form-group">
+                    <label for="cliente">Cliente *</label>
+                    <input type="text" id="cliente" name="cliente" placeholder="Nombre del cliente" required>
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="fecha_venta">Fecha de Venta *</label>
+                    <input type="date" id="fecha_venta" name="fecha_venta" required>
+                </div>
+                <div class="form-group">
+                    <label for="fecha_entrega">Fecha de Entrega</label>
+                    <input type="date" id="fecha_entrega" name="fecha_entrega">
+                </div>
+            </div>
+            
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="estado">Estado</label>
+                    <select id="estado" name="estado">
+                        <option value="pendiente">Pendiente</option>
+                        <option value="entregado">Entregado</option>
+                        <option value="pagado">Pagado</option>
+                        <option value="cancelado">Cancelado</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="metodo_pago">Método de Pago</label>
+                    <select id="metodo_pago" name="metodo_pago">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="transferencia">Transferencia</option>
+                        <option value="cheque">Cheque</option>
+                        <option value="credito">Crédito</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="direccion_entrega">Dirección de Entrega</label>
+                <input type="text" id="direccion_entrega" name="direccion_entrega" placeholder="Dirección completa">
+            </div>
+            
+            <div class="form-group">
+                <label for="observaciones">Observaciones</label>
+                <textarea id="observaciones" name="observaciones" rows="3" placeholder="Notas adicionales..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn">Guardar Venta</button>
+        </form>
+    </div>
+    
+    <script>
+        // Test para verificar que el campo existe
+        document.addEventListener('DOMContentLoaded', function() {
+            const tipoProducto = document.getElementById('tipo_producto');
+            console.log('Campo tipo_producto encontrado:', tipoProducto);
+            if (tipoProducto) {
+                console.log('Campo visible:', tipoProducto.offsetParent !== null);
+                console.log('Campo display:', window.getComputedStyle(tipoProducto).display);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

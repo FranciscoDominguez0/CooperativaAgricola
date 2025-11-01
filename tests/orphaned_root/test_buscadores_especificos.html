@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Buscadores Específicos</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .demo-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .demo-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .demo-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .demo-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table-title h4 {
+            color: #1a3a2e;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .demo-table-content {
+            padding: 1rem;
+        }
+        .demo-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .demo-table th,
+        .demo-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a3a2e;
+        }
+        .demo-table td {
+            color: #374151;
+        }
+        .demo-table tr:hover {
+            background: #f8f9fa;
+        }
+        .verification-section {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin: 20px 0;
+        }
+        .verification-section h3 {
+            color: #065f46;
+            margin-bottom: 15px;
+        }
+        .verification-section ul {
+            color: #065f46;
+            line-height: 1.8;
+        }
+        .test-steps {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin: 20px 0;
+        }
+        .test-steps h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        .test-steps ol {
+            color: #92400e;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔍 Test - Buscadores Específicos</h1>
+            <p>Buscadores solo en Producción, Ventas y Pagos</p>
+        </div>
+        
+        <div class="verification-section">
+            <h3>✅ Buscadores Implementados Solo En:</h3>
+            <ul>
+                <li><strong>🌾 Producción:</strong> Buscador específico para tabla de producción</li>
+                <li><strong>💰 Ventas:</strong> Buscador específico para tabla de ventas</li>
+                <li><strong>💳 Pagos:</strong> Buscador específico para tabla de pagos</li>
+            </ul>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo - Tabla de Producción (CON Buscador)</h3>
+            <div class="demo-table produccion-section">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Producción</h4>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="produccionSearch" placeholder="Buscar en producción..." class="search-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Cultivo</th>
+                                <th>Cantidad</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>Maíz</td>
+                                <td>500 kg</td>
+                                <td>2024-01-15</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>Frijol</td>
+                                <td>300 kg</td>
+                                <td>2024-01-16</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo - Tabla de Ventas (CON Buscador)</h3>
+            <div class="demo-table ventas-section">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Ventas</h4>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="ventasSearch" placeholder="Buscar en ventas..." class="search-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>Maíz</td>
+                                <td>100 kg</td>
+                                <td>$250.00</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>Frijol</td>
+                                <td>50 kg</td>
+                                <td>$150.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo - Tabla de Pagos (CON Buscador)</h3>
+            <div class="demo-table pagos-section">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Pagos</h4>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="pagosSearch" placeholder="Buscar en pagos..." class="search-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>Aporte</td>
+                                <td>$100.00</td>
+                                <td>2024-01-15</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>Cuota</td>
+                                <td>$50.00</td>
+                                <td>2024-01-16</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo - Tabla de Socios (SIN Buscador)</h3>
+            <div class="demo-table socios-section">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Socios</h4>
+                    </div>
+                    <!-- NO hay buscador aquí -->
+                </div>
+                <div class="demo-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Cédula</th>
+                                <th>Teléfono</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>12345678</td>
+                                <td>555-1234</td>
+                                <td>juan@email.com</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>87654321</td>
+                                <td>555-5678</td>
+                                <td>maria@email.com</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-steps">
+            <h3>🧪 Pasos para Verificar</h3>
+            <ol>
+                <li><strong>Página de Producción:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que aparece el buscador en la esquina derecha</li>
+                        <li>Prueba escribir "maíz" para filtrar</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Ventas:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que aparece el buscador en la esquina derecha</li>
+                        <li>Prueba escribir "Juan" para filtrar</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Pagos:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que aparece el buscador en la esquina derecha</li>
+                        <li>Prueba escribir "aporte" para filtrar</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Socios:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que NO aparece buscador (solo título)</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">📋 Resumen de Implementación</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Especificidad:</strong> Buscadores solo en secciones específicas (.produccion-section, .ventas-section, .pagos-section)</li>
+                <li><strong>Selectividad:</strong> No afecta otras secciones como socios o insumos</li>
+                <li><strong>Funcionalidad:</strong> Búsqueda en tiempo real en las tres tablas principales</li>
+                <li><strong>Diseño:</strong> Consistente con el tema de la aplicación</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        // Funciones de búsqueda para el test
+        function handleProduccionSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            console.log('🔍 Búsqueda en producción:', searchTerm);
+            filterTableRows('.produccion-section table tbody tr', searchTerm);
+        }
+        
+        function handleVentasSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            console.log('🔍 Búsqueda en ventas:', searchTerm);
+            filterTableRows('.ventas-section table tbody tr', searchTerm);
+        }
+        
+        function handlePagosSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            console.log('🔍 Búsqueda en pagos:', searchTerm);
+            filterTableRows('.pagos-section table tbody tr', searchTerm);
+        }
+        
+        function filterTableRows(selector, searchTerm) {
+            const rows = document.querySelectorAll(selector);
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matches = text.includes(searchTerm);
+                
+                if (matches) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            console.log(`✅ Búsqueda completada: ${visibleCount} resultados encontrados`);
+        }
+        
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('produccionSearch')?.addEventListener('input', handleProduccionSearch);
+            document.getElementById('ventasSearch')?.addEventListener('input', handleVentasSearch);
+            document.getElementById('pagosSearch')?.addEventListener('input', handlePagosSearch);
+            
+            console.log('✅ Buscadores específicos configurados');
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+

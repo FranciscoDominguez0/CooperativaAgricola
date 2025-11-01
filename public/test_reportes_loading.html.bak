@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test de Carga de Reportes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-section {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border-left: 4px solid #2d5016;
+        }
+        .test-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .test-button:hover {
+            background: #4a7c59;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .kpi-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+        }
+        .kpi-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2d5016;
+        }
+        .kpi-label {
+            font-size: 14px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test de Carga de Reportes</h1>
+    
+    <div class="test-section">
+        <h2>📊 Estado de los Reportes</h2>
+        <div id="reportStatus">
+            <div class="status info">Iniciando test...</div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔄 Pruebas de Carga</h2>
+        <button class="test-button" onclick="testBasicConnection()">Test Conexión Básica</button>
+        <button class="test-button" onclick="testReportesEndpoint()">Test Endpoint Reportes</button>
+        <button class="test-button" onclick="testDebugEndpoint()">Test Endpoint Debug</button>
+        <button class="test-button" onclick="testKPIs()">Test KPIs</button>
+        <button class="test-button" onclick="testCharts()">Test Gráficos</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>📈 KPIs de Prueba</h2>
+        <div id="kpiResults">
+            <div class="kpi-card">
+                <div class="kpi-value" id="testIncome">$0</div>
+                <div class="kpi-label">Ingresos</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="testContributions">$0</div>
+                <div class="kpi-label">Aportes</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="testMembers">0</div>
+                <div class="kpi-label">Socios</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-value" id="testInventory">$0</div>
+                <div class="kpi-label">Inventario</div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📝 Log de Resultados</h2>
+        <div id="testLog" style="background: #f8f8f8; padding: 15px; border-radius: 5px; max-height: 300px; overflow-y: auto;">
+            <div>Esperando pruebas...</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logEntry.className = `status ${type}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('reportStatus');
+            statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+        
+        // Test 1: Conexión básica
+        async function testBasicConnection() {
+            log('🔌 Probando conexión básica...', 'info');
+            try {
+                const response = await fetch('php/conexion.php');
+                if (response.ok) {
+                    log('✅ Conexión básica: EXITOSA', 'success');
+                    updateStatus('Conexión básica funcionando', 'success');
+                } else {
+                    log('❌ Conexión básica: ERROR', 'error');
+                    updateStatus('Error en conexión básica', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                updateStatus('Error de conexión', 'error');
+            }
+        }
+        
+        // Test 2: Endpoint de reportes
+        async function testReportesEndpoint() {
+            log('📊 Probando endpoint de reportes...', 'info');
+            try {
+                const response = await fetch('php/reportes.php?action=kpis');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Endpoint reportes: EXITOSO', 'success');
+                    log(`📈 KPIs cargados: ${JSON.stringify(data.kpis)}`, 'info');
+                    updateStatus('Endpoint de reportes funcionando', 'success');
+                } else {
+                    log(`❌ Endpoint reportes: ERROR - ${data.message}`, 'error');
+                    updateStatus('Error en endpoint de reportes', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                updateStatus('Error de conexión al endpoint', 'error');
+            }
+        }
+        
+        // Test 3: Endpoint de debug
+        async function testDebugEndpoint() {
+            log('🔍 Probando endpoint de debug...', 'info');
+            try {
+                const response = await fetch('debug_reportes_simple.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Endpoint debug: EXITOSO', 'success');
+                    log(`🔧 Debug info: ${JSON.stringify(data.debug_info)}`, 'info');
+                    updateStatus('Endpoint de debug funcionando', 'success');
+                } else {
+                    log(`❌ Endpoint debug: ERROR - ${data.error}`, 'error');
+                    updateStatus('Error en endpoint de debug', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                updateStatus('Error de conexión al debug', 'error');
+            }
+        }
+        
+        // Test 4: KPIs específicos
+        async function testKPIs() {
+            log('📈 Probando KPIs específicos...', 'info');
+            try {
+                const response = await fetch('debug_reportes_simple.php');
+                const data = await response.json();
+                
+                if (data.success && data.kpis) {
+                    // Actualizar KPIs en la interfaz
+                    document.getElementById('testIncome').textContent = '$' + (data.kpis.totalIncome || 0).toLocaleString();
+                    document.getElementById('testContributions').textContent = '$' + (data.kpis.totalContributions || 0).toLocaleString();
+                    document.getElementById('testMembers').textContent = data.kpis.activeMembers || 0;
+                    document.getElementById('testInventory').textContent = '$' + (data.kpis.inventoryValue || 0).toLocaleString();
+                    
+                    log('✅ KPIs actualizados correctamente', 'success');
+                    updateStatus('KPIs cargados exitosamente', 'success');
+                } else {
+                    log('❌ Error cargando KPIs', 'error');
+                    updateStatus('Error cargando KPIs', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                updateStatus('Error en KPIs', 'error');
+            }
+        }
+        
+        // Test 5: Gráficos
+        async function testCharts() {
+            log('📊 Probando carga de gráficos...', 'info');
+            try {
+                const response = await fetch('php/reportes.php?action=charts');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Gráficos: EXITOSOS', 'success');
+                    log(`📈 Datos de gráficos cargados`, 'info');
+                    updateStatus('Gráficos funcionando', 'success');
+                } else {
+                    log(`❌ Gráficos: ERROR - ${data.message}`, 'error');
+                    updateStatus('Error en gráficos', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                updateStatus('Error en gráficos', 'error');
+            }
+        }
+        
+        // Ejecutar tests automáticamente al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Iniciando tests automáticos...', 'info');
+            
+            setTimeout(() => testBasicConnection(), 500);
+            setTimeout(() => testReportesEndpoint(), 1000);
+            setTimeout(() => testDebugEndpoint(), 1500);
+            setTimeout(() => testKPIs(), 2000);
+            setTimeout(() => testCharts(), 2500);
+        });
+    </script>
+</body>
+</html>

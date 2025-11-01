@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Test Final - Pago</title>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; }
+        .test-section { margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #007bff; }
+        button { padding: 12px 24px; margin: 8px; cursor: pointer; background: #007bff; color: white; border: none; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        .success { color: #28a745; font-weight: bold; }
+        .error { color: #dc3545; font-weight: bold; }
+        .info { color: #17a2b8; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Test Final - Edición de Pagos</h1>
+        
+        <div class="test-section">
+            <h2>1. Verificar Carga del Script</h2>
+            <p>Busca en consola: <span class="success">✅ Script pagos.js cargado correctamente</span></p>
+            <button onclick="verificarScript()">🔍 Verificar Script</button>
+            <div id="scriptResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>2. Probar Función editPago</h2>
+            <p>Simula hacer clic en el botón editar de un pago</p>
+            <button onclick="probarEditPago()">✏️ Simular Editar Pago ID: 1</button>
+            <div id="editResult"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>3. Verificar Datos en Consola</h2>
+            <p>Revisa la consola del navegador (F12) para ver todos los logs detallados</p>
+            <button onclick="mostrarInstrucciones()">📋 Ver Instrucciones</button>
+            <div id="instrucciones"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>4. Test Manual</h2>
+            <p>Si todo funciona aquí, prueba en la página real:</p>
+            <a href="" target="_blank" style="display: inline-block; padding: 10px 20px; background: #28a745; color: white; text-decoration: none; border-radius: 4px;">🚀 Abrir </a>
+        </div>
+    </div>
+    
+    <script src="js/pagos.js"></script>
+    
+    <script>
+        function verificarScript() {
+            const resultDiv = document.getElementById('scriptResult');
+            
+            if (typeof window.editPago === 'function') {
+                resultDiv.innerHTML = '<p class="success">✅ window.editPago está disponible</p>';
+                console.log('✅ Función editPago disponible:', window.editPago);
+            } else {
+                resultDiv.innerHTML = '<p class="error">❌ window.editPago NO está disponible</p>';
+                console.error('❌ Función editPago no encontrada');
+            }
+        }
+        
+        async function probarEditPago() {
+            const resultDiv = document.getElementById('editResult');
+            resultDiv.innerHTML = '<p class="info">🔄 Ejecutando test...</p>';
+            
+            try {
+                console.log('🧪 INICIANDO TEST MANUAL');
+                
+                // Simular datos de un pago
+                const pagoTest = {
+                    id_pago: 1,
+                    id_socio: 1,
+                    tipo: 'aporte_mensual',
+                    monto: 150.75,
+                    descripcion: 'Pago mensual de enero 2024',
+                    observaciones: 'Pago realizado en efectivo',
+                    fecha_pago: '2024-01-15',
+                    metodo_pago: 'efectivo',
+                    estado: 'confirmado',
+                    numero_comprobante: 'COMP-001',
+                    id_venta: null
+                };
+                
+                console.log('📦 Datos de prueba:', pagoTest);
+                
+                // Llamar a la función de llenar modal
+                await llenarModalConDatos(pagoTest);
+                
+                resultDiv.innerHTML = '<p class="success">✅ Test ejecutado - revisa la consola y el modal</p>';
+                
+            } catch (error) {
+                console.error('❌ Error en test:', error);
+                resultDiv.innerHTML = '<p class="error">❌ Error: ' + error.message + '</p>';
+            }
+        }
+        
+        function mostrarInstrucciones() {
+            const div = document.getElementById('instrucciones');
+            div.innerHTML = `
+                <h3>📋 Instrucciones para verificar:</h3>
+                <ol>
+                    <li><strong>Abre la consola del navegador</strong> (F12 → pestaña Console)</li>
+                    <li><strong>Haz clic en "Simular Editar Pago ID: 1"</strong></li>
+                    <li><strong>Busca estos logs en consola:</strong>
+                        <pre>🎯 EDITAR PAGO - ID: 1
+📦 Datos del pago: {id_pago: 1, id_socio: 1, ...}
+🔄 LLENANDO MODAL CON DATOS
+👤 Configurando socio ID: 1
+✅ Socio seleccionado: [Nombre del socio]
+📝 Campos llenados:
+  - Socio: 1 ([Nombre])
+  - Tipo: aporte_mensual
+  - Descripción: Pago mensual de enero 2024
+  - Observaciones: Pago realizado en efectivo
+✅ Modal mostrado</pre>
+                    </li>
+                    <li><strong>Verifica que el modal se abra</strong> con todos los campos llenos</li>
+                </ol>
+            `;
+        }
+        
+        // Auto-verificar al cargar
+        setTimeout(() => {
+            verificarScript();
+        }, 1000);
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,934 @@
+// JavaScript para Gestión de Producción - Cooperativa Agrícola La Pintada
+
+let currentUser = null;
+let currentPage = 1;
+let totalPages = 1;
+let sociosList = [];
+let searchInstance = null;
+
+document.addEventListener('DOMContentLoaded', function() {
+    checkSession();
+    setupEventListeners();
+});
+
+async function checkSession() {
+    try {
+        console.log('Verificando sesión...');
+        updateDebugInfo('Verificando sesión...');
+        
+        const response = await fetch('php/verificar_sesion.php');
+        const data = await response.json();
+        
+        console.log('Respuesta de sesión:', data);
+        updateDebugInfo('Sesión verificada: ' + (data.authenticated ? 'Autenticado' : 'No autenticado'));
+        
+        if (data.authenticated) {
+            currentUser = data.user;
+            console.log('Usuario autenticado:', currentUser);
+            updateDebugInfo('Cargando página de producción...');
+            loadProduccionPage();
+        } else {
+            console.log('Usuario no autenticado, redirigiendo a login');
+            updateDebugInfo('Redirigiendo al login...');
+            window.location.href = '';
+        }
+    } catch (error) {
+        console.error('Error checking session:', error);
+        updateDebugInfo('Error de conexión: ' + error.message);
+        showToast('Error de conexión. Redirigiendo al login...', 'error');
+        setTimeout(() => {
+            window.location.href = '';
+        }, 2000);
+    }
+}
+
+function updateDebugInfo(message) {
+    const debugElement = document.getElementById('debugInfo');
+    if (debugElement) {
+        debugElement.textContent = message;
+    }
+}
+
+// ===== FUNCIONES DE ANIMACIÓN =====
+
+function animatePageTransition(callback) {
+    const tableContainer = document.querySelector('.table-container');
+    const tbody = document.getElementById('produccionTableBody');
+    
+    // Animación de salida
+    tbody.style.animation = 'fadeOutDown 0.3s ease-in forwards';
+    
+    setTimeout(() => {
+        callback();
+        // Animación de entrada
+        tbody.style.animation = 'fadeInUp 0.5s ease-out forwards';
+    }, 300);
+}
+
+function animateModalOpen(modal) {
+    modal.style.display = 'flex';
+    modal.classList.add('modal-backdrop-enter');
+    
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.classList.add('modal-enter');
+    
+    // Animar elementos del formulario
+    const formElements = modal.querySelectorAll('.form-group, .modal-buttons');
+    formElements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 200 + (index * 100));
+    });
+}
+
+function animateModalClose(modal) {
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.classList.add('modal-exit');
+    modal.classList.add('modal-backdrop-exit');
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('modal-backdrop-enter', 'modal-backdrop-exit');
+        modalContent.classList.remove('modal-enter', 'modal-exit');
+    }, 300);
+}
+
+function animateRowDelete(row) {
+    row.classList.add('table-row-exit');
+    
+    setTimeout(() => {
+        row.remove();
+    }, 300);
+}
+
+function animateRowAdd(row) {
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(20px)';
+    row.style.transition = 'all 0.5s ease';
+    
+    setTimeout(() => {
+        row.style.opacity = '1';
+        row.style.transform = 'translateY(0)';
+    }, 100);
+}
+
+function animateButtonClick(button) {
+    button.classList.add('micro-bounce');
+    setTimeout(() => {
+        button.classList.remove('micro-bounce');
+    }, 300);
+}
+
+function animateSearch() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.classList.add('pulse-animation');
+    
+    setTimeout(() => {
+        searchInput.classList.remove('pulse-animation');
+    }, 1000);
+}
+
+function animateLoading() {
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.style.display = 'flex';
+        loading.classList.add('animate-fade-in-scale');
+    }
+}
+
+function animateLoadingHide() {
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.classList.add('animate-fade-out-scale');
+        setTimeout(() => {
+            loading.style.display = 'none';
+            loading.classList.remove('animate-fade-in-scale', 'animate-fade-out-scale');
+        }, 300);
+    }
+}
+
+function loadProduccionPage() {
+    animateLoadingHide();
+    document.getElementById('userName').textContent = currentUser.nombre;
+    document.getElementById('userRole').textContent = getRoleDisplay(currentUser.rol);
+    
+    // Cargar socios para el dropdown
+    loadSocios();
+    
+    // Initialize search functionality
+    initializeSearch();
+    
+    // Cargar estadísticas y producción
+    loadStatistics();
+    loadProduccion();
+}
+
+function initializeSearch() {
+    // Initialize search functionality after DOM is ready
+    if (typeof CooperativeSearch !== 'undefined') {
+        searchInstance = new CooperativeSearch({
+            module: 'produccion',
+            searchFields: ['cultivo', 'variedad', 'calidad', 'socio'],
+            tableBodyId: 'produccionTableBody',
+            loadFunction: loadProduccion,
+            debounceTime: 300,
+            minSearchLength: 2
+        });
+    } else {
+        // Fallback: Initialize search manually if CooperativeSearch is not available
+        initializeManualSearch();
+    }
+}
+
+function initializeManualSearch() {
+    const searchInput = document.getElementById('searchInput_produccion');
+    const searchClear = document.getElementById('searchClear_produccion');
+    const searchReset = document.getElementById('searchReset_produccion');
+    const filterButtons = document.querySelectorAll('#searchFilters_produccion .filter-btn');
+    
+    if (!searchInput) {
+        console.error('Search input not found for production module');
+        return;
+    }
+    
+    let searchTimeout = null;
+    
+    // Search input events
+    searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.trim();
+        
+        // Show/hide clear button
+        if (searchClear) {
+            searchClear.style.display = searchTerm.length > 0 ? 'block' : 'none';
+        }
+        
+        // Debounce search
+        if (searchTimeout) {
+            clearTimeout(searchTimeout);
+        }
+        
+        searchTimeout = setTimeout(() => {
+            loadProduccion(1, searchTerm);
+        }, 300);
+    });
+    
+    // Clear search button
+    if (searchClear) {
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchClear.style.display = 'none';
+            loadProduccion(1, '');
+        });
+    }
+    
+    // Reset search button
+    if (searchReset) {
+        searchReset.addEventListener('click', () => {
+            searchInput.value = '';
+            if (searchClear) searchClear.style.display = 'none';
+            loadProduccion(1, '');
+        });
+    }
+    
+    // Filter buttons
+    filterButtons.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filter = e.currentTarget.dataset.filter;
+            searchInput.placeholder = `Filtrando por ${filter}...`;
+            searchInput.focus();
+            
+            // Update filter button states
+            filterButtons.forEach(b => b.classList.remove('active'));
+            e.currentTarget.classList.add('active');
+        });
+    });
+}
+
+function getRoleDisplay(role) {
+    const roles = {
+        'admin': 'Administrador',
+        'productor': 'Productor Agrícola',
+        'cliente': 'Cliente',
+        'contador': 'Contador'
+    };
+    return roles[role] || 'Miembro';
+}
+
+async function loadSocios() {
+        try {
+            const response = await fetch('php/socios.php');
+            const data = await response.json();
+            
+            if (data.success) {
+            sociosList = data.data;
+            populateSociosDropdown();
+        }
+    } catch (error) {
+        console.error('Error al cargar socios:', error);
+    }
+}
+
+function populateSociosDropdown() {
+    const select = document.getElementById('id_socio');
+    select.innerHTML = '<option value="">Seleccionar socio</option>';
+    
+    sociosList.forEach(socio => {
+                        const option = document.createElement('option');
+                        option.value = socio.id_socio;
+                        option.textContent = socio.nombre;
+        select.appendChild(option);
+    });
+}
+
+async function loadStatistics() {
+    try {
+        const response = await fetch('php/produccion.php?action=statistics');
+        const data = await response.json();
+        
+        if (data.success) {
+            updateStatistics(data.statistics);
+            }
+        } catch (error) {
+        console.error('Error al cargar estadísticas:', error);
+    }
+}
+
+function updateStatistics(stats) {
+    document.getElementById('totalProduccion').textContent = stats.total_produccion || '0';
+    document.getElementById('totalProduccionUnit').textContent = stats.unidad_principal || 'quintales';
+    document.getElementById('cultivosActivos').textContent = stats.cultivos_activos || '0';
+    document.getElementById('productoresActivos').textContent = stats.productores_activos || '0';
+    document.getElementById('calidadPremium').textContent = (stats.calidad_premium || '0') + '%';
+}
+
+async function loadProduccion(page = 1, search = '') {
+    try {
+        console.log('Cargando producción...', { page, search });
+        updateDebugInfo('Cargando datos de producción...');
+        
+        // Use enhanced search API if search term is provided
+        if (search && search.trim().length > 0) {
+            const params = new URLSearchParams({
+                module: 'produccion',
+                search: search,
+                page: page,
+                limit: 10
+            });
+            
+            console.log('Using enhanced search API:', params.toString());
+            const response = await fetch(`php/search.php?${params}`);
+            const data = await response.json();
+            
+            if (data.success) {
+                console.log('Search results loaded:', data.data);
+                updateDebugInfo(`Búsqueda completada: ${data.data.length} resultados`);
+                displayProduccion(data.data);
+                displayPagination(data.pagination);
+                currentPage = data.pagination.current_page;
+                totalPages = data.pagination.total_pages;
+            } else {
+                console.error('Search error:', data.message);
+                updateDebugInfo('Error en búsqueda: ' + data.message);
+                showToast('Error en la búsqueda: ' + data.message, 'error');
+            }
+        } else {
+            // Use standard API for no search
+            const params = new URLSearchParams({
+                page: page,
+                limit: 10,
+                search: search
+            });
+            
+            console.log('Using standard API:', params.toString());
+            const response = await fetch(`php/produccion.php?${params}`);
+            console.log('Server response:', response.status);
+            updateDebugInfo(`Servidor respondió: ${response.status}`);
+            
+            const data = await response.json();
+            console.log('Data received:', data);
+            
+            if (data.success) {
+                console.log('Producción cargada exitosamente:', data.data);
+                updateDebugInfo(`Producción cargada: ${data.data.length} registros`);
+                displayProduccion(data.data);
+                displayPagination(data.pagination);
+                currentPage = data.pagination.current_page;
+                totalPages = data.pagination.total_pages;
+            } else {
+                console.error('Server error:', data.message);
+                updateDebugInfo('Error: ' + data.message);
+                showToast('Error al cargar producción: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error al cargar producción:', error);
+        updateDebugInfo('Error de conexión: ' + error.message);
+        showToast('Error de conexión al cargar producción', 'error');
+    }
+}
+
+function displayProduccion(produccion) {
+        const tbody = document.getElementById('produccionTableBody');
+        tbody.innerHTML = '';
+
+    if (produccion.length === 0) {
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="8" class="no-data">
+                    <div class="no-data-content">
+                        <i class="fas fa-seedling"></i>
+                        <p>No hay registros de producción</p>
+                        <small>Comienza registrando la primera cosecha</small>
+                    </div>
+                </td>
+            </tr>
+        `;
+            return;
+        }
+
+    produccion.forEach((item, index) => {
+            const row = document.createElement('tr');
+        row.className = 'table-row-enter';
+        row.style.setProperty('--row-index', index);
+        
+        // Truncar observaciones si son muy largas
+        const observaciones = item.observaciones || '';
+        const observacionesDisplay = observaciones.length > 50 ? 
+            observaciones.substring(0, 50) + '...' : observaciones;
+        
+        row.innerHTML = `
+            <td>${item.id_produccion}</td>
+            <td>${item.nombre_socio || '-'}</td>
+            <td>${item.cultivo}</td>
+            <td>${item.variedad || '-'}</td>
+            <td>${parseFloat(item.cantidad).toLocaleString()} ${item.unidad}</td>
+            <td>${formatDate(item.fecha_recoleccion)}</td>
+            <td><span class="quality-badge quality-${item.calidad}">${getCalidadDisplay(item.calidad)}</span></td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-secondary btn-animate hover-scale micro-bounce" onclick="editProduccion(${item.id_produccion})" title="Editar producción">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="confirmDeleteProduccion(${item.id_produccion}, '${item.cultivo}')" title="Eliminar producción">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+            tbody.appendChild(row);
+        });
+    }
+
+function getCalidadDisplay(calidad) {
+    const calidades = {
+        'premium': 'Premium',
+        'buena': 'Buena',
+        'regular': 'Regular',
+        'baja': 'Baja'
+    };
+    return calidades[calidad] || calidad;
+}
+
+function formatDate(dateString) {
+        if (!dateString) return '-';
+        const date = new Date(dateString);
+        return date.toLocaleDateString('es-ES');
+    }
+
+function displayPagination(pagination) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'pagination-btn btn-animate hover-lift';
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => {
+        animatePageTransition(() => loadProduccion(pagination.current_page - 1, document.getElementById('searchInput').value));
+    };
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `pagination-btn btn-animate hover-lift ${i === pagination.current_page ? 'active' : ''}`;
+            pageBtn.textContent = i;
+            pageBtn.onclick = () => {
+                animatePageTransition(() => loadProduccion(i, document.getElementById('searchInput').value));
+            };
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            dots.className = 'smooth-transition';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'pagination-btn btn-animate hover-lift';
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => {
+        animatePageTransition(() => loadProduccion(pagination.current_page + 1, document.getElementById('searchInput').value));
+    };
+    paginationDiv.appendChild(nextBtn);
+}
+
+function setupEventListeners() {
+    // Navegación
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.dataset.section;
+            
+            if (section === 'dashboard') {
+                window.location.href = '';
+                return;
+            }
+            
+            if (section === 'socios') {
+                window.location.href = 'socios.html';
+                return;
+            }
+            
+            if (section === 'insumos') {
+                window.location.href = '';
+                return;
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'flex';
+    });
+
+    document.getElementById('confirmLogout').addEventListener('click', async function() {
+        try {
+            const response = await fetch('php/logout.php', {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.href = '';
+            } else {
+                showToast('Error al cerrar sesión', 'error');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+            window.location.href = '';
+        }
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'none';
+    });
+
+
+    // Agregar producción
+    document.getElementById('addProduccionBtn').addEventListener('click', function() {
+        animateButtonClick(this);
+        openProduccionModal();
+    });
+
+    // Formulario de producción
+    document.getElementById('produccionForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await saveProduccion();
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        closeProduccionModal();
+    });
+
+    document.getElementById('produccionModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeProduccionModal();
+        }
+    });
+}
+
+function openProduccionModal(produccion = null) {
+        const modal = document.getElementById('produccionModal');
+        const form = document.getElementById('produccionForm');
+    const title = document.getElementById('modalTitle');
+        
+        if (produccion) {
+        // MODO EDICIÓN - Editar producción existente
+            title.textContent = 'Editar Producción';
+        console.log('MODO EDICIÓN - Estableciendo datos en el formulario:', produccion);
+        
+        // Limpiar formulario primero
+        form.reset();
+        
+        // Establecer datos de la producción
+        Object.keys(produccion).forEach(key => {
+            let fieldId = key;
+            
+            // Mapear id_produccion a produccionId para el HTML
+            if (key === 'id_produccion') {
+                fieldId = 'produccionId';
+            }
+            
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.value = produccion[key];
+                console.log(`Campo ${key} (${fieldId}) establecido con valor:`, produccion[key]);
+            } else {
+                console.log(`Campo ${key} (${fieldId}) no encontrado en el formulario`);
+            }
+        });
+        
+        // Verificar que el campo id_produccion esté establecido
+        const idField = document.getElementById('produccionId');
+        console.log('Campo produccionId encontrado:', idField);
+        console.log('Valor del campo produccionId:', idField ? idField.value : 'NO ENCONTRADO');
+        } else {
+        // MODO CREACIÓN - Agregar nueva producción
+            title.textContent = 'Registrar Nueva Producción';
+        console.log('MODO CREACIÓN - Limpiando formulario para nueva producción');
+        
+        // Limpiar completamente el formulario
+            form.reset();
+        
+        // FORZAR limpieza del campo ID - CRÍTICO
+        const idField = document.getElementById('produccionId');
+        if (idField) {
+            idField.value = '';
+            idField.removeAttribute('value');
+            idField.setAttribute('value', '');
+            console.log('Campo ID limpiado y forzado a vacío:', idField.value);
+        }
+        
+        // Limpiar también el campo hidden
+        const hiddenIdField = document.querySelector('input[name="id_produccion"]');
+        if (hiddenIdField) {
+            hiddenIdField.value = '';
+            hiddenIdField.removeAttribute('value');
+            hiddenIdField.setAttribute('value', '');
+            console.log('Campo hidden ID limpiado:', hiddenIdField.value);
+        }
+        
+        // Establecer fecha actual para recolección
+        const fechaField = document.getElementById('fecha_recoleccion');
+        if (fechaField) {
+            fechaField.value = new Date().toISOString().split('T')[0];
+            console.log('Fecha de recolección establecida:', fechaField.value);
+        }
+        
+        // Establecer valores por defecto
+        const calidadField = document.getElementById('calidad');
+        if (calidadField) {
+            calidadField.value = 'buena';
+        }
+        
+        const unidadField = document.getElementById('unidad');
+        if (unidadField) {
+            unidadField.value = 'quintales';
+        }
+        
+        console.log('Formulario completamente limpio para nueva producción');
+        console.log('ID Field value:', document.getElementById('produccionId').value);
+    }
+    
+    animateModalOpen(modal);
+}
+
+function closeProduccionModal() {
+    const modal = document.getElementById('produccionModal');
+    
+    // Limpiar completamente el formulario al cerrar
+    const form = document.getElementById('produccionForm');
+    if (form) {
+        form.reset();
+        
+        // Limpiar específicamente el campo ID
+        const idField = document.getElementById('produccionId');
+        if (idField) {
+            idField.value = '';
+            idField.removeAttribute('value');
+        }
+        
+        // Limpiar también el campo hidden
+        const hiddenIdField = document.querySelector('input[name="id_produccion"]');
+        if (hiddenIdField) {
+            hiddenIdField.value = '';
+            hiddenIdField.removeAttribute('value');
+        }
+        
+        console.log('Formulario limpiado al cerrar modal');
+    }
+    
+    animateModalClose(modal);
+}
+
+async function saveProduccion() {
+        const form = document.getElementById('produccionForm');
+    const produccionId = document.getElementById('produccionId').value;
+    
+    // VERIFICACIÓN ESTRICTA - Si hay ID es actualización, si no hay ID es creación
+    const isUpdate = produccionId && produccionId.trim() !== '';
+    
+    console.log('=== VERIFICACIÓN DE ACCIÓN ===');
+    console.log('ProduccionId value:', produccionId);
+    console.log('Is Update:', isUpdate);
+    console.log('Acción:', isUpdate ? 'ACTUALIZAR producción existente' : 'CREAR nueva producción');
+        
+        try {
+            const url = 'php/produccion.php';
+        
+        if (isUpdate) {
+            // ACTUALIZAR: Usar PUT con URL-encoded
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                params.append(key, value);
+            }
+            
+            console.log('ACTUALIZANDO producción con ID:', produccionId);
+            console.log('Params being sent:', params.toString());
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeProduccionModal();
+                loadProduccion(currentPage);
+                loadStatistics(); // Recargar estadísticas
+                showToast('✏️ Producción actualizada exitosamente', 'update');
+            } else {
+                showToast('🚨 Error al actualizar producción: ' + data.message, 'error');
+            }
+        } else {
+            // CREAR: Usar POST con FormData
+            console.log('CREANDO NUEVA PRODUCCIÓN - No hay ID, es una producción nueva');
+            
+            // CREAR FormData SIN el campo id_produccion
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                // EXCLUIR completamente el campo id_produccion
+                if (element.name !== 'id_produccion' && element.name !== '') {
+                    formData.append(element.name, element.value);
+                    console.log(`Agregando campo: ${element.name} = ${element.value}`);
+                }
+            });
+            
+            console.log('FormData contents (SIN id_produccion):');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeProduccionModal();
+                loadProduccion(currentPage);
+                loadStatistics(); // Recargar estadísticas
+                showToast('🌱 Nueva producción registrada exitosamente', 'create');
+            } else {
+                showToast('🚨 Error al registrar producción: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar la producción', 'error');
+    }
+}
+
+async function editProduccion(id) {
+    try {
+        console.log('Editando producción con ID:', id);
+        
+        // Obtener datos completos de la producción desde la base de datos
+        const response = await fetch(`php/produccion.php?id_produccion=${id}`);
+        const data = await response.json();
+        
+        console.log('Datos recibidos del servidor:', data);
+        
+        if (data.success && data.data) {
+            const produccion = data.data;
+            console.log('Datos de la producción a editar:', produccion);
+            openProduccionModal(produccion);
+            } else {
+            showToast('Error al cargar los datos de la producción', 'error');
+            }
+        } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar los datos de la producción', 'error');
+    }
+}
+
+function confirmDeleteProduccion(id, cultivo) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Producción?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar la producción de <strong>"${cultivo}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deleteProduccion(id);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
+
+async function deleteProduccion(id) {
+    try {
+        // Encontrar la fila a eliminar para animarla
+        const rows = document.querySelectorAll('#produccionTableBody tr');
+        const rowToDelete = Array.from(rows).find(row => 
+            row.querySelector('td:first-child').textContent === id.toString()
+        );
+        
+        if (rowToDelete) {
+            animateRowDelete(rowToDelete);
+        }
+        
+        // Para DELETE, necesitamos enviar los datos como URL-encoded
+        const params = new URLSearchParams();
+        params.append('id_produccion', id);
+        
+        const response = await fetch('php/produccion.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Recargar datos después de la animación
+            setTimeout(() => {
+                loadProduccion(currentPage);
+                loadStatistics(); // Recargar estadísticas
+            }, 300);
+            showToast('🗑️ Producción eliminada exitosamente', 'delete');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar la producción', 'error');
+    }
+}
+
+function showToast(message, type) {
+        const toast = document.createElement('div');
+    toast.className = `toast ${type} toast-enter`;
+        toast.textContent = message;
+        
+    // Agregar barra de progreso
+    const progressBar = document.createElement('div');
+    progressBar.className = 'toast-progress';
+    toast.appendChild(progressBar);
+    
+    // Agregar efectos especiales según el tipo
+    if (type === 'success') {
+        toast.classList.add('glow');
+    } else if (type === 'error') {
+        toast.classList.add('pulse');
+    } else if (type === 'warning') {
+        toast.classList.add('shimmer');
+    }
+    
+    document.getElementById('toastContainer').appendChild(toast);
+    
+    // Animación de entrada con bounce
+    setTimeout(() => {
+        toast.classList.add('show', 'toast-bounce');
+    }, 100);
+    
+    // Efecto hover para pausar el timer
+    toast.addEventListener('mouseenter', () => {
+        toast.style.animationPlayState = 'paused';
+        toast.style.transform = 'translateX(-5px) scale(1.02)';
+    });
+    
+    toast.addEventListener('mouseleave', () => {
+        toast.style.animationPlayState = 'running';
+        toast.style.transform = 'translateX(0) scale(1)';
+    });
+    
+    // Click para cerrar manualmente
+    toast.addEventListener('click', () => {
+        closeToast(toast);
+    });
+    
+    // Auto-close después de 4 segundos
+    setTimeout(() => {
+        if (toast.parentNode) {
+            closeToast(toast);
+        }
+    }, 4000);
+}
+
+function closeToast(toast) {
+    toast.classList.remove('show', 'toast-bounce');
+    toast.classList.add('toast-exit');
+    
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 300);
+}
+
+
+

@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Buscadores en Tablas</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .feature-section {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin: 20px 0;
+        }
+        .feature-section h3 {
+            color: #065f46;
+            margin-bottom: 15px;
+        }
+        .demo-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .demo-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .demo-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .demo-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table-title h4 {
+            color: #1a3a2e;
+            margin: 0 0 0.25rem 0;
+            font-size: 1.1rem;
+        }
+        .demo-table-title p {
+            color: #6b7280;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+        .demo-search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            min-width: 250px;
+        }
+        .demo-search-box i {
+            color: #6b7280;
+            margin-right: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .demo-search-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            flex: 1;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        .demo-table-content {
+            padding: 1rem;
+        }
+        .demo-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .demo-table th,
+        .demo-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a3a2e;
+        }
+        .demo-table td {
+            color: #374151;
+        }
+        .demo-table tr:hover {
+            background: #f8f9fa;
+        }
+        .test-steps {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin: 20px 0;
+        }
+        .test-steps h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        .test-steps ol {
+            color: #92400e;
+            line-height: 1.8;
+        }
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .feature-card {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 3px solid #3b82f6;
+        }
+        .feature-card h4 {
+            color: #1a3a2e;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .feature-card p {
+            color: #6b7280;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔍 Test - Buscadores en Tablas</h1>
+            <p>Funcionalidad de búsqueda agregada a Producción, Ventas y Pagos</p>
+        </div>
+        
+        <div class="feature-section">
+            <h3>✅ Buscadores Implementados</h3>
+            <p><strong>Se han agregado buscadores a todas las tablas principales:</strong></p>
+            <ul>
+                <li><strong>Producción:</strong> Buscar por socio, cultivo, cantidad, fecha, etc.</li>
+                <li><strong>Ventas:</strong> Buscar por socio, cliente, producto, monto, fecha, etc.</li>
+                <li><strong>Pagos:</strong> Buscar por socio, tipo, descripción, monto, fecha, etc.</li>
+            </ul>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <h4>🔍 Búsqueda en Tiempo Real</h4>
+                <p>Los resultados se filtran mientras escribes</p>
+            </div>
+            <div class="feature-card">
+                <h4>📱 Responsive</h4>
+                <p>Se adapta a dispositivos móviles</p>
+            </div>
+            <div class="feature-card">
+                <h4>🎯 Búsqueda Inteligente</h4>
+                <p>Busca en todos los campos de la tabla</p>
+            </div>
+            <div class="feature-card">
+                <h4>💡 Sin Resultados</h4>
+                <p>Muestra mensaje cuando no hay coincidencias</p>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo Visual - Cómo se Ven los Buscadores</h3>
+            
+            <div class="demo-table">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Producción</h4>
+                        <p>Historial de cosechas registradas por socio</p>
+                    </div>
+                    <div class="search-container">
+                        <div class="demo-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Buscar en producción..." class="demo-search-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Cultivo</th>
+                                <th>Cantidad</th>
+                                <th>Fecha</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>Maíz</td>
+                                <td>500 kg</td>
+                                <td>2024-01-15</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">Editar</button>
+                                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>Frijol</td>
+                                <td>300 kg</td>
+                                <td>2024-01-16</td>
+                                <td>
+                                    <button class="btn btn-sm btn-primary">Editar</button>
+                                    <button class="btn btn-sm btn-danger">Eliminar</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="test-steps">
+            <h3>🧪 Pasos para Probar los Buscadores</h3>
+            <ol>
+                <li><strong>Página de Producción:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Busca el campo de búsqueda en la esquina superior derecha de la tabla</li>
+                        <li>Escribe "maíz" para filtrar por cultivo</li>
+                        <li>Escribe "Juan" para filtrar por socio</li>
+                        <li>Escribe "500" para filtrar por cantidad</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Ventas:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/ventas.html</code></li>
+                        <li>Busca el campo de búsqueda en la esquina superior derecha de la tabla</li>
+                        <li>Escribe "cliente" para filtrar por cliente</li>
+                        <li>Escribe "producto" para filtrar por producto</li>
+                        <li>Escribe "100" para filtrar por monto</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Pagos:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Busca el campo de búsqueda en la esquina superior derecha de la tabla</li>
+                        <li>Escribe "aporte" para filtrar por tipo de pago</li>
+                        <li>Escribe "socio" para filtrar por socio</li>
+                        <li>Escribe "736" para filtrar por monto</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="feature-section">
+            <h3>🔧 Características Técnicas</h3>
+            <ul>
+                <li><strong>Posición:</strong> Esquina superior derecha de cada tabla</li>
+                <li><strong>Diseño:</strong> Caja de búsqueda con icono y placeholder</li>
+                <li><strong>Funcionalidad:</strong> Filtrado en tiempo real mientras escribes</li>
+                <li><strong>Alcance:</strong> Busca en todos los campos visibles de la tabla</li>
+                <li><strong>UX:</strong> Mensaje cuando no hay resultados</li>
+                <li><strong>Responsive:</strong> Se adapta a pantallas móviles</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">📋 Resumen de Implementación</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>HTML:</strong> Agregado buscador en table-header de cada página</li>
+                <li><strong>CSS:</strong> Estilos responsivos para buscadores</li>
+                <li><strong>JavaScript:</strong> Funciones de búsqueda en tiempo real</li>
+                <li><strong>UX:</strong> Mensajes informativos y diseño consistente</li>
+                <li><strong>Compatibilidad:</strong> Funciona en todas las tablas existentes</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">💡 Consejos de Uso:</h4>
+            <ul style="color: #92400e; font-size: 0.9rem; margin: 0; line-height: 1.6;">
+                <li><strong>Búsqueda parcial:</strong> Puedes escribir solo parte de la palabra</li>
+                <li><strong>Múltiples campos:</strong> La búsqueda incluye todos los campos visibles</li>
+                <li><strong>Limpiar búsqueda:</strong> Borra el texto para ver todos los resultados</li>
+                <li><strong>Case insensitive:</strong> No importa si escribes en mayúsculas o minúsculas</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+
+
+

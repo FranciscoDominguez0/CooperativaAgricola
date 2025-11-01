@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Directo - Módulo de Usuarios</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            background: white;
+            padding: 20px;
+            margin: 10px 0;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .test-button:hover {
+            background: #4a7c59;
+        }
+        .status {
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .status.success { background: #d4edda; color: #155724; }
+        .status.error { background: #f8d7da; color: #721c24; }
+        .status.info { background: #d1ecf1; color: #0c5460; }
+        .preview {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #2d5016, #4a7c59);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            font-size: 2rem;
+            margin: 0;
+        }
+        .stat-card p {
+            margin: 5px 0 0 0;
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Test Directo - Módulo de Usuarios</h1>
+    <p><strong>Cooperativa Agrícola La Pintada</strong> - Verificación completa del sistema</p>
+    
+    <div class="test-container">
+        <h2>🔧 Tests del Backend</h2>
+        <button class="test-button" onclick="testConexion()">🔌 Test Conexión</button>
+        <button class="test-button" onclick="testEstadisticas()">📈 Test Estadísticas</button>
+        <button class="test-button" onclick="testListaUsuarios()">👥 Test Lista Usuarios</button>
+        <button class="test-button" onclick="testCrearUsuario()">➕ Test Crear Usuario</button>
+        <button class="test-button" onclick="abrirModuloUsuarios()">🚀 Abrir Módulo Usuarios</button>
+    </div>
+    
+    <div class="test-container">
+        <h2>📊 Estadísticas de Usuarios</h2>
+        <div id="estadisticasPreview" class="preview">
+            <div>Haz clic en "Test Estadísticas" para ver las estadísticas de usuarios</div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>👥 Lista de Usuarios</h2>
+        <div id="usuariosPreview" class="preview">
+            <div>Haz clic en "Test Lista Usuarios" para ver la lista de usuarios</div>
+        </div>
+    </div>
+    
+    <div class="test-container">
+        <h2>📝 Log de Resultados</h2>
+        <div id="testLog" style="background: #f8f8f8; padding: 15px; border-radius: 5px; max-height: 300px; overflow-y: auto;">
+            <div>Esperando pruebas...</div>
+        </div>
+    </div>
+
+    <script>
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('testLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = document.createElement('div');
+            logEntry.innerHTML = `<strong>[${timestamp}]</strong> ${message}`;
+            logEntry.className = `status ${type}`;
+            logDiv.appendChild(logEntry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Test 1: Conexión
+        async function testConexion() {
+            log('🔌 Probando conexión a la base de datos...', 'info');
+            try {
+                const response = await fetch('php/conexion.php');
+                if (response.ok) {
+                    log('✅ Conexión: EXITOSA', 'success');
+                } else {
+                    log('❌ Conexión: ERROR', 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 2: Estadísticas
+        async function testEstadisticas() {
+            log('📊 Probando estadísticas de usuarios...', 'info');
+            try {
+                const response = await fetch('php/usuarios.php?action=estadisticas');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Estadísticas: EXITOSAS', 'success');
+                    
+                    // Mostrar estadísticas
+                    const preview = document.getElementById('estadisticasPreview');
+                    preview.innerHTML = `
+                        <h3>Estadísticas del Sistema:</h3>
+                        <div class="stats-grid">
+                            <div class="stat-card">
+                                <h3>${data.estadisticas.total_usuarios || 0}</h3>
+                                <p>Total Usuarios</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.estadisticas.usuarios_activos || 0}</h3>
+                                <p>Usuarios Activos</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.estadisticas.administradores || 0}</h3>
+                                <p>Administradores</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.estadisticas.productores || 0}</h3>
+                                <p>Productores</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.estadisticas.clientes || 0}</h3>
+                                <p>Clientes</p>
+                            </div>
+                            <div class="stat-card">
+                                <h3>${data.estadisticas.contadores || 0}</h3>
+                                <p>Contadores</p>
+                            </div>
+                        </div>
+                        <h4>Distribución por Roles:</h4>
+                        <pre style="background: #f0f0f0; padding: 10px; border-radius: 3px; font-size: 12px;">${JSON.stringify(data.estadisticas.distribucion_roles, null, 2)}</pre>
+                    `;
+                } else {
+                    log(`❌ Estadísticas: ERROR - ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 3: Lista de usuarios
+        async function testListaUsuarios() {
+            log('👥 Probando lista de usuarios...', 'info');
+            try {
+                const response = await fetch('php/usuarios.php?action=lista');
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Lista usuarios: EXITOSA', 'success');
+                    
+                    // Mostrar usuarios
+                    const preview = document.getElementById('usuariosPreview');
+                    preview.innerHTML = `
+                        <h3>Usuarios Registrados (${data.total}):</h3>
+                        ${data.usuarios.map(usuario => `
+                            <div style="background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 15px; margin: 10px 0;">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4>${usuario.nombre} ${usuario.apellido}</h4>
+                                        <p><strong>Email:</strong> ${usuario.email}</p>
+                                        <p><strong>Username:</strong> ${usuario.username}</p>
+                                        <p><strong>Estado:</strong> ${usuario.estado}</p>
+                                        <p><strong>Registro:</strong> ${new Date(usuario.fecha_registro).toLocaleDateString('es-ES')}</p>
+                                    </div>
+                                    <div>
+                                        <span style="background: #2d5016; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">${usuario.rol}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    `;
+                } else {
+                    log(`❌ Lista usuarios: ERROR - ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Test 4: Crear usuario
+        async function testCrearUsuario() {
+            log('👤 Probando creación de usuario...', 'info');
+            try {
+                const nuevoUsuario = {
+                    nombre: 'Test',
+                    apellido: 'Usuario',
+                    email: 'test@cooperativa.com',
+                    telefono: '123456789',
+                    username: 'testuser',
+                    password: 'password123',
+                    rol: 'cliente',
+                    estado: 'activo',
+                    notas: 'Usuario de prueba'
+                };
+                
+                const response = await fetch('php/usuarios.php?action=crear', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(nuevoUsuario)
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    log('✅ Crear usuario: EXITOSO', 'success');
+                    log(`📝 Usuario creado con ID: ${data.id_usuario}`, 'info');
+                } else {
+                    log(`❌ Crear usuario: ERROR - ${data.message}`, 'error');
+                }
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        // Abrir módulo de usuarios
+        function abrirModuloUsuarios() {
+            log('🔗 Abriendo módulo de usuarios...', 'info');
+            window.open('', '_blank');
+        }
+        
+        // Ejecutar tests automáticamente al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            log('🚀 Iniciando tests automáticos...', 'info');
+            
+            setTimeout(() => testConexion(), 500);
+            setTimeout(() => testEstadisticas(), 1000);
+            setTimeout(() => testListaUsuarios(), 1500);
+        });
+    </script>
+</body>
+</html>
+

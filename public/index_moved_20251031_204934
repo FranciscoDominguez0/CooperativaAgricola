@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cooperativa Agrícola La Pintada</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #8bc34a 0%, #4a7c59 50%, #2d5016 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+            padding: 1.5rem;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .logo {
+            margin-bottom: 1rem;
+        }
+
+        .logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4a7c59, #2d5016);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 0.75rem;
+            box-shadow: 0 8px 20px rgba(45, 80, 22, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .logo-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .logo h1 {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .welcome-section {
+            margin-bottom: 1rem;
+        }
+
+        .welcome-section h2 {
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .welcome-section p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9rem;
+            line-height: 1.4;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            background: linear-gradient(135deg, #2d5016, #4a7c59);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 16px rgba(45, 80, 22, 0.3);
+            margin: 0.4rem;
+            min-width: 160px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 28px rgba(45, 80, 22, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.1));
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.2));
+            transform: translateY(-1px);
+        }
+
+        .loading {
+            display: none;
+            margin-top: 1rem;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-top: 3px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 0.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .features {
+            margin-top: 1rem;
+            text-align: left;
+        }
+
+        .features-title {
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.5rem;
+        }
+
+        .feature {
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.8rem;
+            padding: 0.4rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .feature:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateX(3px);
+        }
+
+        .feature i {
+            color: #4a7c59;
+            margin-right: 0.5rem;
+            width: 16px;
+            font-size: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .agricultural-elements {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+
+        .agricultural-elements::before {
+            content: '🌾';
+            position: absolute;
+            top: 15%;
+            left: 8%;
+            font-size: 1.5rem;
+            opacity: 0.3;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .agricultural-elements::after {
+            content: '🌱';
+            position: absolute;
+            top: 25%;
+            right: 10%;
+            font-size: 1.2rem;
+            opacity: 0.4;
+            animation: float 3s ease-in-out infinite reverse;
+        }
+
+        .leaf-1 {
+            position: absolute;
+            top: 20%;
+            right: 20%;
+            font-size: 1.3rem;
+            opacity: 0.2;
+            animation: float 5s ease-in-out infinite;
+        }
+
+        .leaf-2 {
+            position: absolute;
+            bottom: 25%;
+            left: 12%;
+            font-size: 1rem;
+            opacity: 0.3;
+            animation: float 4s ease-in-out infinite reverse;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.5rem;
+                margin: 1rem;
+                width: 95%;
+            }
+            
+            .btn {
+                display: block;
+                margin: 0.5rem 0;
+                min-width: auto;
+                width: 100%;
+            }
+
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+
+            .welcome-section h2 {
+                font-size: 1.2rem;
+            }
+
+            .welcome-section p {
+                font-size: 0.9rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 0.5rem;
+            }
+
+            .feature {
+                font-size: 0.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 1.25rem;
+            }
+
+            .logo-icon {
+                width: 70px;
+                height: 70px;
+            }
+
+            .logo-icon i {
+                font-size: 2rem;
+            }
+
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+
+            .welcome-section h2 {
+                font-size: 1.1rem;
+            }
+
+            .btn {
+                padding: 0.9rem 1.5rem;
+                font-size: 0.95rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .logo h1 {
+                font-size: 1.2rem;
+            }
+
+            .welcome-section h2 {
+                font-size: 1rem;
+            }
+
+            .welcome-section p {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="agricultural-elements">
+        <div class="leaf-1">🍃</div>
+        <div class="leaf-2">🌿</div>
+    </div>
+
+    <div class="container">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-seedling"></i>
+            </div>
+            <h1>Cooperativa Agrícola</h1>
+            <div class="subtitle">La Pintada</div>
+        </div>
+
+        <div class="welcome-section">
+            <h2>Bienvenido a Nuestra Comunidad</h2>
+            <p>Cultivando juntos un futuro próspero y sostenible</p>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Verificando acceso...</p>
+        </div>
+
+        <a href="login.html" class="btn" id="loginBtn">
+            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+        </a>
+
+        <a href="register.html" class="btn btn-secondary" id="registerBtn">
+            <i class="fas fa-user-plus"></i> Únete a Nosotros
+        </a>
+
+        <div class="features">
+            <h3 class="features-title">Nuestros Valores</h3>
+            <div class="features-grid">
+                <div class="feature">
+                    <i class="fas fa-leaf"></i>
+                    <span>Agricultura sostenible</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-hands-helping"></i>
+                    <span>Cooperación</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Crecimiento compartido</span>
+                </div>
+                <div class="feature">
+                    <i class="fas fa-globe-americas"></i>
+                    <span>Desarrollo comunitario</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Verificar si ya hay una sesión activa
+        document.addEventListener('DOMContentLoaded', function() {
+            checkSession();
+        });
+
+        async function checkSession() {
+            try {
+                const response = await fetch('php/verificar_sesion.php');
+                const data = await response.json();
+                
+                if (data.authenticated) {
+                    showLoading();
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1500);
+                }
+            } catch (error) {
+                console.log('No hay sesión activa');
+            }
+        }
+
+        function showLoading() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('loginBtn').style.display = 'none';
+            document.getElementById('registerBtn').style.display = 'none';
+        }
+    </script>
+    <script src="js/dark-mode.js"></script>
+</body>
+</html>

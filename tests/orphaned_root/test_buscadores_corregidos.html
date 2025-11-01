@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Buscadores Corregidos</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .fix-section {
+            background: #f0fdf4;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #10b981;
+            margin: 20px 0;
+        }
+        .fix-section h3 {
+            color: #065f46;
+            margin-bottom: 15px;
+        }
+        .demo-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .demo-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .demo-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .demo-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table-title h4 {
+            color: #1a3a2e;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .demo-search-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 0.5rem 0.75rem;
+            min-width: 250px;
+        }
+        .demo-search-box i {
+            color: #6b7280;
+            margin-right: 0.5rem;
+            font-size: 0.875rem;
+        }
+        .demo-search-input {
+            border: none;
+            outline: none;
+            background: transparent;
+            flex: 1;
+            font-size: 0.875rem;
+            color: #1f2937;
+        }
+        .test-steps {
+            background: #fef3c7;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #f59e0b;
+            margin: 20px 0;
+        }
+        .test-steps h3 {
+            color: #92400e;
+            margin-bottom: 15px;
+        }
+        .test-steps ol {
+            color: #92400e;
+            line-height: 1.8;
+        }
+        .before-after {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        .before, .after {
+            padding: 15px;
+            border-radius: 8px;
+        }
+        .before {
+            background: #fef2f2;
+            border-left: 4px solid #ef4444;
+        }
+        .after {
+            background: #f0fdf4;
+            border-left: 4px solid #10b981;
+        }
+        .before h4, .after h4 {
+            margin: 0 0 10px 0;
+            font-size: 0.9rem;
+        }
+        .before h4 {
+            color: #dc2626;
+        }
+        .after h4 {
+            color: #065f46;
+        }
+        .code-block {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔍 Test - Buscadores Corregidos</h1>
+            <p>Buscadores ahora visibles sin texto descriptivo</p>
+        </div>
+        
+        <div class="fix-section">
+            <h3>✅ Problema Corregido</h3>
+            <p><strong>Cambio realizado:</strong> Se eliminó el texto descriptivo "Historial de..." para que el buscador sea más visible y prominente.</p>
+        </div>
+        
+        <div class="before-after">
+            <div class="before">
+                <h4>❌ ANTES (Problemático)</h4>
+                <div class="code-block">
+&lt;div class="table-title"&gt;
+    &lt;h3&gt;Registro de Ventas&lt;/h3&gt;
+    &lt;p&gt;Historial de ventas registradas por socio&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class="search-container"&gt;
+    &lt;!-- Buscador menos visible --&gt;
+&lt;/div&gt;
+                </div>
+            </div>
+            <div class="after">
+                <h4>✅ DESPUÉS (Corregido)</h4>
+                <div class="code-block">
+&lt;div class="table-title"&gt;
+    &lt;h3&gt;Registro de Ventas&lt;/h3&gt;
+&lt;/div&gt;
+&lt;div class="search-container"&gt;
+    &lt;!-- Buscador más prominente --&gt;
+&lt;/div&gt;
+                </div>
+            </div>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo Visual - Cómo se Ven Ahora los Buscadores</h3>
+            
+            <div class="demo-table">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Ventas</h4>
+                    </div>
+                    <div class="search-container">
+                        <div class="demo-search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" placeholder="Buscar en ventas..." class="demo-search-input">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 20px;">
+                <h4>🎯 Páginas Corregidas:</h4>
+                <ul>
+                    <li><strong>Producción:</strong> Solo título "Registro de Producción" + buscador</li>
+                    <li><strong>Ventas:</strong> Solo título "Registro de Ventas" + buscador</li>
+                    <li><strong>Pagos:</strong> Solo título "Registro de Pagos" + buscador</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="test-steps">
+            <h3>🧪 Pasos para Verificar la Corrección</h3>
+            <ol>
+                <li><strong>Página de Producción:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que solo aparece "Registro de Producción" como título</li>
+                        <li>Verifica que el buscador está visible en la esquina derecha</li>
+                        <li>Prueba escribir en el buscador</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Ventas:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que solo aparece "Registro de Ventas" como título</li>
+                        <li>Verifica que el buscador está visible en la esquina derecha</li>
+                        <li>Prueba escribir en el buscador</li>
+                    </ul>
+                </li>
+                <li><strong>Página de Pagos:</strong>
+                    <ul>
+                        <li>Abre: <code>http://localhost/cooperativa-agricola/</code></li>
+                        <li>Verifica que solo aparece "Registro de Pagos" como título</li>
+                        <li>Verifica que el buscador está visible en la esquina derecha</li>
+                        <li>Prueba escribir en el buscador</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+        
+        <div class="fix-section">
+            <h3>🔧 Cambios Realizados</h3>
+            <ul>
+                <li><strong>HTML:</strong> Eliminado el texto descriptivo de todas las tablas</li>
+                <li><strong>CSS:</strong> Ajustado el alineamiento para centrar título y buscador</li>
+                <li><strong>Layout:</strong> Buscador ahora más prominente y visible</li>
+                <li><strong>UX:</strong> Interfaz más limpia y funcional</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">📋 Resumen de la Corrección</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Problema:</strong> Buscadores no se veían bien con texto descriptivo</li>
+                <li><strong>Solución:</strong> Eliminado texto descriptivo, solo título + buscador</li>
+                <li><strong>Resultado:</strong> Buscadores más visibles y prominentes</li>
+                <li><strong>Beneficio:</strong> Interfaz más limpia y funcional</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">💡 Verificación:</h4>
+            <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                Ahora los buscadores deberían ser claramente visibles en la esquina superior derecha de cada tabla, sin el texto descriptivo que los hacía menos prominentes.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+

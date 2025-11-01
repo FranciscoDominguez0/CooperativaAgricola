@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Producción - Cooperativa Agrícola La Pintada</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/creative-messages.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <h1>Cooperativa Agrícola La Pintada</h1>
+            </div>
+            <div class="user-info">
+                <div class="user-details">
+                    <div class="user-name" id="userName">Usuario</div>
+                    <div class="user-role" id="userRole">Miembro</div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav-container">
+        <div class="nav-content">
+            <div class="nav-item" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                Dashboard
+            </div>
+            <div class="nav-item" data-section="socios">
+                <i class="fas fa-users"></i>
+                Socios
+            </div>
+            <div class="nav-item" data-section="insumos">
+                <i class="fas fa-seedling"></i>
+                Insumos
+            </div>
+            <div class="nav-item active" data-section="produccion">
+                <i class="fas fa-chart-line"></i>
+                Producción
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-chart-bar"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="totalProduccion">280 qq</div>
+                    <div class="stat-label">Total registrado</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-seedling"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="cultivosActivos">4</div>
+                    <div class="stat-label">Tipos diferentes</div>
+                </div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <i class="fas fa-users"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="productoresActivos">3</div>
+                    <div class="stat-label">Socios productores</div>
+                </div>
+            </div>
+            <div class="stat-card stat-card-dark">
+                <div class="stat-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="stat-content">
+                    <div class="stat-number" id="calidadPremium">50.0%</div>
+                    <div class="stat-label">Del total producido</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Producción Section -->
+        <section class="content-section active" id="produccionSection">
+            <div class="produccion-section">
+                <div class="section-header animate-fade-in-up">
+                    <div class="section-title-container">
+                        <h2 class="section-title">
+                            <i class="fas fa-chart-line"></i>
+                            Gestión de Producción
+                        </h2>
+                        <p class="section-subtitle">Control y registro de la producción agrícola</p>
+                    </div>
+                    <div class="search-container stagger-animation">
+                        <input type="text" id="searchProduccionInput" class="search-input smooth-transition" placeholder="Buscar por socio, cultivo o variedad...">
+                        <button class="btn btn-primary btn-animate hover-lift" id="addProduccionBtn">
+                            <i class="fas fa-plus"></i> Registrar Producción
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-section">
+                    <h3 class="table-section-title">Registro de Producción</h3>
+                    <p class="table-section-subtitle">Historial de cosechas por socio</p>
+                    
+                    <div class="table-container animate-slide-in-right">
+                        <table class="table" id="produccionTable">
+                            <thead>
+                                <tr>
+                                    <th>Socio</th>
+                                    <th>Cultivo</th>
+                                    <th>Variedad</th>
+                                    <th>Cantidad</th>
+                                    <th>Fecha Recolección</th>
+                                    <th>Calidad</th>
+                                    <th>Observaciones</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="produccionTableBody">
+                                <tr>
+                                    <td>Juan Pérez García</td>
+                                    <td>Café</td>
+                                    <td>Caturra</td>
+                                    <td>25.5 quintales</td>
+                                    <td>20/06/2024</td>
+                                    <td><span class="quality-badge quality-premium">Premium</span></td>
+                                    <td>Café de alta calidad, proceso húmedo</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-edit btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>María Rodríguez López</td>
+                                    <td>Café</td>
+                                    <td>Bourbon</td>
+                                    <td>18.2 quintales</td>
+                                    <td>15/07/2024</td>
+                                    <td><span class="quality-badge quality-buena">Buena</span></td>
+                                    <td>Café orgánico certificado</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-edit btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Carlos Mendoza Silva</td>
+                                    <td>Maíz</td>
+                                    <td>Híbrido 123</td>
+                                    <td>45.0 quintales</td>
+                                    <td>30/08/2024</td>
+                                    <td><span class="quality-badge quality-buena">Buena</span></td>
+                                    <td>Maíz para consumo y venta</td>
+                                    <td>
+                                        <div class="actions">
+                                            <button class="btn btn-edit btn-sm">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <button class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        // Simple navigation
+        document.addEventListener('DOMContentLoaded', () => {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const section = item.getAttribute('data-section');
+                    if (section === 'dashboard') {
+                        window.location.href = 'dashboard.html';
+                    } else if (section === 'socios') {
+                        window.location.href = 'socios.html';
+                    } else if (section === 'insumos') {
+                        window.location.href = 'insumos.html';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

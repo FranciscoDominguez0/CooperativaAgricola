@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Buscador Directo</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .demo-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .demo-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .demo-table {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .demo-table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table-title h4 {
+            color: #1a3a2e;
+            margin: 0;
+            font-size: 1.1rem;
+        }
+        .demo-table-content {
+            padding: 1rem;
+        }
+        .demo-table table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .demo-table th,
+        .demo-table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .demo-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #1a3a2e;
+        }
+        .demo-table td {
+            color: #374151;
+        }
+        .demo-table tr:hover {
+            background: #f8f9fa;
+        }
+        .debug-section {
+            background: #f0f9ff;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #3b82f6;
+            margin: 20px 0;
+        }
+        .debug-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+        }
+        .debug-section pre {
+            background: #1f2937;
+            color: #f9fafb;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🔍 Test - Buscador Directo</h1>
+            <p>Verificación directa de que los buscadores funcionan</p>
+        </div>
+        
+        <div class="demo-section">
+            <h3>📋 Demo - Buscador en Tabla de Ventas</h3>
+            <div class="demo-table">
+                <div class="demo-table-header">
+                    <div class="demo-table-title">
+                        <h4>Registro de Ventas</h4>
+                    </div>
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="ventasSearch" placeholder="Buscar en ventas..." class="search-input">
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-table-content">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Producto</th>
+                                <th>Cantidad</th>
+                                <th>Precio</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>Maíz</td>
+                                <td>100 kg</td>
+                                <td>$2.50</td>
+                                <td>$250.00</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>Frijol</td>
+                                <td>50 kg</td>
+                                <td>$3.00</td>
+                                <td>$150.00</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Carlos López</td>
+                                <td>Arroz</td>
+                                <td>75 kg</td>
+                                <td>$2.80</td>
+                                <td>$210.00</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Ana Martínez</td>
+                                <td>Maíz</td>
+                                <td>200 kg</td>
+                                <td>$2.30</td>
+                                <td>$460.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <h3>🔧 Debugging en Tiempo Real</h3>
+            <p>Verifica en la consola del navegador (F12) que aparezcan estos mensajes:</p>
+            <pre id="debugOutput">Esperando búsqueda...</pre>
+        </div>
+        
+        <div class="demo-section">
+            <h3>🧪 Instrucciones de Prueba</h3>
+            <ol>
+                <li><strong>Escribe "Juan"</strong> - Debe mostrar solo la fila de Juan Pérez</li>
+                <li><strong>Escribe "Maíz"</strong> - Debe mostrar las filas de Juan y Ana</li>
+                <li><strong>Escribe "250"</strong> - Debe mostrar solo la fila con total $250.00</li>
+                <li><strong>Borra el texto</strong> - Debe mostrar todas las filas</li>
+            </ol>
+        </div>
+    </div>
+    
+    <script>
+        // Función de búsqueda para el test
+        function handleVentasSearch(event) {
+            const searchTerm = event.target.value.toLowerCase().trim();
+            console.log('🔍 Búsqueda en ventas:', searchTerm);
+            
+            const table = document.querySelector('.demo-table table');
+            const tbody = table.querySelector('tbody');
+            const rows = tbody.querySelectorAll('tr');
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const matches = text.includes(searchTerm);
+                
+                if (matches) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Actualizar debug output
+            const debugOutput = document.getElementById('debugOutput');
+            debugOutput.textContent = `Búsqueda: "${searchTerm}" - ${visibleCount} resultados encontrados`;
+            
+            console.log(`✅ Búsqueda completada: ${visibleCount} resultados encontrados`);
+        }
+        
+        // Verificar que todo esté funcionando
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('ventasSearch');
+            const searchContainer = document.querySelector('.search-container');
+            const searchBox = document.querySelector('.search-box');
+            
+            console.log('🔍 Verificación de elementos:');
+            console.log('  - searchInput:', searchInput ? '✅ Existe' : '❌ No existe');
+            console.log('  - searchContainer:', searchContainer ? '✅ Existe' : '❌ No existe');
+            console.log('  - searchBox:', searchBox ? '✅ Existe' : '❌ No existe');
+            
+            if (searchInput) {
+                searchInput.addEventListener('input', handleVentasSearch);
+                console.log('✅ Event listener agregado');
+            }
+            
+            if (searchContainer) {
+                const styles = window.getComputedStyle(searchContainer);
+                console.log('  - display:', styles.display);
+                console.log('  - visibility:', styles.visibility);
+                console.log('  - opacity:', styles.opacity);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

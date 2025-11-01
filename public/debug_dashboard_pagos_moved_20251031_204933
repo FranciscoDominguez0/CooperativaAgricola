@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Dashboard Pagos</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .debug-info { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-left: 4px solid #007bff; 
+            font-family: monospace; 
+        }
+        .debug-success { border-left-color: #28a745; }
+        .debug-error { border-left-color: #dc3545; }
+        .debug-warning { border-left-color: #ffc107; }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <h3>🔧 Debug del Módulo de Pagos en Dashboard</h3>
+        <p>Este archivo simula la carga del módulo de pagos para identificar problemas.</p>
+    </div>
+
+    <!-- Simular la estructura del dashboard -->
+    <div class="dashboard-container">
+        <main class="main-content">
+            <!-- Pagos Section -->
+            <section class="content-section active" id="pagosSection">
+                <div class="pagos-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-money-bill-wave"></i>
+                            Gestión de Pagos
+                        </h2>
+                        <div class="section-actions">
+                            <button class="btn btn-primary" id="addPagoBtn">
+                                <i class="fas fa-plus"></i> Registrar Pago
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid" id="pagosStatsGrid">
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-dollar-sign"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="ingresosTotales">$0</div>
+                                <div class="stat-label">Ingresos Totales</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-clock"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="pagosPendientes">0</div>
+                                <div class="stat-label">Pagos Pendientes</div>
+                            </div>
+                        </div>
+                        <div class="stat-card stat-card-dark">
+                            <div class="stat-icon">
+                                <i class="fas fa-check-circle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="pagosConfirmados">0</div>
+                                <div class="stat-label">Pagos Confirmados</div>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fas fa-calendar-alt"></i>
+                            </div>
+                            <div class="stat-content">
+                                <div class="stat-number" id="aportesMensuales">0</div>
+                                <div class="stat-label">Aportes Mensuales</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <div class="table-header">
+                            <h3>Registro de Pagos</h3>
+                            <p>Historial de pagos registrados por socio</p>
+                        </div>
+                        <table class="table" id="pagosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Socio</th>
+                                    <th>Tipo</th>
+                                    <th>Descripción</th>
+                                    <th>Monto</th>
+                                    <th>Fecha</th>
+                                    <th>Estado</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pagosTableBody">
+                                <!-- Los datos se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="pagosPagination">
+                        <!-- La paginación se generará aquí -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Debug Info -->
+    <div id="debug-info"></div>
+
+    <script>
+        // Variables globales para pagos
+        let currentPagosPage = 1;
+        let totalPagosPages = 1;
+        let sociosListPagos = [];
+
+        // Función para mostrar debug info
+        function showDebug(message, type = 'info') {
+            const debugDiv = document.getElementById('debug-info');
+            const className = type === 'success' ? 'debug-success' : type === 'error' ? 'debug-error' : 'debug-warning';
+            debugDiv.innerHTML += `<div class="debug-info ${className}">${message}</div>`;
+        }
+
+        // Función para verificar elementos del DOM
+        function checkDOMElements() {
+            const elements = [
+                'pagosSection',
+                'pagosStatsGrid', 
+                'ingresosTotales',
+                'pagosPendientes',
+                'pagosConfirmados',
+                'aportesMensuales',
+                'pagosTable',
+                'pagosTableBody',
+                'pagosPagination',
+                'addPagoBtn'
+            ];
+
+            let allFound = true;
+            elements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    showDebug(`✅ Elemento encontrado: ${id}`, 'success');
+                } else {
+                    showDebug(`❌ Elemento NO encontrado: ${id}`, 'error');
+                    allFound = false;
+                }
+            });
+
+            return allFound;
+        }
+
+        // Función para probar carga de estadísticas
+        async function testLoadStatistics() {
+            try {
+                showDebug('🔄 Cargando estadísticas...', 'info');
+                const response = await fetch('php/pagos.php?action=statistics');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showDebug('✅ Estadísticas cargadas correctamente', 'success');
+                    
+                    // Actualizar elementos
+                    const ingresosTotales = parseFloat(data.statistics.ingresos_totales || 0);
+                    const formattedTotal = `$${ingresosTotales.toLocaleString()}`;
+                    
+                    const ingresosElement = document.getElementById('ingresosTotales');
+                    if (ingresosElement) {
+                        ingresosElement.textContent = formattedTotal;
+                        showDebug(`💰 Ingresos totales actualizados: ${formattedTotal}`, 'success');
+                    } else {
+                        showDebug('❌ No se encontró el elemento ingresosTotales', 'error');
+                    }
+                    
+                    document.getElementById('pagosPendientes').textContent = data.statistics.pagos_pendientes || '0';
+                    document.getElementById('pagosConfirmados').textContent = data.statistics.pagos_confirmados || '0';
+                    document.getElementById('aportesMensuales').textContent = data.statistics.aportes_mensuales || '0';
+                    
+                    showDebug('📊 Todas las estadísticas actualizadas', 'success');
+                } else {
+                    showDebug(`❌ Error en estadísticas: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showDebug(`❌ Error cargando estadísticas: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para probar carga de pagos
+        async function testLoadPagos() {
+            try {
+                showDebug('🔄 Cargando lista de pagos...', 'info');
+                const response = await fetch('php/pagos.php?page=1&limit=10');
+                const data = await response.json();
+                
+                if (data.success) {
+                    showDebug(`✅ Lista de pagos cargada: ${data.data.length} registros`, 'success');
+                    
+                    // Simular displayPagos
+                    const tbody = document.getElementById('pagosTableBody');
+                    if (tbody) {
+                        if (data.data.length === 0) {
+                            tbody.innerHTML = `
+                                <tr>
+                                    <td colspan="8" class="no-data">
+                                        <div class="no-data-content">
+                                            <i class="fas fa-money-bill-wave"></i>
+                                            <p>No hay registros de pagos</p>
+                                            <small>Comienza registrando el primer pago</small>
+                                        </div>
+                                    </td>
+                                </tr>
+                            `;
+                            showDebug('📋 Tabla actualizada: Sin datos', 'warning');
+                        } else {
+                            let html = '';
+                            data.data.forEach((item, index) => {
+                                html += `
+                                    <tr>
+                                        <td>${item.id_pago}</td>
+                                        <td>${item.nombre_socio || '-'}</td>
+                                        <td><span class="tipo-badge tipo-${item.tipo}">${item.tipo}</span></td>
+                                        <td>${item.descripcion || '-'}</td>
+                                        <td>$${parseFloat(item.monto).toLocaleString()}</td>
+                                        <td>${item.fecha_pago}</td>
+                                        <td><span class="status-badge status-${item.estado}">${item.estado}</span></td>
+                                        <td>
+                                            <div class="actions">
+                                                <button class="btn btn-sm btn-edit" title="Editar pago">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button class="btn btn-sm btn-danger" title="Eliminar pago">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                `;
+                            });
+                            tbody.innerHTML = html;
+                            showDebug(`📋 Tabla actualizada: ${data.data.length} filas`, 'success');
+                        }
+                    } else {
+                        showDebug('❌ No se encontró el elemento pagosTableBody', 'error');
+                    }
+                } else {
+                    showDebug(`❌ Error cargando pagos: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showDebug(`❌ Error cargando pagos: ${error.message}`, 'error');
+            }
+        }
+
+        // Función para probar carga de socios
+        async function testLoadSocios() {
+            try {
+                showDebug('🔄 Cargando socios...', 'info');
+                const response = await fetch('php/socios.php');
+                const data = await response.json();
+                
+                if (data.success) {
+                    sociosListPagos = data.data;
+                    showDebug(`✅ Socios cargados: ${sociosListPagos.length} registros`, 'success');
+                } else {
+                    showDebug(`❌ Error cargando socios: ${data.message}`, 'error');
+                }
+            } catch (error) {
+                showDebug(`❌ Error cargando socios: ${error.message}`, 'error');
+            }
+        }
+
+        // Función principal de debug
+        async function runDebug() {
+            showDebug('🚀 Iniciando debug del módulo de pagos...', 'info');
+            
+            // 1. Verificar elementos DOM
+            showDebug('1️⃣ Verificando elementos del DOM...', 'info');
+            const domOK = checkDOMElements();
+            
+            if (!domOK) {
+                showDebug('❌ Hay elementos del DOM faltantes. Revisa el HTML.', 'error');
+                return;
+            }
+            
+            // 2. Probar carga de estadísticas
+            showDebug('2️⃣ Probando carga de estadísticas...', 'info');
+            await testLoadStatistics();
+            
+            // 3. Probar carga de socios
+            showDebug('3️⃣ Probando carga de socios...', 'info');
+            await testLoadSocios();
+            
+            // 4. Probar carga de pagos
+            showDebug('4️⃣ Probando carga de pagos...', 'info');
+            await testLoadPagos();
+            
+            showDebug('🎉 Debug completado. Revisa los resultados arriba.', 'success');
+        }
+
+        // Ejecutar debug al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            runDebug();
+        });
+    </script>
+</body>
+</html>
+
+

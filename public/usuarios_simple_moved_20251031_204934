@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Módulo de Usuarios - Simple</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌱</text></svg>">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="css/dashboard.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/dark-mode.css">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #2d5016;
+            margin: 0;
+            font-size: 2.5rem;
+        }
+        .header p {
+            color: #6c757d;
+            margin: 10px 0 0 0;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card h3 {
+            font-size: 2.5rem;
+            color: #2d5016;
+            margin: 0;
+        }
+        .stat-card p {
+            color: #6c757d;
+            margin: 10px 0 0 0;
+        }
+        .roles-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .roles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .role-card {
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+        .role-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .role-card.admin {
+            border-color: #dc3545;
+            background: linear-gradient(135deg, #fff5f5, #ffe6e6);
+        }
+        .role-card.producer {
+            border-color: #2d5016;
+            background: linear-gradient(135deg, #f0f8f0, #e6f3e6);
+        }
+        .role-card.client {
+            border-color: #17a2b8;
+            background: linear-gradient(135deg, #f0f9ff, #e6f7ff);
+        }
+        .role-card.accountant {
+            border-color: #ffc107;
+            background: linear-gradient(135deg, #fffbf0, #fff3e6);
+        }
+        .users-section {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .users-table th {
+            background: linear-gradient(135deg, #2d5016, #4a7c59);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+        .users-table td {
+            padding: 15px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .users-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        .btn {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #4a7c59;
+        }
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1><i class="fas fa-user-cog"></i> Gestión de Usuarios</h1>
+            <p>Administración de usuarios y permisos del sistema</p>
+            <button class="btn" onclick="cargarDatos()">
+                <i class="fas fa-sync"></i> Actualizar Datos
+            </button>
+        </div>
+
+        <!-- Estadísticas -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3 id="totalUsuarios">0</h3>
+                <p>Total Usuarios</p>
+                <small>Registrados en el sistema</small>
+            </div>
+            <div class="stat-card">
+                <h3 id="usuariosActivos">0</h3>
+                <p>Usuarios Activos</p>
+                <small>Con acceso al sistema</small>
+            </div>
+            <div class="stat-card">
+                <h3 id="administradores">0</h3>
+                <p>Administradores</p>
+                <small>Con permisos completos</small>
+            </div>
+            <div class="stat-card">
+                <h3 id="productores">0</h3>
+                <p>Productores</p>
+                <small>Usuarios productores</small>
+            </div>
+        </div>
+
+        <!-- Roles y Permisos -->
+        <div class="roles-section">
+            <h2><i class="fas fa-shield-alt"></i> Roles y Permisos</h2>
+            <div class="roles-grid">
+                <div class="role-card admin">
+                    <h3><i class="fas fa-crown"></i> Administrador</h3>
+                    <p><strong>Acceso completo al sistema</strong></p>
+                    <h4>Permisos:</h4>
+                    <ul>
+                        <li>Gestión de usuarios</li>
+                        <li>Todos los módulos</li>
+                        <li>Configuración del sistema</li>
+                    </ul>
+                </div>
+                <div class="role-card producer">
+                    <h3><i class="fas fa-seedling"></i> Productor</h3>
+                    <p><strong>Acceso limitado para productores</strong></p>
+                    <h4>Permisos:</h4>
+                    <ul>
+                        <li>Ver producción propia</li>
+                        <li>Registrar cosechas</li>
+                        <li>Ver pagos</li>
+                    </ul>
+                </div>
+                <div class="role-card client">
+                    <h3><i class="fas fa-shopping-cart"></i> Cliente</h3>
+                    <p><strong>Acceso para compradores</strong></p>
+                    <h4>Permisos:</h4>
+                    <ul>
+                        <li>Ver catálogo</li>
+                        <li>Realizar pedidos</li>
+                        <li>Ver facturas</li>
+                    </ul>
+                </div>
+                <div class="role-card accountant">
+                    <h3><i class="fas fa-calculator"></i> Contador</h3>
+                    <p><strong>Acceso a módulos financieros</strong></p>
+                    <h4>Permisos:</h4>
+                    <ul>
+                        <li>Gestión financiera</li>
+                        <li>Reportes</li>
+                        <li>Pagos y aportes</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Usuarios -->
+        <div class="users-section">
+            <h2><i class="fas fa-list"></i> Lista de Usuarios</h2>
+            <div id="usuariosContainer">
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Cargando usuarios...
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Cargar datos al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Módulo de usuarios iniciado');
+            cargarDatos();
+        });
+
+        // Cargar datos
+        async function cargarDatos() {
+            try {
+                await Promise.all([
+                    cargarEstadisticas(),
+                    cargarUsuarios()
+                ]);
+            } catch (error) {
+                console.error('Error cargando datos:', error);
+                mostrarError('Error cargando datos del módulo');
+            }
+        }
+
+        // Cargar estadísticas
+        async function cargarEstadisticas() {
+            try {
+                const response = await fetch('php/usuarios.php?action=estadisticas');
+                const data = await response.json();
+                
+                if (data.success) {
+                    document.getElementById('totalUsuarios').textContent = data.estadisticas.total_usuarios || 0;
+                    document.getElementById('usuariosActivos').textContent = data.estadisticas.usuarios_activos || 0;
+                    document.getElementById('administradores').textContent = data.estadisticas.administradores || 0;
+                    document.getElementById('productores').textContent = data.estadisticas.productores || 0;
+                    console.log('Estadísticas cargadas:', data.estadisticas);
+                } else {
+                    console.error('Error cargando estadísticas:', data.message);
+                    mostrarError('Error cargando estadísticas: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error cargando estadísticas:', error);
+                mostrarError('Error cargando estadísticas');
+            }
+        }
+
+        // Cargar usuarios
+        async function cargarUsuarios() {
+            try {
+                const response = await fetch('php/usuarios.php?action=lista');
+                const data = await response.json();
+                
+                if (data.success) {
+                    mostrarUsuarios(data.usuarios);
+                    console.log('Usuarios cargados:', data.usuarios);
+                } else {
+                    console.error('Error cargando usuarios:', data.message);
+                    mostrarError('Error cargando usuarios: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error cargando usuarios:', error);
+                mostrarError('Error cargando usuarios');
+            }
+        }
+
+        // Mostrar usuarios
+        function mostrarUsuarios(usuarios) {
+            const container = document.getElementById('usuariosContainer');
+            
+            if (usuarios.length === 0) {
+                container.innerHTML = '<div class="loading">No hay usuarios registrados</div>';
+                return;
+            }
+            
+            let html = `
+                <table class="users-table">
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Email</th>
+                            <th>Registro</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            usuarios.forEach(usuario => {
+                html += `
+                    <tr>
+                        <td><strong>${usuario.nombre} ${usuario.apellido}</strong></td>
+                        <td><span style="background: #2d5016; color: white; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">${usuario.rol}</span></td>
+                        <td><span style="background: #d4edda; color: #155724; padding: 5px 12px; border-radius: 20px; font-size: 0.8rem;">${usuario.estado}</span></td>
+                        <td>${usuario.email}</td>
+                        <td>${new Date(usuario.fecha_registro).toLocaleDateString('es-ES')}</td>
+                    </tr>
+                `;
+            });
+            
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        // Mostrar error
+        function mostrarError(mensaje) {
+            const container = document.getElementById('usuariosContainer');
+            container.innerHTML = `<div class="loading" style="color: #dc3545;">❌ ${mensaje}</div>`;
+        }
+    </script>
+    <script src="js/dark-mode.js"></script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test - Consistencia de Tablas</title>
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .test-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .test-header h1 {
+            color: #1a3a2e;
+            margin-bottom: 10px;
+        }
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+            margin: 30px 0;
+        }
+        .table-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #d4ff00;
+        }
+        .table-section h3 {
+            color: #1a3a2e;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        .font-info {
+            background: #e3f2fd;
+            padding: 10px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: #1565c0;
+        }
+        .font-info strong {
+            color: #0d47a1;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>📊 Test - Consistencia de Tamaño de Fuente en Tablas</h1>
+            <p>Todas las tablas ahora tienen el mismo tamaño de letra (0.9rem)</p>
+        </div>
+        
+        <div class="font-info">
+            <strong>🎯 Tamaño estándar aplicado:</strong> 0.9rem (14.4px) para todas las tablas del sistema
+        </div>
+        
+        <div class="comparison-grid">
+            <!-- Tabla de Producción -->
+            <div class="table-section">
+                <h3>🌱 Tabla de Producción</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cultivo</th>
+                                <th>Cantidad</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Maíz</td>
+                                <td>100 kg</td>
+                                <td>2024-01-15</td>
+                                <td><span class="status-activo">Activo</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Frijol</td>
+                                <td>50 kg</td>
+                                <td>2024-01-16</td>
+                                <td><span class="status-pendiente">Pendiente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Tabla de Ventas -->
+            <div class="table-section">
+                <h3>💰 Tabla de Ventas</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Cliente</th>
+                                <th>Producto</th>
+                                <th>Precio</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Juan Pérez</td>
+                                <td>Maíz</td>
+                                <td>$150.00</td>
+                                <td>2024-01-15</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>María García</td>
+                                <td>Frijol</td>
+                                <td>$75.00</td>
+                                <td>2024-01-16</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Tabla de Pagos -->
+            <div class="table-section">
+                <h3>💳 Tabla de Pagos</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Socio</th>
+                                <th>Tipo</th>
+                                <th>Monto</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Carlos López</td>
+                                <td><span class="tipo-badge tipo-aporte">Aporte</span></td>
+                                <td>$200.00</td>
+                                <td><span class="status-confirmado">Confirmado</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Ana Martínez</td>
+                                <td><span class="tipo-badge tipo-cuota">Cuota</span></td>
+                                <td>$150.00</td>
+                                <td><span class="status-pendiente">Pendiente</span></td>
+                                <td>
+                                    <div class="actions">
+                                        <button class="btn btn-primary btn-sm">
+                                            <i class="fas fa-edit"></i> Editar
+                                        </button>
+                                        <button class="btn btn-danger btn-sm">
+                                            <i class="fas fa-trash"></i> Eliminar
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Tabla de Socios -->
+            <div class="table-section">
+                <h3>👥 Tabla de Socios</h3>
+                <div class="table-container">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Roberto Silva</td>
+                                <td>roberto@email.com</td>
+                                <td>555-0101</td>
+                                <td><span class="status-activo">Activo</span></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Laura Jiménez</td>
+                                <td>laura@email.com</td>
+                                <td>555-0102</td>
+                                <td><span class="status-pendiente">Pendiente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: #f0f9ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
+            <h3 style="color: #1a3a2e; margin-bottom: 15px;">✅ Mejoras Implementadas:</h3>
+            <ul style="color: #6b7280; line-height: 1.8;">
+                <li><strong>Tamaño estándar:</strong> Todas las tablas usan 0.9rem (14.4px)</li>
+                <li><strong>Consistencia visual:</strong> No más variaciones de tamaño entre secciones</li>
+                <li><strong>Legibilidad mejorada:</strong> Tamaño óptimo para lectura</li>
+                <li><strong>Responsive:</strong> Se adapta correctamente en pantallas pequeñas</li>
+                <li><strong>Forzado con !important:</strong> Garantiza que no haya conflictos</li>
+            </ul>
+        </div>
+        
+        <div style="margin-top: 20px; padding: 15px; background: #fef3c7; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <h4 style="color: #92400e; margin-bottom: 10px;">🔍 Verificación Técnica:</h4>
+            <p style="color: #92400e; font-size: 0.9rem; margin: 0;">
+                <strong>CSS aplicado:</strong> <code>font-size: 0.9rem !important;</code> en todas las tablas del sistema
+            </p>
+        </div>
+    </div>
+</body>
+</html>

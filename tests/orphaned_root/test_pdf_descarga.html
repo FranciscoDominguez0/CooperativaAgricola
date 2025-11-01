@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test PDF Descarga - Cooperativa Agrícola La Pintada</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .header h1 {
+            color: #2d5016;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        .test-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .test-button {
+            background: #2d5016;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        .test-button:hover {
+            background: #4a7c59;
+        }
+        .test-button.secondary {
+            background: #6c757d;
+        }
+        .test-button.secondary:hover {
+            background: #5a6268;
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: 500;
+        }
+        .status.success { 
+            background: #d4edda; 
+            color: #155724; 
+        }
+        .status.info { 
+            background: #d1ecf1; 
+            color: #0c5460; 
+        }
+        .status.warning { 
+            background: #fff3cd; 
+            color: #856404; 
+        }
+        .status.error { 
+            background: #f8d7da; 
+            color: #721c24; 
+        }
+        .instructions {
+            background: #e9ecef;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .instructions h3 {
+            color: #2d5016;
+            margin-bottom: 15px;
+        }
+        .instructions ol {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧪 Test PDF Descarga</h1>
+            <p>Cooperativa Agrícola La Pintada - Verificación de descarga de PDF</p>
+        </div>
+        
+        <div class="instructions">
+            <h3>📋 Funcionalidad Implementada</h3>
+            <ol>
+                <li><strong>Descarga directa:</strong> Al hacer clic en el botón PDF, se descarga automáticamente</li>
+                <li><strong>Sin páginas nuevas:</strong> No se abre ninguna ventana o página nueva</li>
+                <li><strong>Datos reales:</strong> Obtiene datos del backend y los incluye en el PDF</li>
+                <li><strong>Formato profesional:</strong> PDF con encabezado, KPIs y análisis</li>
+                <li><strong>Nombre automático:</strong> Se nombra automáticamente con la fecha</li>
+            </ol>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔧 Tests de Descarga de PDF</h3>
+            <p>Prueba la generación y descarga de PDF con diferentes configuraciones:</p>
+            
+            <button class="test-button" onclick="testPDFSimple()">
+                📄 Test PDF Simple
+            </button>
+            
+            <button class="test-button secondary" onclick="testPDFConDatos()">
+                📊 Test PDF con Datos Reales
+            </button>
+            
+            <button class="test-button secondary" onclick="testPDFPersonalizado()">
+                🎨 Test PDF Personalizado
+            </button>
+            
+            <button class="test-button secondary" onclick="verificarJsPDF()">
+                🔍 Verificar jsPDF
+            </button>
+        </div>
+        
+        <div class="test-section">
+            <h3>📊 Estado de la Implementación</h3>
+            <div class="status success">
+                ✅ <strong>jsPDF incluido:</strong> Biblioteca cargada correctamente
+            </div>
+            <div class="status success">
+                ✅ <strong>Descarga directa:</strong> Implementada
+            </div>
+            <div class="status success">
+                ✅ <strong>Sin páginas nuevas:</strong> Funcionando
+            </div>
+            <div class="status success">
+                ✅ <strong>Datos del backend:</strong> Integrados
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Funciones de Test</h3>
+            <p>Estas funciones prueban diferentes aspectos de la generación de PDF:</p>
+            <ul>
+                <li><strong>Test PDF Simple:</strong> Genera un PDF básico con datos de ejemplo</li>
+                <li><strong>Test PDF con Datos:</strong> Obtiene datos reales del backend</li>
+                <li><strong>Test PDF Personalizado:</strong> PDF con formato personalizado</li>
+                <li><strong>Verificar jsPDF:</strong> Comprueba que la biblioteca esté disponible</li>
+            </ul>
+        </div>
+        
+        <div class="test-section">
+            <h3>🔗 Enlaces de Prueba</h3>
+            <p>Prueba el módulo de reportes con la descarga de PDF implementada:</p>
+            <a href="" class="test-button" target="_blank">
+                📊 Abrir Módulo de Reportes
+            </a>
+            <a href="" class="test-button secondary" target="_blank">
+                🏠 Abrir Dashboard
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Verificar jsPDF al cargar
+        document.addEventListener('DOMContentLoaded', function() {
+            verificarJsPDF();
+        });
+        
+        // Verificar si jsPDF está disponible
+        function verificarJsPDF() {
+            const statusDiv = document.querySelector('.status.success');
+            if (typeof window.jspdf !== 'undefined') {
+                statusDiv.innerHTML = '✅ <strong>jsPDF disponible:</strong> Biblioteca cargada correctamente';
+                console.log('jsPDF está disponible');
+            } else {
+                statusDiv.innerHTML = '❌ <strong>jsPDF no disponible:</strong> Error cargando la biblioteca';
+                statusDiv.className = 'status error';
+                console.error('jsPDF no está disponible');
+            }
+        }
+        
+        // Test 1: PDF Simple
+        function testPDFSimple() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Agregar contenido
+                doc.setFontSize(16);
+                doc.setTextColor(45, 80, 22);
+                doc.text('🌱 COOPERATIVA AGRÍCOLA LA PINTADA', 20, 30);
+                
+                doc.setFontSize(12);
+                doc.setTextColor(0, 0, 0);
+                doc.text('Test de PDF Simple', 20, 50);
+                doc.text('Fecha: ' + new Date().toLocaleDateString('es-ES'), 20, 60);
+                doc.text('Este es un PDF de prueba generado con jsPDF', 20, 70);
+                
+                // Descargar
+                doc.save('test-pdf-simple.pdf');
+                console.log('PDF simple generado exitosamente');
+            } catch (error) {
+                console.error('Error generando PDF simple:', error);
+                alert('Error generando PDF: ' + error.message);
+            }
+        }
+        
+        // Test 2: PDF con Datos Reales
+        async function testPDFConDatos() {
+            try {
+                // Obtener datos del backend
+                const response = await fetch('php/reportes.php?action=kpis');
+                const data = await response.json();
+                
+                if (data.success) {
+                    const { jsPDF } = window.jspdf;
+                    const doc = new jsPDF();
+                    
+                    // Encabezado
+                    doc.setFontSize(16);
+                    doc.setTextColor(45, 80, 22);
+                    doc.text('🌱 COOPERATIVA AGRÍCOLA LA PINTADA', 20, 30);
+                    
+                    doc.setFontSize(12);
+                    doc.setTextColor(0, 0, 0);
+                    doc.text('Reporte con Datos Reales', 20, 50);
+                    doc.text('Fecha: ' + new Date().toLocaleDateString('es-ES'), 20, 60);
+                    
+                    // KPIs
+                    doc.text('INDICADORES PRINCIPALES:', 20, 80);
+                    doc.text('Ingresos: $' + (data.data.ingresos || 0).toLocaleString(), 30, 90);
+                    doc.text('Ventas: ' + (data.data.ventas || 0), 30, 100);
+                    doc.text('Aportes: $' + (data.data.aportes || 0).toLocaleString(), 30, 110);
+                    doc.text('Socios: ' + (data.data.socios || 0), 30, 120);
+                    
+                    // Descargar
+                    doc.save('test-pdf-con-datos.pdf');
+                    console.log('PDF con datos reales generado exitosamente');
+                } else {
+                    throw new Error('Error obteniendo datos del backend');
+                }
+            } catch (error) {
+                console.error('Error generando PDF con datos:', error);
+                alert('Error generando PDF: ' + error.message);
+            }
+        }
+        
+        // Test 3: PDF Personalizado
+        function testPDFPersonalizado() {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                // Configuración de página
+                const pageWidth = doc.internal.pageSize.getWidth();
+                const pageHeight = doc.internal.pageSize.getHeight();
+                
+                // Encabezado con estilo
+                doc.setFillColor(45, 80, 22);
+                doc.rect(0, 0, pageWidth, 40, 'F');
+                
+                doc.setTextColor(255, 255, 255);
+                doc.setFontSize(18);
+                doc.text('🌱 COOPERATIVA AGRÍCOLA LA PINTADA', pageWidth / 2, 20, { align: 'center' });
+                
+                doc.setFontSize(12);
+                doc.text('Reporte Personalizado', pageWidth / 2, 30, { align: 'center' });
+                
+                // Contenido
+                doc.setTextColor(0, 0, 0);
+                doc.setFontSize(14);
+                doc.text('INFORMACIÓN DEL REPORTE', 20, 60);
+                
+                doc.setFontSize(10);
+                doc.text('• Generado automáticamente', 20, 75);
+                doc.text('• Formato profesional', 20, 85);
+                doc.text('• Datos en tiempo real', 20, 95);
+                doc.text('• Descarga directa', 20, 105);
+                
+                // Línea separadora
+                doc.setDrawColor(45, 80, 22);
+                doc.setLineWidth(1);
+                doc.line(20, 120, pageWidth - 20, 120);
+                
+                // Pie de página
+                doc.setFontSize(8);
+                doc.setTextColor(128, 128, 128);
+                doc.text('Reporte generado el ' + new Date().toLocaleString('es-ES'), pageWidth / 2, pageHeight - 10, { align: 'center' });
+                
+                // Descargar
+                doc.save('test-pdf-personalizado.pdf');
+                console.log('PDF personalizado generado exitosamente');
+            } catch (error) {
+                console.error('Error generando PDF personalizado:', error);
+                alert('Error generando PDF: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>
+
+

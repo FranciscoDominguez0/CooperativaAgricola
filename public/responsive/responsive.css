@@ -1,0 +1,107 @@
+/* Responsive base stylesheet for the app
+   Placeholders: this file is intentionally conservative and additive.
+   === Goals ===
+   - Fluid containers and typography
+   - Images/tables/forms behave on small screens
+   - Common helpers: .container, .row, .col-*, .hide-on-mobile, .mobile-only
+   - Breakpoints: mobile (<=480), tablet (481-768), small-desktop (769-1024), desktop (>1024)
+*/
+
+:root{
+  --max-width: 1200px;
+  --gutter: 16px;
+  --font-size-base: 16px;
+  --font-family-base: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Reset-ish useful bits (non-invasive) */
+html,body{height:100%;}
+body{
+  margin:0;
+  font-family:var(--font-family-base);
+  font-size:var(--font-size-base);
+  line-height:1.4;
+  color:#222;
+  -webkit-font-smoothing:antialiased;
+}
+
+a{color:inherit}
+img{max-width:100%;height:auto;display:block}
+
+/* Layout helpers */
+.container{
+  width:100%;
+  max-width:var(--max-width);
+  margin-left:auto;
+  margin-right:auto;
+  padding-left:var(--gutter);
+  padding-right:var(--gutter);
+  box-sizing:border-box;
+}
+
+.row{display:flex;flex-wrap:wrap;margin-left:-8px;margin-right:-8px}
+.row > *{padding-left:8px;padding-right:8px;box-sizing:border-box}
+
+/* Simple grid columns full-width by default */
+[class*="col-"]{flex:1 1 100%;min-width:0}
+
+/* Small helpers */
+.text-center{text-align:center}
+.hide-on-mobile{display:block}
+.mobile-only{display:none}
+
+/* Tables: make scrollable on small devices */
+.responsive-table{width:100%;overflow:auto}
+.responsive-table table{width:100%;border-collapse:collapse}
+.responsive-table table th, .responsive-table table td{padding:8px;text-align:left}
+
+/* Form controls: full width on small screens */
+input[type="text"], input[type="email"], input[type="password"], select, textarea, button{
+  width:100%;
+  box-sizing:border-box;
+}
+
+/* Navigation: collapse into mobile-friendly state */
+.app-nav{display:flex;align-items:center;justify-content:space-between;padding:8px 0}
+.app-nav .nav-items{display:flex;gap:12px}
+.app-nav .menu-toggle{display:none}
+
+/* Responsive breakpoints */
+@media (max-width:1024px){
+  /* increase legibility */
+  :root{--font-size-base:15px}
+}
+
+@media (max-width:768px){
+  /* adjust columns to stack */
+  [class*="col-"]{flex:1 1 100%}
+  .app-nav .nav-items{display:none}
+  .app-nav .menu-toggle{display:block}
+  .hide-on-mobile{display:none}
+  .mobile-only{display:block}
+}
+
+@media (max-width:480px){
+  :root{--font-size-base:14px}
+  .container{padding-left:12px;padding-right:12px}
+  .row{margin-left:-6px;margin-right:-6px}
+  .row > *{padding-left:6px;padding-right:6px}
+}
+
+/* Utility spacing */
+.mt-1{margin-top:8px}
+.mt-2{margin-top:16px}
+.mb-1{margin-bottom:8px}
+.mb-2{margin-bottom:16px}
+
+/* Buttons: keep natural size but allow full-width on mobile */
+.btn{display:inline-block;padding:8px 12px;border-radius:4px;border:1px solid #ccc;background:#fff}
+@media (max-width:768px){
+  .btn{width:100%}
+}
+
+/* Minor visual improvements for tables on mobile: convert to block rows if desired (opt-in) */
+.table-stack th{display:none}
+.table-stack td{display:block;padding:8px 0;border-bottom:1px solid #eee}
+
+/* End of responsive base */
