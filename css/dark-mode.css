@@ -789,20 +789,76 @@
 
 /* Aplicar modo oscuro a los formularios */
 [data-theme="dark"] .form-control {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .form-control:focus {
-    background: var(--bg-secondary);
-    border-color: var(--verde-claro);
-    color: var(--text-primary);
-    box-shadow: 0 0 0 0.2rem rgba(0, 255, 0, 0.25);
+    background: var(--bg-secondary) !important;
+    border-color: var(--verde-claro) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 124, 89, 0.25) !important;
+}
+
+[data-theme="dark"] .form-control::placeholder {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="email"],
+[data-theme="dark"] input[type="password"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] input[type="tel"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] input[type="text"]:focus,
+[data-theme="dark"] input[type="email"]:focus,
+[data-theme="dark"] input[type="password"]:focus,
+[data-theme="dark"] input[type="number"]:focus,
+[data-theme="dark"] input[type="tel"]:focus,
+[data-theme="dark"] input[type="date"]:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+    background: var(--bg-secondary) !important;
+    border-color: var(--verde-claro) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 124, 89, 0.25) !important;
+}
+
+[data-theme="dark"] input[type="text"]::placeholder,
+[data-theme="dark"] input[type="email"]::placeholder,
+[data-theme="dark"] input[type="password"]::placeholder,
+[data-theme="dark"] input[type="number"]::placeholder,
+[data-theme="dark"] input[type="tel"]::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-muted) !important;
 }
 
 [data-theme="dark"] .form-label {
-    color: var(--text-primary);
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-group label {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-group {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .form-text {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] small {
+    color: var(--text-secondary) !important;
 }
 
 /* Aplicar modo oscuro a las barras de búsqueda */
@@ -859,20 +915,72 @@
 
 /* Aplicar modo oscuro a los modales */
 [data-theme="dark"] .modal-content {
-    background: var(--bg-secondary);
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .modal-header {
-    background: var(--bg-tertiary);
-    border-bottom: 1px solid var(--border-color);
-    color: var(--text-primary);
+    background: var(--bg-tertiary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-header h3,
+[data-theme="dark"] .modal-header h2,
+[data-theme="dark"] .modal-header h4 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal-body {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
 }
 
 [data-theme="dark"] .modal-footer {
-    background: var(--bg-tertiary);
-    border-top: 1px solid var(--border-color);
+    background: var(--bg-tertiary) !important;
+    border-top: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Aplicar modo oscuro a formularios dentro de modales */
+[data-theme="dark"] .modal .form-control,
+[data-theme="dark"] .modal input,
+[data-theme="dark"] .modal textarea,
+[data-theme="dark"] .modal select {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal .form-control:focus,
+[data-theme="dark"] .modal input:focus,
+[data-theme="dark"] .modal textarea:focus,
+[data-theme="dark"] .modal select:focus {
+    background: var(--bg-tertiary) !important;
+    border-color: var(--verde-claro) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 0.2rem rgba(74, 124, 89, 0.25) !important;
+}
+
+[data-theme="dark"] .modal .form-control::placeholder,
+[data-theme="dark"] .modal input::placeholder,
+[data-theme="dark"] .modal textarea::placeholder {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .modal label,
+[data-theme="dark"] .modal .form-label {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal .form-group {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .modal .form-text,
+[data-theme="dark"] .modal small {
+    color: var(--text-secondary) !important;
 }
 
 /* Aplicar modo oscuro al perfil de usuario */
