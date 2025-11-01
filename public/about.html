@@ -184,7 +184,7 @@
 
     /* About Section */
     .about-section {
-      padding: 100px 20px;
+      padding: 60px 20px;
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
@@ -248,15 +248,14 @@
       color: white;
       font-size: 2rem;
       box-shadow: 0 10px 30px rgba(139, 195, 74, 0.4);
-      overflow: hidden; /* ensure image is clipped to the circle */
-      padding: 0; /* remove inner spacing so image fills the circle */
+      overflow: hidden;
+      padding: 0;
     }
 
-    /* Make any image inside the decorative circle fill and be cropped to the circle */
     .decorative-circle img {
       width: 100%;
       height: 100%;
-      object-fit: cover; /* crop and fill */
+      object-fit: cover;
       display: block;
       -webkit-user-drag: none;
     }
@@ -327,10 +326,67 @@
       font-size: 1.1rem;
     }
 
+    /* Team Photo Section */
+    .team-photo-section {
+      padding: 60px 20px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .team-photo-container {
+      position: relative;
+      border-radius: 30px;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+      background: linear-gradient(135deg, #e8f5e9, #c5e1a5);
+      padding: 40px;
+      transition: transform 0.3s ease;
+    }
+
+    .team-photo-container:hover {
+      transform: scale(1.02);
+    }
+
+    .team-photo-container img {
+      width: 100%;
+      max-width: 350px;
+      max-height: 280px;
+      height: auto;
+      border-radius: 20px;
+      display: block;
+      margin: 0 auto;
+      object-fit: contain;
+    }
+
+    .team-photo-badge {
+      position: absolute;
+      top: 30px;
+      right: 30px;
+      background: linear-gradient(135deg, #8bc34a, #4a7c59);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 8px 20px rgba(139, 195, 74, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .team-caption {
+      margin-top: 30px;
+      font-size: 1.1rem;
+      color: #555;
+      font-style: italic;
+      line-height: 1.6;
+    }
+
     /* Services Section */
     .services-section {
       background: linear-gradient(135deg, #f1f8e9, #ffffff);
-      padding: 100px 20px;
+      padding: 60px 20px;
     }
 
     .services-container {
@@ -437,7 +493,7 @@
 
     /* Process Section */
     .process-section {
-      padding: 100px 20px;
+      padding: 60px 20px;
       max-width: 1200px;
       margin: 0 auto;
       text-align: center;
@@ -644,8 +700,21 @@
       </div>
 
       <div class="signature">
-        <div class="signature-name">Equipo Fundador</div>
-        Santiago, Rubén y Francisco
+        <div class="signature-name">Nuestra Misión</div>
+        Hacer la tecnología accesible para cada agricultor
+      </div>
+    </div>
+  </section>
+
+  <!-- Team Photo Section -->
+  <section class="team-photo-section">
+    <div class="team-photo-container">
+      <div class="team-photo-badge">
+        <span>🌟</span> Equipo Fundador
+      </div>
+      <img src="responsive/images/team-founders.png" alt="Equipo Fundador - Santiago, Rubén y Francisco" />
+      <div class="team-caption">
+        "Tres mentes, una visión: transformar el campo a través de la tecnología"
       </div>
     </div>
   </section>
