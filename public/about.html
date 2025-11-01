@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Sobre Nosotros - Cooperativa Agrícola</title>
+  
+  <!-- Preload de imágenes críticas -->
+  <link rel="preload" as="image" href="responsive/images/about-hero-2.png" fetchpriority="high">
+  <link rel="preload" as="image" href="responsive/images/story-1.png">
+  <link rel="preload" as="image" href="responsive/images/story-2.png">
   <style>
     * {
       margin: 0;
@@ -200,6 +205,14 @@
       gap: 20px;
     }
 
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+    
     .image-card {
       background: linear-gradient(135deg, #e8f5e9, #c5e1a5);
       border-radius: 20px;
@@ -212,13 +225,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
       transition: transform 0.3s ease;
       overflow: hidden;
-    }
-
-    .image-card img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
+      position: relative;
     }
 
     .image-card:hover {
@@ -643,7 +650,7 @@
         </div>
       </div>
       <div class="hero-image">
-        <img src="responsive/images/about-hero-2.png" alt="Cooperativa Agrícola" />
+        <img src="responsive/images/about-hero-2.png" alt="Cooperativa Agrícola" loading="eager" fetchpriority="high" decoding="async" />
       </div>
     </div>
   </section>
@@ -666,16 +673,16 @@
   <section class="about-section" id="about">
     <div class="about-images">
       <div class="image-card">
-        <img src="responsive/images/story-1.png" alt="Campo y Cosechas" />
+        <img src="responsive/images/story-1.png" alt="Campo y Cosechas" loading="lazy" decoding="async" />
       </div>
       <div class="image-card">
-        <img src="responsive/images/story-2.png" alt="Tecnología" />
+        <img src="responsive/images/story-2.png" alt="Tecnología" loading="lazy" decoding="async" />
       </div>
       <div class="image-card large">
-        <img src="responsive/images/story-3.png" alt="Colaboración y Café" />
+        <img src="responsive/images/story-3.png" alt="Colaboración y Café" loading="lazy" decoding="async" />
       </div>
       <div class="decorative-circle">
-        <img src="responsive/images/about-hero-1.png" alt="Colaboración y Café" />
+        <img src="responsive/images/about-hero-1.png" alt="Colaboración y Café" loading="lazy" decoding="async" />
       </div>
     </div>
     <div class="about-content">
@@ -712,7 +719,7 @@
       <div class="team-photo-badge">
         <span>🌟</span> Equipo Fundador
       </div>
-      <img src="responsive/images/team-founders.png" alt="Equipo Fundador - Santiago, Rubén y Francisco" />
+      <img src="responsive/images/team-founders.png" alt="Equipo Fundador - Santiago, Rubén y Francisco" loading="lazy" decoding="async" />
       <div class="team-caption">
         "Tres mentes, una visión: transformar el campo a través de la tecnología"
       </div>
@@ -819,6 +826,30 @@
     document.querySelectorAll('.ticker-content').forEach(ticker => {
       const items = ticker.innerHTML;
       ticker.innerHTML = items + items;
+    });
+
+    // Optimización silenciosa de carga de imágenes
+    // Las imágenes se cargan automáticamente con lazy loading nativo
+    // Sin mostrar efectos de carga al usuario
+    const imageObserver = new IntersectionObserver((entries, observer) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          const img = entry.target;
+          // Si hay una imagen con data-src, cargarla
+          if (img.dataset.src) {
+            img.src = img.dataset.src;
+            img.removeAttribute('data-src');
+          }
+          observer.unobserve(img);
+        }
+      });
+    }, {
+      rootMargin: '100px' // Precargar imágenes más antes de que entren al viewport para carga más fluida
+    });
+
+    // Observar todas las imágenes con lazy loading de forma silenciosa
+    document.querySelectorAll('img[loading="lazy"]').forEach(img => {
+      imageObserver.observe(img);
     });
 
     // Smooth scroll

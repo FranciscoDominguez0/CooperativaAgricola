@@ -37,7 +37,11 @@ function loadDashboard() {
     else if (hour >= 18) greeting = 'Buenas noches';
     
     document.getElementById('welcomeTitle').textContent = `${greeting}, ${currentUser.nombre}!`;
-    loadStats();
+    
+    // Cargar estadísticas después de un pequeño delay para asegurar que el DOM esté listo
+    setTimeout(() => {
+        loadStats();
+    }, 200);
 }
 
 function getRoleDisplay(role) {
@@ -50,13 +54,357 @@ function getRoleDisplay(role) {
     return roles[role] || 'Miembro';
 }
 
-function loadStats() {
-    setTimeout(() => {
-        document.getElementById('totalMembers').textContent = '127';
-        document.getElementById('totalCrops').textContent = '45';
-        document.getElementById('totalRevenue').textContent = '$12,450';
-        document.getElementById('pendingTasks').textContent = '8';
-    }, 1000);
+// Variables para almacenar instancias de gráficos del dashboard
+let dashboardCharts = {
+    ingresosChart: null,
+    cultivosChart: null,
+    sociosChart: null
+};
+
+async function loadStats() {
+    try {
+        console.log('Cargando estadísticas del dashboard...');
+        const response = await fetch('php/dashboard.php');
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const text = await response.text();
+        console.log('Respuesta del servidor (texto):', text);
+        
+        let data;
+        try {
+            data = JSON.parse(text);
+        } catch (e) {
+            console.error('Error parseando JSON:', e);
+            console.error('Respuesta recibida:', text);
+            throw new Error('Respuesta inválida del servidor');
+        }
+        
+        console.log('Datos recibidos del servidor:', data);
+        
+        if (data.success && data.stats) {
+            const stats = data.stats;
+            console.log('Estadísticas:', stats);
+            
+            // Verificar que los elementos existan antes de actualizar
+            const totalMembersEl = document.getElementById('totalMembers');
+            const totalCropsEl = document.getElementById('totalCrops');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            const pendingTasksEl = document.getElementById('pendingTasks');
+            
+            if (!totalMembersEl || !totalCropsEl || !totalRevenueEl || !pendingTasksEl) {
+                console.error('Elementos del DOM no encontrados:', {
+                    totalMembers: !!totalMembersEl,
+                    totalCrops: !!totalCropsEl,
+                    totalRevenue: !!totalRevenueEl,
+                    pendingTasks: !!pendingTasksEl
+                });
+                setTimeout(() => loadStats(), 500);
+                return;
+            }
+            
+            // Función formatCurrency debe estar disponible
+            if (typeof formatCurrency !== 'function') {
+                console.error('formatCurrency no está definida');
+                // Definir formatCurrency si no existe
+                window.formatCurrency = function(value) {
+                    return new Intl.NumberFormat('es-ES', {
+                        style: 'currency',
+                        currency: 'USD',
+                        minimumFractionDigits: 0,
+                        maximumFractionDigits: 0
+                    }).format(value || 0);
+                };
+            }
+            
+            // Actualizar estadísticas principales
+            totalMembersEl.textContent = stats.total_members || 0;
+            totalCropsEl.textContent = stats.total_crops || 0;
+            totalRevenueEl.textContent = formatCurrency(stats.revenue_month || 0);
+            pendingTasksEl.textContent = stats.pending_tasks || 0;
+            
+            console.log('Estadísticas actualizadas:', {
+                miembros: stats.total_members,
+                cultivos: stats.total_crops,
+                ingresos: stats.revenue_month,
+                tareas: stats.pending_tasks
+            });
+            
+            // Crear gráficos si hay datos
+            if (data.charts) {
+                setTimeout(() => {
+                    createDashboardCharts(data.charts);
+                }, 300);
+            }
+        } else {
+            console.error('Error cargando estadísticas:', data.message || 'No se recibieron datos');
+            // Mostrar valores por defecto
+            const totalMembersEl = document.getElementById('totalMembers');
+            const totalCropsEl = document.getElementById('totalCrops');
+            const totalRevenueEl = document.getElementById('totalRevenue');
+            const pendingTasksEl = document.getElementById('pendingTasks');
+            
+            if (totalMembersEl) totalMembersEl.textContent = '0';
+            if (totalCropsEl) totalCropsEl.textContent = '0';
+            if (totalRevenueEl) totalRevenueEl.textContent = '$0';
+            if (pendingTasksEl) pendingTasksEl.textContent = '0';
+        }
+    } catch (error) {
+        console.error('Error al cargar estadísticas:', error);
+        // Mostrar valores por defecto en caso de error
+        const totalMembersEl = document.getElementById('totalMembers');
+        const totalCropsEl = document.getElementById('totalCrops');
+        const totalRevenueEl = document.getElementById('totalRevenue');
+        const pendingTasksEl = document.getElementById('pendingTasks');
+        
+        if (totalMembersEl) totalMembersEl.textContent = '0';
+        if (totalCropsEl) totalCropsEl.textContent = '0';
+        if (totalRevenueEl) totalRevenueEl.textContent = '$0';
+        if (pendingTasksEl) pendingTasksEl.textContent = '0';
+    }
+}
+
+function createDashboardCharts(charts) {
+    // Gráfico de ingresos por tipo (ventas vs aportes)
+    if (charts.ingresos_por_tipo && charts.ingresos_por_tipo.length > 0) {
+        createIngresosChart(charts.ingresos_por_tipo);
+    }
+    
+    // Gráfico de distribución de cultivos
+    if (charts.distribucion_cultivos && charts.distribucion_cultivos.length > 0) {
+        createCultivosChart(charts.distribucion_cultivos);
+    }
+    
+    // Gráfico de top socios por producción
+    if (charts.top_socios && charts.top_socios.length > 0) {
+        createSociosChart(charts.top_socios);
+    }
+}
+
+function createIngresosChart(data) {
+    const canvas = document.getElementById('ingresosChart');
+    if (!canvas) return;
+    
+    // Destruir gráfico anterior si existe
+    if (dashboardCharts.ingresosChart) {
+        dashboardCharts.ingresosChart.destroy();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    const labels = data.map(item => {
+        const mes = item.mes;
+        const fecha = new Date(mes + '-01');
+        return fecha.toLocaleDateString('es-ES', { month: 'short', year: 'numeric' });
+    });
+    
+    dashboardCharts.ingresosChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [
+                {
+                    label: 'Ventas',
+                    data: data.map(item => item.ventas || 0),
+                    backgroundColor: 'rgba(45, 80, 22, 0.8)',
+                    borderColor: '#2d5016',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Aportes',
+                    data: data.map(item => item.aportes || 0),
+                    backgroundColor: 'rgba(74, 124, 89, 0.8)',
+                    borderColor: '#4a7c59',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
+                },
+                title: {
+                    display: true,
+                    text: 'Ingresos por Tipo (Últimos 6 Meses)'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function createCultivosChart(data) {
+    const canvas = document.getElementById('cultivosChart');
+    if (!canvas) return;
+    
+    // Destruir gráfico anterior si existe
+    if (dashboardCharts.cultivosChart) {
+        dashboardCharts.cultivosChart.destroy();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    const labels = data.map(item => item.nombre);
+    const values = data.map(item => item.cantidad);
+    
+    dashboardCharts.cultivosChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: labels,
+            datasets: [{
+                data: values,
+                backgroundColor: [
+                    '#2d5016',
+                    '#4a7c59',
+                    '#8bc34a',
+                    '#aed581',
+                    '#c5e1a5'
+                ],
+                borderWidth: 2,
+                borderColor: '#fff'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                },
+                title: {
+                    display: true,
+                    text: 'Distribución de Cultivos (Top 5)'
+                }
+            }
+        }
+    });
+}
+
+function createSociosChart(data) {
+    const canvas = document.getElementById('sociosChart');
+    if (!canvas) return;
+    
+    // Destruir gráfico anterior si existe
+    if (dashboardCharts.sociosChart) {
+        dashboardCharts.sociosChart.destroy();
+    }
+    
+    const ctx = canvas.getContext('2d');
+    const labels = data.map(item => item.nombre);
+    const values = data.map(item => item.total_produccion || 0);
+    
+    dashboardCharts.sociosChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Producción Total',
+                data: values,
+                backgroundColor: 'rgba(139, 195, 74, 0.8)',
+                borderColor: '#8bc34a',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
+                },
+                title: {
+                    display: true,
+                    text: 'Top 5 Socios por Producción'
+                }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toLocaleString() + ' qq';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// Funciones adicionales útiles para el dashboard
+
+// Función para refrescar todos los datos del dashboard
+function refreshDashboard() {
+    loadStats();
+    showToast('Dashboard actualizado', 'success');
+}
+
+// Función para exportar estadísticas del dashboard a CSV
+function exportDashboardStats() {
+    try {
+        fetch('php/dashboard.php')
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    const stats = data.stats;
+                    let csv = 'Estadística,Valor\n';
+                    csv += `Miembros Activos,${stats.total_members}\n`;
+                    csv += `Cultivos Registrados,${stats.total_crops}\n`;
+                    csv += `Ingresos del Mes,${stats.revenue_month}\n`;
+                    csv += `Tareas Pendientes,${stats.pending_tasks}\n`;
+                    csv += `Ventas de Hoy,${stats.ventas_hoy}\n`;
+                    csv += `Aportes del Mes,${stats.aportes_mes}\n`;
+                    csv += `Productores Activos,${stats.productores_activos}\n`;
+                    csv += `Clientes Activos,${stats.clientes_activos}\n`;
+                    csv += `Margen Bruto,${stats.margen_bruto}%\n`;
+                    
+                    const blob = new Blob([csv], { type: 'text/csv' });
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `dashboard_stats_${new Date().toISOString().split('T')[0]}.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    
+                    showToast('Estadísticas exportadas correctamente', 'success');
+                }
+            });
+    } catch (error) {
+        console.error('Error exportando estadísticas:', error);
+        showToast('Error al exportar estadísticas', 'error');
+    }
+}
+
+// Función para obtener resumen rápido del dashboard
+async function getDashboardSummary() {
+    try {
+        const response = await fetch('php/dashboard.php');
+        const data = await response.json();
+        
+        if (data.success) {
+            return {
+                members: data.stats.total_members,
+                crops: data.stats.total_crops,
+                revenue: data.stats.revenue_month,
+                tasks: data.stats.pending_tasks
+            };
+        }
+    } catch (error) {
+        console.error('Error obteniendo resumen:', error);
+    }
+    return null;
 }
 
 async function loadSocios(page = 1, search = '') {
@@ -77,8 +425,8 @@ async function loadSocios(page = 1, search = '') {
             totalPages = data.pagination.total_pages;
         } else {
             showToast('Error al cargar socios: ' + data.message, 'error');
-            }
-        } catch (error) {
+        }
+    } catch (error) {
         console.error('Error:', error);
         showToast('Error de conexión', 'error');
     }
@@ -327,7 +675,10 @@ function showSection(sectionName) {
     
     document.getElementById(sectionName + 'Section').classList.add('active');
     
-    if (sectionName === 'socios') {
+    if (sectionName === 'dashboard') {
+        // Recargar estadísticas cuando se muestra el dashboard
+        loadStats();
+    } else if (sectionName === 'socios') {
         loadSocios();
     } else if (sectionName === 'insumos') {
         loadInsumos();
@@ -343,7 +694,10 @@ function showSection(sectionName) {
         loadPagosStatistics();
         loadSociosForPagos();
     } else if (sectionName === 'reportes') {
-        loadReportesPreview();
+        // Pequeño delay para asegurar que la sección esté visible antes de cargar
+        setTimeout(() => {
+            loadReportesPreview(true); // Forzar recarga
+        }, 100);
     }
 }
 
@@ -2293,44 +2647,88 @@ async function deletePago(pagoId) {
 
 // ===== FUNCIONES DE REPORTES =====
 
-async function loadReportesPreview() {
+// Variables para almacenar las instancias de los gráficos
+let previewFinancialChartInstance = null;
+let previewInventoryChartInstance = null;
+
+async function loadReportesPreview(forceReload = false) {
     try {
-        console.log('Cargando preview de reportes con datos reales...');
+        console.log('Cargando preview de reportes con datos reales...', forceReload ? '(forzado)' : '');
         
-        // Cargar datos de KPIs para el preview
-        const response = await fetch('php/reportes.php?action=kpis');
+        // Verificar que los elementos del DOM estén disponibles
+        const requiredElements = [
+            'previewSales',
+            'previewContributions',
+            'previewInventory',
+            'previewMargin',
+            'previewFinancialChart',
+            'previewInventoryChart'
+        ];
+        
+        const missingElements = requiredElements.filter(id => !document.getElementById(id));
+        if (missingElements.length > 0) {
+            console.warn('Elementos del DOM no disponibles aún:', missingElements);
+            // Reintentar después de un pequeño delay
+            setTimeout(() => loadReportesPreview(forceReload), 200);
+            return;
+        }
+        
+        // Cargar datos de KPIs para el preview (sin caché si se fuerza recarga)
+        const cacheOption = forceReload ? { cache: 'no-cache', headers: { 'Cache-Control': 'no-cache' } } : {};
+        const response = await fetch('php/reportes.php?action=kpis&t=' + Date.now(), cacheOption);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
         const data = await response.json();
 
-        if (data.success) {
+        if (data.success && data.kpis) {
+            console.log('Datos recibidos:', data.kpis);
             updateReportesPreview(data.kpis);
-            await loadPreviewChartsData();
-            console.log('Preview de reportes cargado:', data.kpis);
+            await loadPreviewChartsData(forceReload);
+            console.log('Preview de reportes cargado exitosamente');
         } else {
-            console.warn('Error loading real data:', data.message);
-            updateReportesPreview({
-                totalIncome: 0,
-                totalContributions: 0,
-                inventoryValue: 0,
-                grossMargin: 0
-            });
-            createEmptyCharts();
+            console.warn('Error loading real data:', data.message || 'No se recibieron datos');
+            // No establecer valores en 0, mantener los valores anteriores o reintentar
+            console.log('Reintentando carga de datos...');
+            setTimeout(() => loadReportesPreview(true), 500);
         }
     } catch (error) {
         console.error('Error loading reportes preview:', error);
-        updateReportesPreview({
-            totalIncome: 0,
-            totalContributions: 0,
-            inventoryValue: 0,
-            grossMargin: 0
-        });
-        createEmptyCharts();
+        // Reintentar una vez más antes de mostrar valores en 0
+        setTimeout(() => {
+            loadReportesPreview(true).catch(() => {
+                console.error('Error persistente cargando reportes');
+                // Solo establecer valores en 0 si el error persiste después de múltiples intentos
+                updateReportesPreview({
+                    totalIncome: 0,
+                    totalContributions: 0,
+                    inventoryValue: 0,
+                    grossMargin: 0,
+                    activeMembers: 0,
+                    availableItems: 0
+                });
+            });
+        }, 500);
     }
 }
 
 function updateReportesPreview(kpis) {
-    document.getElementById('previewSales').textContent = formatCurrency(kpis.totalIncome || 0);
-    document.getElementById('previewContributions').textContent = formatCurrency(kpis.totalContributions || 0);
-    document.getElementById('previewInventory').textContent = formatCurrency(kpis.inventoryValue || 0);
+    // Verificar que los elementos existan antes de actualizar
+    const previewSales = document.getElementById('previewSales');
+    const previewContributions = document.getElementById('previewContributions');
+    const previewInventory = document.getElementById('previewInventory');
+    const previewMargin = document.getElementById('previewMargin');
+    
+    if (!previewSales || !previewContributions || !previewInventory || !previewMargin) {
+        console.warn('Elementos del DOM no encontrados para actualizar preview');
+        return;
+    }
+    
+    previewSales.textContent = formatCurrency(kpis.totalIncome || 0);
+    previewContributions.textContent = formatCurrency(kpis.totalContributions || 0);
+    previewInventory.textContent = formatCurrency(kpis.inventoryValue || 0);
     
     // Actualizar miembros activos
     const activeMembers = parseInt(kpis.activeMembers || 0);
@@ -2348,16 +2746,31 @@ function updateReportesPreview(kpis) {
     
     // Formatear margen bruto con 2 decimales
     const grossMargin = parseFloat(kpis.grossMargin || 0);
-    document.getElementById('previewMargin').textContent = `${grossMargin.toFixed(2)}%`;
+    previewMargin.textContent = `${grossMargin.toFixed(2)}%`;
 }
 
-async function loadPreviewChartsData() {
+async function loadPreviewChartsData(forceReload = false) {
     try {
-        // Cargar datos de evolución financiera
-        const financialResponse = await fetch('php/reportes.php?action=charts');
+        // Verificar que los canvas existan
+        const financialChart = document.getElementById('previewFinancialChart');
+        const inventoryChart = document.getElementById('previewInventoryChart');
+        
+        if (!financialChart || !inventoryChart) {
+            console.warn('Canvas de gráficos no encontrados');
+            return;
+        }
+        
+        // Cargar datos de evolución financiera (sin caché si se fuerza recarga)
+        const cacheOption = forceReload ? { cache: 'no-cache', headers: { 'Cache-Control': 'no-cache' } } : {};
+        const financialResponse = await fetch('php/reportes.php?action=charts&t=' + Date.now(), cacheOption);
+        
+        if (!financialResponse.ok) {
+            throw new Error(`HTTP error! status: ${financialResponse.status}`);
+        }
+        
         const financialData = await financialResponse.json();
         
-        if (financialData.success) {
+        if (financialData.success && financialData.charts) {
             createFinancialChart(financialData.charts.monthlyFinancial);
             createInventoryChart(financialData.charts.inventoryType);
         } else {
@@ -2371,8 +2784,17 @@ async function loadPreviewChartsData() {
 }
 
 function createFinancialChart(data) {
-    const financialCtx = document.getElementById('previewFinancialChart').getContext('2d');
-    new Chart(financialCtx, {
+    const financialCanvas = document.getElementById('previewFinancialChart');
+    if (!financialCanvas) return;
+    
+    // Destruir gráfico anterior si existe
+    if (previewFinancialChartInstance) {
+        previewFinancialChartInstance.destroy();
+        previewFinancialChartInstance = null;
+    }
+    
+    const financialCtx = financialCanvas.getContext('2d');
+    previewFinancialChartInstance = new Chart(financialCtx, {
         type: 'line',
         data: {
             labels: data.labels || ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
@@ -2416,8 +2838,17 @@ function createFinancialChart(data) {
 }
 
 function createInventoryChart(data) {
-    const inventoryCtx = document.getElementById('previewInventoryChart').getContext('2d');
-    new Chart(inventoryCtx, {
+    const inventoryCanvas = document.getElementById('previewInventoryChart');
+    if (!inventoryCanvas) return;
+    
+    // Destruir gráfico anterior si existe
+    if (previewInventoryChartInstance) {
+        previewInventoryChartInstance.destroy();
+        previewInventoryChartInstance = null;
+    }
+    
+    const inventoryCtx = inventoryCanvas.getContext('2d');
+    previewInventoryChartInstance = new Chart(inventoryCtx, {
         type: 'doughnut',
         data: {
             labels: data.labels || [],
@@ -2441,9 +2872,22 @@ function createInventoryChart(data) {
 }
 
 function createEmptyCharts() {
+    // Destruir gráficos anteriores si existen
+    if (previewFinancialChartInstance) {
+        previewFinancialChartInstance.destroy();
+        previewFinancialChartInstance = null;
+    }
+    if (previewInventoryChartInstance) {
+        previewInventoryChartInstance.destroy();
+        previewInventoryChartInstance = null;
+    }
+    
     // Gráfico de evolución financiera vacío
-    const financialCtx = document.getElementById('previewFinancialChart').getContext('2d');
-    new Chart(financialCtx, {
+    const financialCanvas = document.getElementById('previewFinancialChart');
+    if (!financialCanvas) return;
+    
+    const financialCtx = financialCanvas.getContext('2d');
+    previewFinancialChartInstance = new Chart(financialCtx, {
         type: 'line',
         data: {
             labels: ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun'],
@@ -2486,8 +2930,11 @@ function createEmptyCharts() {
     });
 
     // Gráfico de inventario vacío
-    const inventoryCtx = document.getElementById('previewInventoryChart').getContext('2d');
-    new Chart(inventoryCtx, {
+    const inventoryCanvas = document.getElementById('previewInventoryChart');
+    if (!inventoryCanvas) return;
+    
+    const inventoryCtx = inventoryCanvas.getContext('2d');
+    previewInventoryChartInstance = new Chart(inventoryCtx, {
         type: 'doughnut',
         data: {
             labels: [],

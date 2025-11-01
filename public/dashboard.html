@@ -121,6 +121,14 @@
                 <div class="dashboard-header">
                     <h2 id="welcomeTitle">¡Bienvenido a tu Cooperativa!</h2>
                     <p id="welcomeMessage">Gestiona tu cooperativa de manera eficiente y moderna</p>
+                    <div class="dashboard-actions" style="margin-top: 1rem; display: flex; gap: 1rem;">
+                        <button class="btn btn-secondary" onclick="refreshDashboard()" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-sync-alt"></i> Actualizar
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportDashboardStats()" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-download"></i> Exportar Estadísticas
+                        </button>
+                    </div>
                 </div>
 
                 <div class="stats-grid">
@@ -158,6 +166,22 @@
                         <div class="stat-content">
                             <div class="stat-number" id="pendingTasks">0</div>
                             <div class="stat-label">Tareas Pendientes</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sección de Gráficos -->
+                <div class="charts-section" style="margin-top: 2rem;">
+                    <h3 style="margin-bottom: 1.5rem; color: var(--text-primary);">Análisis Visual</h3>
+                    <div class="charts-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1.5rem;">
+                        <div class="chart-card" style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <canvas id="ingresosChart" style="max-height: 300px;"></canvas>
+                        </div>
+                        <div class="chart-card" style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <canvas id="cultivosChart" style="max-height: 300px;"></canvas>
+                        </div>
+                        <div class="chart-card" style="background: var(--bg-secondary); padding: 1.5rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <canvas id="sociosChart" style="max-height: 300px;"></canvas>
                         </div>
                     </div>
                 </div>
