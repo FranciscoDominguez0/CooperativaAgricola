@@ -1,6 +1,4 @@
-/* Mejoras Visuales Creativas para Mensajes - Cooperativa Agrícola La Pintada */
 
-/* ===== SOBRESCRIBIR ESTILOS EXISTENTES ===== */
 #toastContainer {
     position: fixed !important;
     top: 20px !important;
@@ -22,7 +20,7 @@
     bottom: auto !important;
 }
 
-/* ===== TOAST NOTIFICATIONS AGRÍCOLAS CREATIVAS ===== */
+
 .toast {
     position: fixed !important;
     top: 20px !important;

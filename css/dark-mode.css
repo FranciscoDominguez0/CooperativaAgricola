@@ -805,6 +805,24 @@
     color: var(--text-primary);
 }
 
+/* Aplicar modo oscuro a las barras de búsqueda */
+[data-theme="dark"] .search-input {
+    background: var(--bg-secondary) !important;
+    border: 2px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .search-input:focus {
+    background: var(--bg-secondary) !important;
+    border-color: var(--verde-claro) !important;
+    color: var(--text-primary) !important;
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.3) !important;
+}
+
+[data-theme="dark"] .search-input::placeholder {
+    color: var(--text-muted) !important;
+}
+
 /* Aplicar modo oscuro a los botones */
 [data-theme="dark"] .btn-primary {
     background: var(--verde-primario);

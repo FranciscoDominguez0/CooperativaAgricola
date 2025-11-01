@@ -391,87 +391,15 @@ body::before {
 }
 
 /* Stats Grid */
+/* Stats Grid - NO MODIFICAR ESTILOS DE LAS TARJETAS DE ESTADÍSTICAS */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-xl);
-    margin-bottom: var(--space-2xl);
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 1.5rem;
 }
 
-.stat-card {
-    background: var(--pure-white);
-    border-radius: var(--radius-xl);
-    padding: var(--space-xl);
-    box-shadow: var(--shadow-lg);
-    text-align: center;
-    transition: all var(--transition-normal);
-    border: 1px solid var(--medium-gray);
-    position: relative;
-    overflow: hidden;
-}
-
-.stat-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient-primary);
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-2xl);
-}
-
-.stat-icon {
-    width: 70px;
-    height: 70px;
-    background: var(--gradient-primary);
-    border-radius: var(--radius-xl);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto var(--space-lg);
-    box-shadow: var(--shadow-md);
-    position: relative;
-}
-
-.stat-icon::after {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: -1px;
-    right: -1px;
-    bottom: -1px;
-    background: var(--gradient-secondary);
-    border-radius: var(--radius-xl);
-    z-index: -1;
-    opacity: 0.2;
-}
-
-.stat-icon i {
-    font-size: 2rem;
-    color: var(--pure-white);
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--forest-green);
-    margin-bottom: var(--space-sm);
-    font-family: var(--font-heading);
-}
-
-.stat-label {
-    color: var(--text-secondary);
-    font-weight: 500;
-    font-size: 0.95rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
+/* Las tarjetas de estadísticas usan los estilos de dashboard.css, no modificar aquí */
 
 /* Socios Section */
 .socios-section {
@@ -535,19 +463,20 @@ body::before {
 
 .search-input {
     padding: var(--space-md) var(--space-lg);
-    border: 2px solid var(--medium-gray);
+    border: 2px solid var(--sage-green);
     border-radius: var(--radius-lg);
     font-size: 0.9rem;
     min-width: 250px;
     transition: all var(--transition-normal);
     background: var(--pure-white);
     font-family: var(--font-primary);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .search-input:focus {
     outline: none;
     border-color: var(--sage-green);
-    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.2), 0 2px 8px rgba(0, 0, 0, 0.15);
     transform: scale(1.02);
 }
 
@@ -629,6 +558,52 @@ body::before {
 }
 
 /* Table Styles */
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--space-lg);
+    border-bottom: 1px solid var(--medium-gray);
+    flex-wrap: wrap;
+    gap: var(--space-md);
+}
+
+.table-header h3 {
+    margin: 0;
+    color: var(--forest-green);
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.table-header p {
+    margin: 0.25rem 0 0 0;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.table-header .section-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+}
+
+.table-header .section-actions .search-input {
+    border: 2px solid var(--sage-green);
+    background: var(--pure-white);
+    box-shadow: 0 2px 6px rgba(74, 124, 89, 0.15);
+}
+
+.table-header .section-actions .search-input:hover {
+    border-color: var(--forest-green);
+    box-shadow: 0 2px 8px rgba(74, 124, 89, 0.2);
+}
+
+.table-header .section-actions .search-input:focus {
+    border-color: var(--forest-green);
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.25), 0 4px 12px rgba(74, 124, 89, 0.2);
+    transform: scale(1.02);
+}
+
 .table-container {
     overflow-x: auto;
     border-radius: var(--radius-xl);

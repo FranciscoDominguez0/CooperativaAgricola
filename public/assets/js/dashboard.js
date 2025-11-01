@@ -234,6 +234,10 @@ function setupEventListeners() {
     });
 
     // Event listeners para producción
+    document.getElementById('searchProduccionInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        loadProduccion(1, searchTerm);
+    });
 
     document.getElementById('addProduccionBtn').addEventListener('click', function() {
         openProduccionModal();
@@ -255,6 +259,11 @@ function setupEventListeners() {
     });
 
     // Event listeners para ventas
+    document.getElementById('searchVentasInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        loadVentas(1, searchTerm);
+    });
+
     document.getElementById('addVentaBtn').addEventListener('click', function() {
         openVentaModal();
     });
@@ -1012,7 +1021,7 @@ function displayProduccionPagination(pagination) {
     const prevBtn = document.createElement('button');
     prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
     prevBtn.disabled = pagination.current_page === 1;
-    prevBtn.onclick = () => loadProduccion(pagination.current_page - 1);
+    prevBtn.onclick = () => loadProduccion(pagination.current_page - 1, document.getElementById('searchProduccionInput').value);
     paginationDiv.appendChild(prevBtn);
     
     for (let i = 1; i <= pagination.total_pages; i++) {
@@ -1020,7 +1029,7 @@ function displayProduccionPagination(pagination) {
             const pageBtn = document.createElement('button');
             pageBtn.textContent = i;
             pageBtn.className = i === pagination.current_page ? 'active' : '';
-            pageBtn.onclick = () => loadProduccion(i);
+            pageBtn.onclick = () => loadProduccion(i, document.getElementById('searchProduccionInput').value);
             paginationDiv.appendChild(pageBtn);
         } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
             const dots = document.createElement('span');
@@ -1033,7 +1042,7 @@ function displayProduccionPagination(pagination) {
     const nextBtn = document.createElement('button');
     nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
     nextBtn.disabled = pagination.current_page === pagination.total_pages;
-    nextBtn.onclick = () => loadProduccion(pagination.current_page + 1);
+    nextBtn.onclick = () => loadProduccion(pagination.current_page + 1, document.getElementById('searchProduccionInput').value);
     paginationDiv.appendChild(nextBtn);
 }
 
@@ -1109,7 +1118,7 @@ async function saveProduccion() {
 
             if (data.success) {
                 closeProduccionModal();
-                loadProduccion(currentProduccionPage);
+                loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
                 loadProduccionStatistics();
                 showToast('Producción actualizada exitosamente', 'success');
             } else {
@@ -1134,7 +1143,7 @@ async function saveProduccion() {
             
             if (data.success) {
                 closeProduccionModal();
-                loadProduccion(currentProduccionPage);
+                loadProduccion(currentProduccionPage, document.getElementById('searchProduccionInput').value);
                 loadProduccionStatistics();
                 showToast('Nueva producción registrada exitosamente', 'success');
             } else {
@@ -1414,7 +1423,7 @@ function displayVentasPagination(pagination) {
     const prevBtn = document.createElement('button');
     prevBtn.textContent = 'Anterior';
     prevBtn.disabled = pagination.current_page === 1;
-    prevBtn.onclick = () => loadVentas(pagination.current_page - 1);
+    prevBtn.onclick = () => loadVentas(pagination.current_page - 1, document.getElementById('searchVentasInput').value);
     paginationDiv.appendChild(prevBtn);
     
     for (let i = 1; i <= pagination.total_pages; i++) {
@@ -1422,7 +1431,7 @@ function displayVentasPagination(pagination) {
             const pageBtn = document.createElement('button');
             pageBtn.textContent = i;
             pageBtn.className = i === pagination.current_page ? 'active' : '';
-            pageBtn.onclick = () => loadVentas(i);
+            pageBtn.onclick = () => loadVentas(i, document.getElementById('searchVentasInput').value);
             paginationDiv.appendChild(pageBtn);
         } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
             const dots = document.createElement('span');
@@ -1435,7 +1444,7 @@ function displayVentasPagination(pagination) {
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Siguiente';
     nextBtn.disabled = pagination.current_page === pagination.total_pages;
-    nextBtn.onclick = () => loadVentas(pagination.current_page + 1);
+    nextBtn.onclick = () => loadVentas(pagination.current_page + 1, document.getElementById('searchVentasInput').value);
     paginationDiv.appendChild(nextBtn);
 }
 
@@ -1507,7 +1516,7 @@ async function saveVenta() {
             
             if (data.success) {
                 closeVentaModal();
-                loadVentas(currentVentasPage);
+                loadVentas(currentVentasPage, document.getElementById('searchVentasInput').value);
                 loadVentasStatistics();
                 showToast('Venta actualizada exitosamente', 'success');
             } else {
@@ -1532,7 +1541,7 @@ async function saveVenta() {
             
             if (data.success) {
                 closeVentaModal();
-                loadVentas(currentVentasPage);
+                loadVentas(currentVentasPage, document.getElementById('searchVentasInput').value);
                 loadVentasStatistics();
                 showToast('Nueva venta registrada exitosamente', 'success');
             } else {
@@ -1641,6 +1650,11 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Event listeners para pagos
+    document.getElementById('searchPagosInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        loadPagos(1, searchTerm);
+    });
+
     document.getElementById('addPagoBtn').addEventListener('click', function() {
         openPagoModal();
     });
@@ -1833,7 +1847,7 @@ function displayPagosPagination(pagination) {
     const prevBtn = document.createElement('button');
     prevBtn.textContent = 'Anterior';
     prevBtn.disabled = pagination.current_page === 1;
-    prevBtn.onclick = () => loadPagos(pagination.current_page - 1);
+    prevBtn.onclick = () => loadPagos(pagination.current_page - 1, document.getElementById('searchPagosInput').value);
     paginationDiv.appendChild(prevBtn);
     
     for (let i = 1; i <= pagination.total_pages; i++) {
@@ -1841,7 +1855,7 @@ function displayPagosPagination(pagination) {
             const pageBtn = document.createElement('button');
             pageBtn.textContent = i;
             pageBtn.className = i === pagination.current_page ? 'active' : '';
-            pageBtn.onclick = () => loadPagos(i);
+            pageBtn.onclick = () => loadPagos(i, document.getElementById('searchPagosInput').value);
             paginationDiv.appendChild(pageBtn);
         } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
             const dots = document.createElement('span');
@@ -1854,7 +1868,7 @@ function displayPagosPagination(pagination) {
     const nextBtn = document.createElement('button');
     nextBtn.textContent = 'Siguiente';
     nextBtn.disabled = pagination.current_page === pagination.total_pages;
-    nextBtn.onclick = () => loadPagos(pagination.current_page + 1);
+    nextBtn.onclick = () => loadPagos(pagination.current_page + 1, document.getElementById('searchPagosInput').value);
     paginationDiv.appendChild(nextBtn);
 }
 
@@ -1925,7 +1939,7 @@ async function savePago() {
             
             if (data.success) {
                 closePagoModal();
-                loadPagos(currentPagosPage);
+                loadPagos(currentPagosPage, document.getElementById('searchPagosInput').value);
                 loadPagosStatistics();
                 showToast('Pago actualizado exitosamente', 'success');
             } else {
@@ -1950,7 +1964,7 @@ async function savePago() {
             
             if (data.success) {
                 closePagoModal();
-                loadPagos(currentPagosPage);
+                loadPagos(currentPagosPage, document.getElementById('searchPagosInput').value);
                 loadPagosStatistics();
                 showToast('Nuevo pago registrado exitosamente', 'success');
             } else {
