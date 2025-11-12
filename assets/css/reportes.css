@@ -1,0 +1,973 @@
+/* Estilos para el módulo de Reportes y Estadísticas */
+/* Tema: Agricultura y Naturaleza con enfoque en analytics */
+
+:root {
+    --verde-primario: #2d5016;
+    --verde-secundario: #4a7c59;
+    --verde-claro: #8bc34a;
+    --amarillo-trigo: #ffc107;
+    --marron-tierra: #8d6e63;
+    --beige-claro: #f5f5dc;
+    --blanco-puro: #ffffff;
+    --gris-texto: #333333;
+    --gris-claro: #f8f9fa;
+    --rojo-error: #f44336;
+    --verde-exito: #4caf50;
+    --azul-info: #2196f3;
+    --naranja-advertencia: #ff9800;
+    --sombra: rgba(0, 0, 0, 0.1);
+    --sombra-fuerte: rgba(0, 0, 0, 0.15);
+}
+
+/* Header de Reportes */
+.reportes-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    padding: 2rem 0;
+    background: linear-gradient(135deg, var(--verde-claro) 0%, var(--verde-secundario) 100%);
+    border-radius: 15px;
+    color: white;
+    box-shadow: 0 8px 25px rgba(45, 80, 22, 0.2);
+}
+
+.reportes-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.reportes-header p {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    font-weight: 400;
+}
+
+/* Filtros */
+.filters-container {
+    background: var(--blanco-puro);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 15px var(--sombra);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    min-width: 150px;
+}
+
+.filter-group label {
+    font-weight: 600;
+    color: var(--verde-primario);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.filter-input {
+    padding: 0.75rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: var(--blanco-puro);
+}
+
+.filter-input:focus {
+    outline: none;
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.1);
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-left: auto;
+}
+
+/* Grid de KPIs */
+.kpis-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.kpi-card {
+    background: var(--blanco-puro);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 20px var(--sombra);
+    transition: all 0.3s ease;
+    border-left: 5px solid;
+    position: relative;
+    overflow: hidden;
+}
+
+.kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: linear-gradient(45deg, rgba(139, 195, 74, 0.1), rgba(74, 124, 89, 0.1));
+    border-radius: 0 0 0 100px;
+    z-index: 0;
+}
+
+.kpi-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px var(--sombra-fuerte);
+}
+
+.kpi-card.kpi-sales {
+    border-left-color: var(--verde-exito);
+}
+
+.kpi-card.kpi-contributions {
+    border-left-color: var(--azul-info);
+}
+
+.kpi-card.kpi-inventory {
+    border-left-color: var(--naranja-advertencia);
+}
+
+.kpi-card.kpi-margin {
+    border-left-color: var(--amarillo-trigo);
+}
+
+.kpi-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 1rem;
+    position: relative;
+    z-index: 1;
+}
+
+.kpi-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+    font-size: 1.5rem;
+    color: white;
+}
+
+.kpi-sales .kpi-icon {
+    background: linear-gradient(135deg, var(--verde-exito), #45a049);
+}
+
+.kpi-contributions .kpi-icon {
+    background: linear-gradient(135deg, var(--azul-info), #1976d2);
+}
+
+.kpi-inventory .kpi-icon {
+    background: linear-gradient(135deg, var(--naranja-advertencia), #f57c00);
+}
+
+.kpi-margin .kpi-icon {
+    background: linear-gradient(135deg, var(--amarillo-trigo), #f9a825);
+}
+
+.kpi-title h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gris-texto);
+    margin-bottom: 0.25rem;
+}
+
+.kpi-title p {
+    font-size: 0.85rem;
+    color: #666;
+    margin: 0;
+}
+
+.kpi-content {
+    position: relative;
+    z-index: 1;
+}
+
+.kpi-value {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--verde-primario);
+    margin-bottom: 0.5rem;
+    line-height: 1;
+}
+
+.kpi-change {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 20px;
+    display: inline-block;
+}
+
+.kpi-change.positive {
+    background: rgba(76, 175, 80, 0.1);
+    color: var(--verde-exito);
+}
+
+.kpi-change.negative {
+    background: rgba(244, 67, 54, 0.1);
+    color: var(--rojo-error);
+}
+
+.kpi-subtitle {
+    font-size: 0.9rem;
+    color: #666;
+    margin-bottom: 1rem;
+}
+
+.kpi-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-sm {
+    padding: 0.5rem 1rem;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+/* Sección de Gráficos */
+.charts-section {
+    margin-bottom: 2rem;
+}
+
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 1.5rem;
+}
+
+.chart-container {
+    background: var(--blanco-puro);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 20px var(--sombra);
+    transition: all 0.3s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px var(--sombra-fuerte);
+}
+
+.chart-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.chart-header h3 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--verde-primario);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.chart-header p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+.chart-content {
+    position: relative;
+    height: 300px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.chart-content canvas {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* Sección de Resumen */
+.summary-section {
+    background: var(--blanco-puro);
+    border-radius: 15px;
+    padding: 1.5rem;
+    box-shadow: 0 6px 20px var(--sombra);
+    margin-bottom: 2rem;
+}
+
+.summary-header {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.summary-header h3 {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--verde-primario);
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.summary-header p {
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0;
+}
+
+.summary-table-container {
+    overflow-x: auto;
+    border-radius: 10px;
+    border: 1px solid #e0e0e0;
+}
+
+.summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: var(--blanco-puro);
+}
+
+.summary-table th {
+    background: linear-gradient(135deg, var(--verde-claro), var(--verde-secundario));
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.summary-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #f0f0f0;
+    font-size: 0.9rem;
+}
+
+.summary-table tr:hover {
+    background: rgba(139, 195, 74, 0.05);
+}
+
+.trend-indicator {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    font-weight: 600;
+}
+
+.trend-up {
+    color: var(--verde-exito);
+}
+
+.trend-down {
+    color: var(--rojo-error);
+}
+
+.trend-stable {
+    color: #666;
+}
+
+/* Botones de acción */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario));
+    color: white;
+    box-shadow: 0 4px 12px rgba(45, 80, 22, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(45, 80, 22, 0.4);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #5a6268);
+    color: white;
+    box-shadow: 0 4px 12px rgba(108, 117, 125, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(108, 117, 125, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, var(--verde-exito), #45a049);
+    color: white;
+    box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(76, 175, 80, 0.4);
+}
+
+/* Loading states */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: var(--gris-texto);
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--verde-claro);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .charts-grid {
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .reportes-header h2 {
+        font-size: 2rem;
+    }
+    
+    .kpis-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .charts-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filters-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .filter-actions {
+        margin-left: 0;
+        justify-content: center;
+    }
+    
+    .chart-content {
+        height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .reportes-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .reportes-header h2 {
+        font-size: 1.5rem;
+    }
+    
+    .kpi-card {
+        padding: 1rem;
+    }
+    
+    .kpi-value {
+        font-size: 2rem;
+    }
+    
+    .chart-container {
+        padding: 1rem;
+    }
+    
+    .chart-content {
+        height: 200px;
+    }
+}
+
+/* Animaciones */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.kpi-card {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.kpi-card:nth-child(1) { animation-delay: 0.1s; }
+.kpi-card:nth-child(2) { animation-delay: 0.2s; }
+.kpi-card:nth-child(3) { animation-delay: 0.3s; }
+.kpi-card:nth-child(4) { animation-delay: 0.4s; }
+
+.chart-container {
+    animation: fadeInUp 0.6s ease-out;
+}
+
+.chart-container:nth-child(1) { animation-delay: 0.1s; }
+.chart-container:nth-child(2) { animation-delay: 0.2s; }
+.chart-container:nth-child(3) { animation-delay: 0.3s; }
+.chart-container:nth-child(4) { animation-delay: 0.4s; }
+.chart-container:nth-child(5) { animation-delay: 0.5s; }
+.chart-container:nth-child(6) { animation-delay: 0.6s; }
+
+/* Estados de carga para gráficos */
+.chart-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #666;
+}
+
+.chart-loading .spinner {
+    width: 30px;
+    height: 30px;
+    margin-bottom: 0.5rem;
+}
+
+/* Mejoras visuales */
+.kpi-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+    border-radius: 15px;
+    pointer-events: none;
+}
+
+/* Efectos hover mejorados */
+.chart-container:hover .chart-header h3 {
+    color: var(--verde-claro);
+    transition: color 0.3s ease;
+}
+
+/* Indicadores de tendencia */
+.trend-indicator i {
+    font-size: 0.8rem;
+}
+
+/* Mejoras en la tabla de resumen */
+.summary-table th:first-child {
+    border-top-left-radius: 10px;
+}
+
+.summary-table th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.summary-table tr:last-child td:first-child {
+    border-bottom-left-radius: 10px;
+}
+
+.summary-table tr:last-child td:last-child {
+    border-bottom-right-radius: 10px;
+}
+
+/* ===== MODO OSCURO PARA REPORTES ===== */
+
+/* Aplicar modo oscuro a la sección de reportes */
+[data-theme="dark"] .reportes-header {
+    background: linear-gradient(135deg, #1a3a2e 0%, #2d5016 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(139, 195, 74, 0.2) !important;
+}
+
+[data-theme="dark"] .reportes-header h2 {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-header p {
+    color: #e8f5e8 !important;
+    opacity: 0.9 !important;
+}
+
+/* Aplicar modo oscuro a los filtros */
+[data-theme="dark"] .filters-container {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .filter-group label {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .filter-input {
+    background: var(--bg-tertiary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .filter-input:focus {
+    border-color: var(--verde-claro) !important;
+    box-shadow: 0 0 0 3px rgba(0, 255, 0, 0.1) !important;
+}
+
+/* Aplicar modo oscuro a las tarjetas KPI */
+[data-theme="dark"] .kpi-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .kpi-title h3 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .kpi-title p {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .kpi-value {
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .kpi-change {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .kpi-change.positive {
+    background: rgba(0, 255, 0, 0.1) !important;
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .kpi-change.negative {
+    background: rgba(255, 0, 0, 0.1) !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .kpi-subtitle {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a los contenedores de gráficos */
+[data-theme="dark"] .chart-container {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .chart-header h3 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .chart-header p {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a la sección de resumen */
+[data-theme="dark"] .summary-section {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .summary-header h3 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .summary-header p {
+    color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .summary-table-container {
+    border: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .summary-table {
+    background: var(--bg-secondary) !important;
+}
+
+[data-theme="dark"] .summary-table th {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: var(--text-primary) !important;
+    border: none !important;
+}
+
+[data-theme="dark"] .summary-table td {
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+[data-theme="dark"] .summary-table tr:hover {
+    background: var(--bg-tertiary) !important;
+}
+
+[data-theme="dark"] .summary-table tr:hover td {
+    background: var(--bg-tertiary) !important;
+}
+
+/* Aplicar modo oscuro a los indicadores de tendencia */
+[data-theme="dark"] .trend-up {
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .trend-down {
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .trend-stable {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro al estado de carga */
+[data-theme="dark"] .loading {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .spinner {
+    border: 4px solid var(--bg-tertiary) !important;
+    border-top: 4px solid var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .chart-loading {
+    color: var(--text-secondary) !important;
+}
+
+/* Aplicar modo oscuro a los botones */
+[data-theme="dark"] .btn-primary {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .btn-secondary {
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--border-color)) !important;
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .btn-success {
+    background: linear-gradient(135deg, var(--verde-claro), var(--verde-secundario)) !important;
+    color: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro a elementos específicos de reportes */
+[data-theme="dark"] .content-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .reportes-section {
+    background: var(--bg-primary) !important;
+}
+
+/* Aplicar modo oscuro a todos los textos en reportes */
+[data-theme="dark"] .reportes-section h1,
+[data-theme="dark"] .reportes-section h2,
+[data-theme="dark"] .reportes-section h3,
+[data-theme="dark"] .reportes-section h4,
+[data-theme="dark"] .reportes-section h5,
+[data-theme="dark"] .reportes-section h6 {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .reportes-section p,
+[data-theme="dark"] .reportes-section span,
+[data-theme="dark"] .reportes-section div {
+    color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .reportes-section .text-muted {
+    color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .reportes-section .text-secondary {
+    color: var(--text-secondary) !important;
+}
+
+/* ===== MODO OSCURO PARA SECCIÓN DE REPORTES EN DASHBOARD ===== */
+
+/* Aplicar modo oscuro a la sección de reportes del dashboard */
+[data-theme="dark"] .reportes-section {
+    background: var(--bg-primary) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-header {
+    background: linear-gradient(135deg, #1a3a2e 0%, #2d5016 100%) !important;
+    border-radius: 15px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(139, 195, 74, 0.2) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .section-title i {
+    color: #ffffff !important;
+}
+
+/* Aplicar modo oscuro a las tarjetas de vista previa */
+[data-theme="dark"] .preview-cards {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)) !important;
+    gap: 1rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+[data-theme="dark"] .preview-card {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .preview-card:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3) !important;
+    border-color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-icon {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+    width: 50px !important;
+    height: 50px !important;
+    border-radius: 12px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.2rem !important;
+    margin-bottom: 1rem !important;
+}
+
+[data-theme="dark"] .preview-content h3 {
+    color: var(--text-primary) !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+[data-theme="dark"] .preview-value {
+    color: var(--verde-claro) !important;
+    font-size: 1.8rem !important;
+    font-weight: 700 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+[data-theme="dark"] .preview-change {
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    padding: 0.25rem 0.5rem !important;
+    border-radius: 20px !important;
+    display: inline-block !important;
+}
+
+[data-theme="dark"] .preview-change.positive {
+    background: rgba(0, 255, 0, 0.1) !important;
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-change.negative {
+    background: rgba(255, 0, 0, 0.1) !important;
+    color: #ff6b6b !important;
+}
+
+[data-theme="dark"] .preview-subtitle {
+    color: var(--text-secondary) !important;
+    font-size: 0.85rem !important;
+    margin-top: 0.5rem !important;
+}
+
+/* Aplicar modo oscuro a los gráficos de vista previa */
+[data-theme="dark"] .preview-charts {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+    gap: 1.5rem !important;
+}
+
+[data-theme="dark"] .preview-chart {
+    background: var(--bg-secondary) !important;
+    border: 1px solid var(--border-color) !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2) !important;
+}
+
+[data-theme="dark"] .preview-chart h4 {
+    color: var(--text-primary) !important;
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    margin-bottom: 1rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+[data-theme="dark"] .preview-chart h4 i {
+    color: var(--verde-claro) !important;
+}
+
+[data-theme="dark"] .preview-chart canvas {
+    max-width: 100% !important;
+    height: 200px !important;
+}
+
+/* Aplicar modo oscuro al botón de ir a reportes completos */
+[data-theme="dark"] .reportes-section .btn-primary {
+    background: linear-gradient(135deg, var(--verde-primario), var(--verde-secundario)) !important;
+    color: #ffffff !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(26, 58, 46, 0.3) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 16px rgba(26, 58, 46, 0.4) !important;
+    background: linear-gradient(135deg, #2d5016, #4a7c59) !important;
+}
+
+[data-theme="dark"] .reportes-section .btn-primary i {
+    margin-right: 0.5rem !important;
+}

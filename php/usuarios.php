@@ -7,52 +7,73 @@ header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE');
 header('Access-Control-Allow-Headers: Content-Type');
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-    // Obtener usuarios con paginación y búsqueda
     try {
         $pdo = conectarDB();
         
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $search = isset($_GET['search']) ? trim($_GET['search']) : '';
-        $limit = 10;
-        $offset = ($page - 1) * $limit;
-        
-        // Construir consulta con búsqueda
-        $whereClause = '';
-        $params = [];
-        
-        if (!empty($search)) {
-            $whereClause = "WHERE nombre LIKE ? OR correo LIKE ? OR rol LIKE ?";
-            $searchTerm = "%$search%";
-            $params = [$searchTerm, $searchTerm, $searchTerm];
+        // Verificar si se solicita un usuario específico
+        if (isset($_GET['id_usuario'])) {
+            // Obtener un usuario específico
+            $id_usuario = (int)$_GET['id_usuario'];
+            $stmt = $pdo->prepare("SELECT id_usuario, nombre, correo, rol, estado, fecha_registro FROM usuarios WHERE id_usuario = ?");
+            $stmt->execute([$id_usuario]);
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
+            
+            if ($usuario) {
+                echo json_encode([
+                    'success' => true,
+                    'data' => $usuario
+                ]);
+            } else {
+                echo json_encode([
+                    'success' => false,
+                    'message' => 'Usuario no encontrado'
+                ]);
+            }
+        } else {
+            // Obtener lista de usuarios con paginación y búsqueda
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $search = isset($_GET['search']) ? trim($_GET['search']) : '';
+            $limit = 10;
+            $offset = ($page - 1) * $limit;
+            
+            // Construir consulta con búsqueda
+            $whereClause = '';
+            $params = [];
+            
+            if (!empty($search)) {
+                $whereClause = "WHERE nombre LIKE ? OR correo LIKE ? OR rol LIKE ?";
+                $searchTerm = "%$search%";
+                $params = [$searchTerm, $searchTerm, $searchTerm];
+            }
+            
+            // Contar total de registros
+            $countQuery = "SELECT COUNT(*) as total FROM usuarios $whereClause";
+            $countStmt = $pdo->prepare($countQuery);
+            $countStmt->execute($params);
+            $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
+            $totalPages = ceil($totalRecords / $limit);
+            
+            // Obtener usuarios
+            $query = "SELECT id_usuario, nombre, correo, rol, estado, fecha_registro 
+                      FROM usuarios $whereClause 
+                      ORDER BY fecha_registro DESC 
+                      LIMIT $limit OFFSET $offset";
+            
+            $stmt = $pdo->prepare($query);
+            $stmt->execute($params);
+            $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            
+            echo json_encode([
+                'success' => true,
+                'data' => $usuarios,
+                'pagination' => [
+                    'current_page' => $page,
+                    'total_pages' => $totalPages,
+                    'total_records' => $totalRecords,
+                    'limit' => $limit
+                ]
+            ]);
         }
-        
-        // Contar total de registros
-        $countQuery = "SELECT COUNT(*) as total FROM usuarios $whereClause";
-        $countStmt = $pdo->prepare($countQuery);
-        $countStmt->execute($params);
-        $totalRecords = $countStmt->fetch(PDO::FETCH_ASSOC)['total'];
-        $totalPages = ceil($totalRecords / $limit);
-        
-        // Obtener usuarios
-        $query = "SELECT id_usuario, nombre, correo, rol, estado, fecha_registro 
-                  FROM usuarios $whereClause 
-                  ORDER BY fecha_registro DESC 
-                  LIMIT $limit OFFSET $offset";
-        
-        $stmt = $pdo->prepare($query);
-        $stmt->execute($params);
-        $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        
-        echo json_encode([
-            'success' => true,
-            'data' => $usuarios,
-            'pagination' => [
-                'current_page' => $page,
-                'total_pages' => $totalPages,
-                'total_records' => $totalRecords,
-                'limit' => $limit
-            ]
-        ]);
         
     } catch (PDOException $e) {
         error_log("Error en GET usuarios: " . $e->getMessage());
@@ -240,8 +261,15 @@ elseif ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     try {
         $pdo = conectarDB();
         
-        $input = json_decode(file_get_contents('php://input'), true);
-        $id_usuario = $input['id_usuario'] ?? '';
+        // Intentar obtener datos de URL-encoded primero (como socios.php)
+        parse_str(file_get_contents('php://input'), $data);
+        $id_usuario = $data['id_usuario'] ?? '';
+        
+        // Si no se encontró en URL-encoded, intentar JSON
+        if (empty($id_usuario)) {
+            $input = json_decode(file_get_contents('php://input'), true);
+            $id_usuario = $input['id_usuario'] ?? '';
+        }
         
         if (empty($id_usuario)) {
             echo json_encode(['success' => false, 'message' => 'ID de usuario requerido']);

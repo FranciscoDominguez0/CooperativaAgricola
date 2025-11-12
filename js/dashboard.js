@@ -669,6 +669,12 @@ function setupEventListeners() {
 }
 
 function showSection(sectionName) {
+    // Redirigir a páginas externas para usuarios (no tiene sección interna en dashboard)
+    if (sectionName === 'usuarios') {
+        window.location.href = 'usuarios.html';
+        return;
+    }
+    
     document.querySelectorAll('.content-section').forEach(section => {
         section.classList.remove('active');
     });

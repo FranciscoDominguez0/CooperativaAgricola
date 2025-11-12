@@ -38,10 +38,26 @@ function loadDashboard() {
     
     document.getElementById('welcomeTitle').textContent = `${greeting}, ${currentUser.nombre}!`;
     
-    // Cargar estadísticas después de un pequeño delay para asegurar que el DOM esté listo
-    setTimeout(() => {
-        loadStats();
-    }, 200);
+    // Verificar si hay una sección activa guardada en sessionStorage (por ejemplo, si se redirigió desde usuarios.html)
+    const activeSection = sessionStorage.getItem('activeSection');
+    if (activeSection) {
+        sessionStorage.removeItem('activeSection');
+        // Mostrar la sección solicitada
+        setTimeout(() => {
+            showSection(activeSection);
+            // Activar el nav-item correspondiente
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            const navItem = document.querySelector(`[data-section="${activeSection}"]`);
+            if (navItem) {
+                navItem.classList.add('active');
+            }
+        }, 100);
+    } else {
+        // Cargar estadísticas después de un pequeño delay para asegurar que el DOM esté listo
+        setTimeout(() => {
+            loadStats();
+        }, 200);
+    }
 }
 
 function getRoleDisplay(role) {
@@ -693,6 +709,8 @@ function showSection(sectionName) {
         loadPagos();
         loadPagosStatistics();
         loadSociosForPagos();
+    } else if (sectionName === 'usuarios') {
+        loadUsuarios();
     } else if (sectionName === 'reportes') {
         // Pequeño delay para asegurar que la sección esté visible antes de cargar
         setTimeout(() => {
@@ -2134,6 +2152,47 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('goToReportsBtn').addEventListener('click', function() {
         window.location.href = 'reportes.html';
     });
+
+    // Event listeners para usuarios
+    const searchUsuariosInput = document.getElementById('searchUsuariosInput');
+    const addUsuarioBtn = document.getElementById('addUsuarioBtn');
+    const usuarioForm = document.getElementById('usuarioForm');
+    const cancelUsuarioBtn = document.getElementById('cancelUsuarioBtn');
+    const usuarioModal = document.getElementById('usuarioModal');
+
+    if (searchUsuariosInput) {
+        searchUsuariosInput.addEventListener('input', function() {
+            const searchTerm = this.value;
+            loadUsuarios(1, searchTerm);
+        });
+    }
+
+    if (addUsuarioBtn) {
+        addUsuarioBtn.addEventListener('click', function() {
+            openUsuarioModal();
+        });
+    }
+
+    if (usuarioForm) {
+        usuarioForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            await saveUsuario();
+        });
+    }
+
+    if (cancelUsuarioBtn) {
+        cancelUsuarioBtn.addEventListener('click', function() {
+            closeUsuarioModal();
+        });
+    }
+
+    if (usuarioModal) {
+        usuarioModal.addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeUsuarioModal();
+            }
+        });
+    }
 });
 
 // ===== FUNCIONES DE PAGOS =====
@@ -3240,4 +3299,302 @@ function showChangeAvatarModal() {
             modal.remove();
         }
     });
+}
+
+// ===== FUNCIONES DE USUARIOS =====
+
+let currentUsuariosPage = 1;
+let totalUsuariosPages = 1;
+
+function getRoleDisplay(role) {
+    const roles = {
+        'admin': 'Administrador',
+        'productor': 'Productor Agrícola',
+        'cliente': 'Cliente',
+        'contador': 'Contador'
+    };
+    return roles[role] || 'Miembro';
+}
+
+function formatDateUsuarios(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+}
+
+async function loadUsuarios(page = 1, search = '') {
+    try {
+        const params = new URLSearchParams({
+            page: page,
+            search: search
+        });
+        
+        const response = await fetch(`php/usuarios.php?${params}`);
+        const data = await response.json();
+        
+        if (data.success) {
+            displayUsuarios(data.data);
+            displayUsuariosPagination(data.pagination);
+            currentUsuariosPage = data.pagination.current_page;
+            totalUsuariosPages = data.pagination.total_pages;
+        } else {
+            showToast('Error al cargar usuarios: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+        showToast('Error de conexión al cargar usuarios', 'error');
+    }
+}
+
+function displayUsuarios(usuarios) {
+    const tbody = document.getElementById('usuariosTableBody');
+    if (!tbody) return;
+    
+    tbody.innerHTML = '';
+    
+    usuarios.forEach((usuario) => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+            <td>${usuario.id_usuario}</td>
+            <td>${usuario.nombre}</td>
+            <td>${usuario.correo}</td>
+            <td><span class="status-badge status-${usuario.rol}">${getRoleDisplay(usuario.rol)}</span></td>
+            <td><span class="status-badge status-${usuario.estado}">${usuario.estado}</span></td>
+            <td>${formatDateUsuarios(usuario.fecha_registro)}</td>
+            <td>
+                <div class="actions">
+                    <button class="btn btn-sm btn-secondary" onclick="editUsuario(${usuario.id_usuario})" title="Editar usuario">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn btn-sm btn-danger" onclick="confirmDeleteUsuario(${usuario.id_usuario}, '${usuario.nombre.replace(/'/g, "\\'")}')" title="Eliminar usuario">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        tbody.appendChild(row);
+    });
+}
+
+function displayUsuariosPagination(pagination) {
+    const paginationDiv = document.getElementById('usuariosPagination');
+    if (!paginationDiv) return;
+    
+    paginationDiv.innerHTML = '';
+    
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'pagination-btn';
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => {
+        const searchInput = document.getElementById('searchUsuariosInput');
+        loadUsuarios(pagination.current_page - 1, searchInput ? searchInput.value : '');
+    };
+    paginationDiv.appendChild(prevBtn);
+    
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `pagination-btn ${i === pagination.current_page ? 'active' : ''}`;
+            pageBtn.textContent = i;
+            pageBtn.onclick = () => {
+                const searchInput = document.getElementById('searchUsuariosInput');
+                loadUsuarios(i, searchInput ? searchInput.value : '');
+            };
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            paginationDiv.appendChild(dots);
+        }
+    }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'pagination-btn';
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => {
+        const searchInput = document.getElementById('searchUsuariosInput');
+        loadUsuarios(pagination.current_page + 1, searchInput ? searchInput.value : '');
+    };
+    paginationDiv.appendChild(nextBtn);
+}
+
+function openUsuarioModal(usuario = null) {
+    const modal = document.getElementById('usuarioModal');
+    const form = document.getElementById('usuarioForm');
+    const title = document.getElementById('usuarioModalTitle');
+    const passwordInput = document.getElementById('usuarioContraseña');
+    const confirmPasswordInput = document.getElementById('usuarioConfirmarContraseña');
+    const passwordLabel = document.getElementById('passwordLabel');
+    const confirmPasswordLabel = document.getElementById('confirmPasswordLabel');
+    
+    if (usuario) {
+        title.textContent = 'Editar Usuario';
+        document.getElementById('usuarioId').value = usuario.id_usuario;
+        document.getElementById('usuarioNombre').value = usuario.nombre;
+        document.getElementById('usuarioCorreo').value = usuario.correo;
+        document.getElementById('usuarioRol').value = usuario.rol;
+        document.getElementById('usuarioEstado').value = usuario.estado;
+        
+        passwordLabel.innerHTML = 'Contraseña <small>(dejar vacío para no cambiar)</small>';
+        confirmPasswordLabel.innerHTML = 'Confirmar Contraseña <small>(solo si desea cambiar)</small>';
+        passwordInput.removeAttribute('required');
+        confirmPasswordInput.removeAttribute('required');
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+    } else {
+        title.textContent = 'Agregar Nuevo Usuario';
+        form.reset();
+        document.getElementById('usuarioId').value = '';
+        document.getElementById('usuarioEstado').value = 'activo';
+        
+        passwordLabel.innerHTML = 'Contraseña *';
+        confirmPasswordLabel.innerHTML = 'Confirmar Contraseña *';
+        passwordInput.setAttribute('required', 'required');
+        confirmPasswordInput.setAttribute('required', 'required');
+    }
+    
+    modal.style.display = 'flex';
+    modal.classList.add('show');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeUsuarioModal() {
+    const modal = document.getElementById('usuarioModal');
+    const form = document.getElementById('usuarioForm');
+    
+    if (form) {
+        form.reset();
+        document.getElementById('usuarioId').value = '';
+    }
+    
+    modal.style.display = 'none';
+    modal.classList.remove('show');
+    document.body.style.overflow = 'auto';
+}
+
+async function saveUsuario() {
+    const form = document.getElementById('usuarioForm');
+    const usuarioId = document.getElementById('usuarioId').value;
+    const isUpdate = usuarioId && usuarioId.trim() !== '';
+    
+    try {
+        const url = 'php/usuarios.php';
+        
+        if (isUpdate) {
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                if ((key === 'contraseña' || key === 'confirmar_contraseña') && !value) {
+                    continue;
+                }
+                params.append(key, value);
+            }
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                closeUsuarioModal();
+                const searchInput = document.getElementById('searchUsuariosInput');
+                loadUsuarios(currentUsuariosPage, searchInput ? searchInput.value : '');
+                showToast('Usuario actualizado exitosamente', 'success');
+            } else {
+                showToast('Error al actualizar usuario: ' + data.message, 'error');
+            }
+        } else {
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                if (element.name !== 'id_usuario' && element.name !== '' && element.value) {
+                    formData.append(element.name, element.value);
+                }
+            });
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeUsuarioModal();
+                const searchInput = document.getElementById('searchUsuariosInput');
+                loadUsuarios(currentUsuariosPage, searchInput ? searchInput.value : '');
+                showToast('Nuevo usuario agregado exitosamente', 'success');
+            } else {
+                showToast('Error al agregar usuario: ' + data.message, 'error');
+            }
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar el usuario', 'error');
+    }
+}
+
+async function editUsuario(id) {
+    try {
+        const response = await fetch(`php/usuarios.php?id_usuario=${id}`);
+        const data = await response.json();
+        
+        if (data.success && data.data) {
+            openUsuarioModal(data.data);
+        } else {
+            showToast('Error al cargar los datos del usuario', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar los datos del usuario', 'error');
+    }
+}
+
+function confirmDeleteUsuario(id, nombre) {
+    if (!confirm(`¿Estás seguro de que deseas eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) {
+        return;
+    }
+    
+    deleteUsuario(id);
+}
+
+async function deleteUsuario(id) {
+    try {
+        const params = new URLSearchParams();
+        params.append('id_usuario', id);
+        
+        const response = await fetch('php/usuarios.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            const searchInput = document.getElementById('searchUsuariosInput');
+            loadUsuarios(currentUsuariosPage, searchInput ? searchInput.value : '');
+            showToast('Usuario eliminado exitosamente', 'success');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar el usuario', 'error');
+    }
 }

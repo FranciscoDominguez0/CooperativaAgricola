@@ -131,13 +131,22 @@ function setupEventListeners() {
     document.querySelectorAll('.nav-item').forEach(item => {
         item.addEventListener('click', function() {
             const section = this.dataset.section;
-            if (section !== 'reportes') {
-                // Guardar estado antes de navegar
-                saveReportState();
+            
+            // Guardar estado antes de navegar
+            saveReportState();
+            
+            if (section === 'dashboard') {
                 window.location.href = 'dashboard.html';
-            } else {
+            } else if (section === 'socios') {
+                window.location.href = 'socios.html';
+            } else if (section === 'usuarios') {
+                window.location.href = 'usuarios.html';
+            } else if (section === 'reportes') {
                 // Si ya estamos en reportes, recargar datos
                 loadReportData();
+            } else {
+                // Para otras secciones, ir al dashboard
+                window.location.href = 'dashboard.html';
             }
         });
     });

@@ -1,0 +1,785 @@
+/* Animaciones Modernas para Gestión de Socios - Cooperativa Agrícola La Pintada */
+
+/* ===== ANIMACIONES DE ENTRADA ===== */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInFromLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* ===== ANIMACIONES DE SALIDA ===== */
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+}
+
+@keyframes fadeOutScale {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+@keyframes slideOutToRight {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(50px);
+    }
+}
+
+/* ===== ANIMACIONES DE HOVER ===== */
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateY(0);
+    }
+    40% {
+        transform: translateY(-10px);
+    }
+    60% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+/* ===== ANIMACIONES DE LOADING ===== */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ===== CLASES DE ANIMACIÓN ===== */
+.animate-fade-in-up {
+    animation: fadeInUp 0.6s ease-out forwards;
+}
+
+.animate-fade-in-scale {
+    animation: fadeInScale 0.5s ease-out forwards;
+}
+
+.animate-slide-in-right {
+    animation: slideInFromRight 0.5s ease-out forwards;
+}
+
+.animate-slide-in-left {
+    animation: slideInFromLeft 0.5s ease-out forwards;
+}
+
+.animate-fade-out-down {
+    animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+.animate-fade-out-scale {
+    animation: fadeOutScale 0.3s ease-in forwards;
+}
+
+.animate-slide-out-right {
+    animation: slideOutToRight 0.3s ease-in forwards;
+}
+
+/* ===== EFECTOS DE HOVER ===== */
+.hover-lift {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.hover-scale {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-scale:hover {
+    transform: scale(1.02);
+}
+
+.hover-glow {
+    transition: all 0.3s ease;
+}
+
+.hover-glow:hover {
+    box-shadow: 0 0 20px rgba(74, 124, 89, 0.3);
+}
+
+/* ===== ANIMACIONES DE TABLA ===== */
+.table-row-enter {
+    animation: fadeInUp 0.5s ease-out forwards;
+    animation-delay: calc(var(--row-index) * 0.1s);
+}
+
+.table-row-exit {
+    animation: fadeOutDown 0.3s ease-in forwards;
+}
+
+/* ===== ANIMACIONES DE MODAL ===== */
+.modal-enter {
+    animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.modal-exit {
+    animation: fadeOutScale 0.3s ease-in forwards;
+}
+
+.modal-backdrop-enter {
+    animation: fadeInScale 0.3s ease-out forwards;
+}
+
+.modal-backdrop-exit {
+    animation: fadeOutScale 0.2s ease-in forwards;
+}
+
+/* ===== ANIMACIONES DE BOTONES ===== */
+.btn-animate {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-animate::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.btn-animate:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.btn-animate:active {
+    transform: scale(0.95);
+}
+
+/* ===== ANIMACIONES DE TOAST ===== */
+.toast-enter {
+    animation: slideInFromRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.toast-exit {
+    animation: slideOutToRight 0.3s ease-in forwards;
+}
+
+/* ===== TOAST MODERNOS ===== */
+.toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, #4a7c59, #2d5016);
+    color: white;
+    padding: 16px 24px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-weight: 500;
+    font-size: 14px;
+    z-index: 10000;
+    max-width: 350px;
+    word-wrap: break-word;
+    transform: translateX(400px);
+    opacity: 0;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.toast.show {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.toast.success {
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-left: 4px solid #34d399;
+}
+
+.toast.error {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    border-left: 4px solid #f87171;
+}
+
+.toast.warning {
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    border-left: 4px solid #fbbf24;
+}
+
+.toast.info {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    border-left: 4px solid #60a5fa;
+}
+
+/* ===== ICONOS DE TOAST ===== */
+.toast::before {
+    content: '';
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.toast.success::before {
+    content: '✓';
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.toast.error::before {
+    content: '✕';
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.toast.warning::before {
+    content: '⚠';
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.toast.info::before {
+    content: 'ℹ';
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ===== ANIMACIONES DE TOAST MEJORADAS ===== */
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(400px) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px) scale(0.8);
+        opacity: 0;
+    }
+}
+
+@keyframes toastBounce {
+    0%, 20%, 50%, 80%, 100% {
+        transform: translateX(0) scale(1);
+    }
+    40% {
+        transform: translateX(-5px) scale(1.05);
+    }
+    60% {
+        transform: translateX(-3px) scale(1.02);
+    }
+}
+
+.toast-enter {
+    animation: toastSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+.toast-exit {
+    animation: toastSlideOut 0.3s ease-in forwards;
+}
+
+.toast-bounce {
+    animation: toastBounce 0.6s ease-in-out;
+}
+
+/* ===== EFECTOS DE HOVER EN TOAST ===== */
+.toast:hover {
+    transform: translateX(-5px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+/* ===== TOAST STACK (MÚLTIPLES NOTIFICACIONES) ===== */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 400px;
+}
+
+.toast:nth-child(1) { z-index: 10004; }
+.toast:nth-child(2) { z-index: 10003; }
+.toast:nth-child(3) { z-index: 10002; }
+.toast:nth-child(4) { z-index: 10001; }
+
+/* ===== TOAST CON PROGRESO ===== */
+.toast-progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 0 0 12px 12px;
+    animation: toastProgress 4s linear forwards;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+@keyframes toastProgress {
+    from {
+        width: 100%;
+        opacity: 1;
+    }
+    to {
+        width: 0%;
+        opacity: 0;
+    }
+}
+
+/* ===== TOAST CON EFECTOS ESPECIALES ===== */
+.toast.success .toast-progress {
+    background: linear-gradient(90deg, #34d399, #10b981);
+    box-shadow: 0 0 10px rgba(52, 211, 153, 0.5);
+}
+
+.toast.error .toast-progress {
+    background: linear-gradient(90deg, #f87171, #ef4444);
+    box-shadow: 0 0 10px rgba(248, 113, 113, 0.5);
+}
+
+.toast.warning .toast-progress {
+    background: linear-gradient(90deg, #fbbf24, #f59e0b);
+    box-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.toast.info .toast-progress {
+    background: linear-gradient(90deg, #60a5fa, #3b82f6);
+    box-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+}
+
+/* ===== TOAST CON PULSO ===== */
+@keyframes toastPulse {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.1);
+    }
+}
+
+.toast.pulse {
+    animation: toastPulse 2s ease-in-out infinite;
+}
+
+/* ===== TOAST CON SHIMMER ===== */
+@keyframes toastShimmer {
+    0% {
+        background-position: -200% 0;
+    }
+    100% {
+        background-position: 200% 0;
+    }
+}
+
+.toast.shimmer {
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.1),
+        transparent
+    );
+    background-size: 200% 100%;
+    animation: toastShimmer 2s ease-in-out infinite;
+}
+
+/* ===== TOAST CON GLOW ===== */
+@keyframes toastGlow {
+    0%, 100% {
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+    50% {
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(74, 124, 89, 0.3);
+    }
+}
+
+.toast.glow {
+    animation: toastGlow 3s ease-in-out infinite;
+}
+
+/* ===== TOAST RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .toast {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        transform: translateY(-100px);
+    }
+    
+    .toast.show {
+        transform: translateY(0);
+    }
+    
+    .toast-enter {
+        animation: slideInFromTop 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+    
+    .toast-exit {
+        animation: slideOutToTop 0.3s ease-in forwards;
+    }
+}
+
+@keyframes slideInFromTop {
+    from {
+        transform: translateY(-100px) scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOutToTop {
+    from {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100px) scale(0.8);
+        opacity: 0;
+    }
+}
+
+/* ===== ANIMACIONES DE PAGINACIÓN ===== */
+.pagination-btn {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pagination-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pagination-btn:active {
+    transform: translateY(0);
+}
+
+/* ===== ANIMACIONES DE BÚSQUEDA ===== */
+.search-input {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.search-input:focus {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 3px rgba(74, 124, 89, 0.1);
+}
+
+/* ===== ANIMACIONES DE ESTADO ===== */
+.status-badge {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.status-badge::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+}
+
+.status-badge:hover::before {
+    left: 100%;
+}
+
+/* ===== ANIMACIONES DE CONFIRMACIÓN ===== */
+.confirmation-modal-enter {
+    animation: fadeInScale 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.confirmation-modal-exit {
+    animation: fadeOutScale 0.3s ease-in forwards;
+}
+
+.confirmation-content {
+    animation: fadeInUp 0.5s ease-out 0.1s both;
+}
+
+/* ===== ANIMACIONES DE LOADING ===== */
+.loading-spinner {
+    animation: spin 1s linear infinite;
+}
+
+.loading-dots::after {
+    content: '';
+    animation: dots 1.5s infinite;
+}
+
+@keyframes dots {
+    0%, 20% {
+        content: '.';
+    }
+    40% {
+        content: '..';
+    }
+    60%, 100% {
+        content: '...';
+    }
+}
+
+/* ===== EFECTOS DE RIPPLE ===== */
+.ripple-effect {
+    position: relative;
+    overflow: hidden;
+}
+
+.ripple-effect::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    animation: ripple 0.6s ease-out;
+}
+
+/* ===== ANIMACIONES DE PROGRESO ===== */
+@keyframes progress {
+    0% {
+        width: 0%;
+    }
+    100% {
+        width: 100%;
+    }
+}
+
+.progress-bar {
+    animation: progress 2s ease-out forwards;
+}
+
+/* ===== ANIMACIONES DE PULSO ===== */
+.pulse-animation {
+    animation: pulse 2s infinite;
+}
+
+.bounce-animation {
+    animation: bounce 1s infinite;
+}
+
+.shake-animation {
+    animation: shake 0.5s ease-in-out;
+}
+
+/* ===== TRANSICIONES SUAVES ===== */
+.smooth-transition {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fast-transition {
+    transition: all 0.2s ease;
+}
+
+.slow-transition {
+    transition: all 0.5s ease;
+}
+
+/* ===== EFECTOS DE GLASSMORPHISM ===== */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.glass-effect:hover {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(15px);
+}
+
+/* ===== ANIMACIONES DE ENTRADA ESCALONADA ===== */
+.stagger-animation > * {
+    animation: fadeInUp 0.6s ease-out forwards;
+    opacity: 0;
+}
+
+.stagger-animation > *:nth-child(1) { animation-delay: 0.1s; }
+.stagger-animation > *:nth-child(2) { animation-delay: 0.2s; }
+.stagger-animation > *:nth-child(3) { animation-delay: 0.3s; }
+.stagger-animation > *:nth-child(4) { animation-delay: 0.4s; }
+.stagger-animation > *:nth-child(5) { animation-delay: 0.5s; }
+.stagger-animation > *:nth-child(6) { animation-delay: 0.6s; }
+.stagger-animation > *:nth-child(7) { animation-delay: 0.7s; }
+.stagger-animation > *:nth-child(8) { animation-delay: 0.8s; }
+.stagger-animation > *:nth-child(9) { animation-delay: 0.9s; }
+.stagger-animation > *:nth-child(10) { animation-delay: 1.0s; }
+
+/* ===== RESPONSIVE ANIMATIONS ===== */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ===== ANIMACIONES DE MICRO-INTERACCIONES ===== */
+.micro-bounce:active {
+    animation: bounce 0.3s ease;
+}
+
+.micro-scale:active {
+    transform: scale(0.95);
+}
+
+.micro-rotate:active {
+    transform: rotate(5deg);
+}
+
+/* ===== EFECTOS DE SOMBRA DINÁMICA ===== */
+.dynamic-shadow {
+    transition: box-shadow 0.3s ease;
+}
+
+.dynamic-shadow:hover {
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* ===== ANIMACIONES DE TEXTO ===== */
+@keyframes typewriter {
+    from {
+        width: 0;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+.typewriter {
+    overflow: hidden;
+    white-space: nowrap;
+    animation: typewriter 2s steps(40, end);
+}
+
+/* ===== ANIMACIONES DE GRADIENTE ===== */
+@keyframes gradient-shift {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.gradient-animation {
+    background: linear-gradient(-45deg, #4a7c59, #2d5016, #6b8e23, #8fbc8f);
+    background-size: 400% 400%;
+    animation: gradient-shift 3s ease infinite;
+}

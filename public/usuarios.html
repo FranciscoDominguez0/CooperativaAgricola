@@ -385,6 +385,16 @@
     </div>
 
     <!-- Scripts -->
+    <script>
+        // Redirigir al dashboard con la sección de usuarios activa
+        // Los usuarios ahora están integrados en el dashboard
+        if (window.location.pathname.includes('usuarios.html')) {
+            // Guardar en sessionStorage que queremos ver la sección de usuarios
+            sessionStorage.setItem('activeSection', 'usuarios');
+            // Redirigir al dashboard
+            window.location.href = 'dashboard.html';
+        }
+    </script>
     <script src="js/usuarios.js"></script>
 </body>
 </html>

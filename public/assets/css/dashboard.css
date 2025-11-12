@@ -70,6 +70,8 @@ body {
 .sidebar-nav {
     flex: 1;
     padding: 1rem 0;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .nav-item {
@@ -101,6 +103,11 @@ body {
     font-size: 1.2rem;
     width: 20px;
     text-align: center;
+}
+
+/* Asegurar que todos los nav-items sean visibles */
+.sidebar-nav .nav-item:last-child {
+    margin-bottom: 0.5rem;
 }
 
 .sidebar-footer {

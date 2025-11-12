@@ -1,0 +1,388 @@
+/* Estilos para Cooperativa Agrícola La Pintada */
+/* Tema: Agricultura y Naturaleza */
+
+:root {
+    --verde-primario: #2d5016;
+    --verde-secundario: #4a7c59;
+    --verde-claro: #8bc34a;
+    --amarillo-trigo: #ffc107;
+    --marron-tierra: #8d6e63;
+    --beige-claro: #f5f5dc;
+    --blanco-puro: #ffffff;
+    --gris-texto: #333333;
+    --rojo-error: #f44336;
+    --sombra: rgba(0, 0, 0, 0.1);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, var(--verde-claro) 0%, var(--verde-secundario) 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gris-texto);
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Fondo decorativo con iconos de agricultura */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.1) 2px, transparent 2px),
+        radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 2px, transparent 2px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.container {
+    background: var(--blanco-puro);
+    border-radius: 20px;
+    box-shadow: 0 20px 40px var(--sombra);
+    overflow: hidden;
+    width: 100%;
+    max-width: 900px;
+    min-height: 600px;
+    display: flex;
+    position: relative;
+}
+
+/* Panel lateral decorativo */
+.side-panel {
+    background: linear-gradient(45deg, var(--verde-primario), var(--verde-secundario));
+    color: var(--blanco-puro);
+    padding: 40px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+}
+
+.side-panel::before {
+    content: '🌱';
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.8;
+}
+
+.side-panel h1 {
+    font-size: 2.5rem;
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.side-panel p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+/* Área principal del formulario */
+.form-area {
+    flex: 1;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.form-container {
+    max-width: 400px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.form-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--verde-primario);
+    font-size: 2rem;
+    font-weight: 600;
+}
+
+.form-subtitle {
+    text-align: center;
+    margin-bottom: 30px;
+    color: var(--gris-texto);
+    font-size: 1rem;
+}
+
+/* Estilos del formulario */
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--verde-primario);
+    font-weight: 500;
+    font-size: 0.95rem;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: var(--blanco-puro);
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--verde-claro);
+    box-shadow: 0 0 0 3px rgba(139, 195, 74, 0.1);
+    transform: translateY(-2px);
+}
+
+.form-group input::placeholder {
+    color: #999;
+    font-style: italic;
+}
+
+/* Botones */
+.btn {
+    width: 100%;
+    padding: 15px;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-primary {
+    background: linear-gradient(45deg, var(--verde-primario), var(--verde-claro));
+    color: var(--blanco-puro);
+    margin-bottom: 15px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(45, 80, 22, 0.3);
+}
+
+.btn-secondary {
+    background: transparent;
+    color: var(--verde-secundario);
+    border: 2px solid var(--verde-secundario);
+}
+
+.btn-secondary:hover {
+    background: var(--verde-secundario);
+    color: var(--blanco-puro);
+    transform: translateY(-2px);
+}
+
+/* Enlaces */
+.link {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.link a {
+    color: var(--verde-secundario);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.link a:hover {
+    color: var(--verde-primario);
+    text-decoration: underline;
+}
+
+/* Mensajes de alerta */
+.alert {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 500;
+    text-align: center;
+    display: none;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-info {
+    background: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* Loading spinner */
+.loading {
+    display: none;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.spinner {
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--verde-claro);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Iconos decorativos */
+.icon {
+    display: inline-block;
+    margin-right: 8px;
+    font-size: 1.2em;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+        margin: 20px;
+        max-width: none;
+        min-height: auto;
+    }
+    
+    .side-panel {
+        padding: 30px 20px;
+        min-height: 200px;
+    }
+    
+    .side-panel h1 {
+        font-size: 2rem;
+    }
+    
+    .side-panel::before {
+        font-size: 60px;
+    }
+    
+    .form-area {
+        padding: 30px 20px;
+    }
+    
+    .form-title {
+        font-size: 1.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        margin: 10px;
+        border-radius: 15px;
+    }
+    
+    .side-panel {
+        padding: 20px;
+        min-height: 150px;
+    }
+    
+    .side-panel h1 {
+        font-size: 1.5rem;
+    }
+    
+    .side-panel::before {
+        font-size: 40px;
+    }
+    
+    .form-area {
+        padding: 20px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .btn {
+        padding: 12px;
+    }
+}
+
+/* Animaciones de entrada */
+@keyframes slideInLeft {
+    from {
+        transform: translateX(-100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+.side-panel {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.form-area {
+    animation: slideInRight 0.8s ease-out;
+}
+
+/* Efectos hover para elementos interactivos */
+.form-group input:hover,
+.form-group select:hover {
+    border-color: var(--verde-claro);
+}
+
+/* Estilos para el select de rol */
+select option {
+    padding: 10px;
+    background: var(--blanco-puro);
+    color: var(--gris-texto);
+}
+
+/* Mejoras visuales adicionales */
+.form-container {
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.95);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}

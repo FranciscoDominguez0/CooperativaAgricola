@@ -55,6 +55,10 @@
                 <i class="fas fa-chart-pie"></i>
                 <span>Reportes</span>
             </div>
+            <div class="nav-item" data-section="usuarios">
+                <i class="fas fa-user-cog"></i>
+                <span>Usuarios</span>
+            </div>
         </nav>
         
         <div class="sidebar-footer">
@@ -619,6 +623,47 @@
                     </div>
                 </div>
             </section>
+
+            <!-- Usuarios Section -->
+            <section class="content-section" id="usuariosSection">
+                <div class="socios-section">
+                    <div class="section-header">
+                        <h2 class="section-title">
+                            <i class="fas fa-user-cog"></i>
+                            Gestión de Usuarios
+                        </h2>
+                        <div class="section-actions">
+                            <input type="text" id="searchUsuariosInput" class="search-input" placeholder="Buscar usuarios...">
+                            <button class="btn btn-primary" id="addUsuarioBtn">
+                                <i class="fas fa-plus"></i> Agregar Usuario
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="table-container">
+                        <table class="table" id="usuariosTable">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Correo</th>
+                                    <th>Rol</th>
+                                    <th>Estado</th>
+                                    <th>Fecha de Registro</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usuariosTableBody">
+                                <!-- Los datos se cargarán aquí -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="pagination" id="usuariosPagination">
+                        <!-- La paginación se generará aquí -->
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
 
@@ -1033,6 +1078,65 @@
                 <div class="modal-buttons">
                     <button type="button" class="btn btn-secondary" id="cancelPagoBtn">Cancelar</button>
                     <button type="submit" class="btn btn-primary" id="savePagoBtn">Guardar Pago</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal para agregar/editar usuario -->
+    <div class="modal" id="usuarioModal">
+        <div class="modal-content">
+            <h3 id="usuarioModalTitle">Agregar Nuevo Usuario</h3>
+            <form id="usuarioForm">
+                <input type="hidden" id="usuarioId" name="id_usuario">
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="usuarioNombre">Nombre Completo *</label>
+                        <input type="text" id="usuarioNombre" name="nombre" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuarioCorreo">Correo Electrónico *</label>
+                        <input type="email" id="usuarioCorreo" name="correo" class="form-control" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="usuarioRol">Rol *</label>
+                        <select id="usuarioRol" name="rol" class="form-control" required>
+                            <option value="">Seleccionar rol</option>
+                            <option value="admin">Administrador</option>
+                            <option value="productor">Productor</option>
+                            <option value="cliente">Cliente</option>
+                            <option value="contador">Contador</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuarioEstado">Estado *</label>
+                        <select id="usuarioEstado" name="estado" class="form-control" required>
+                            <option value="activo">Activo</option>
+                            <option value="inactivo">Inactivo</option>
+                            <option value="suspendido">Suspendido</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row" id="passwordRow">
+                    <div class="form-group">
+                        <label for="usuarioContraseña" id="passwordLabel">Contraseña *</label>
+                        <input type="password" id="usuarioContraseña" name="contraseña" class="form-control">
+                        <small class="form-text text-muted" id="passwordHelp">La contraseña debe tener al menos 6 caracteres</small>
+                    </div>
+                    <div class="form-group">
+                        <label for="usuarioConfirmarContraseña" id="confirmPasswordLabel">Confirmar Contraseña *</label>
+                        <input type="password" id="usuarioConfirmarContraseña" name="confirmar_contraseña" class="form-control">
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="btn btn-secondary" id="cancelUsuarioBtn">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" id="saveUsuarioBtn">Guardar</button>
                 </div>
             </form>
         </div>

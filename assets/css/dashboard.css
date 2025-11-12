@@ -31,6 +31,9 @@ body {
 .sidebar-header {
     padding: 1.5rem 1rem;
     border-bottom: 1px solid rgba(212, 255, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .logo {
@@ -70,8 +73,12 @@ body {
 .sidebar-nav {
     flex: 1;
     padding: 1rem 0;
-    overflow-y: auto;
-    overflow-x: hidden;
+}
+
+.nav-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
 }
 
 .nav-item {
@@ -87,27 +94,35 @@ body {
     font-size: 0.9rem;
 }
 
-.nav-item:hover {
+.nav-link {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover,
+.nav-item:hover .nav-link {
     background: rgba(212, 255, 0, 0.1);
     color: #d4ff00;
     border-left-color: #d4ff00;
 }
 
-.nav-item.active {
+.nav-item.active,
+.nav-item.active .nav-link {
     background: rgba(212, 255, 0, 0.15);
     color: #d4ff00;
     border-left-color: #d4ff00;
 }
 
-.nav-item i {
+.nav-item i,
+.nav-link i {
     font-size: 1.2rem;
     width: 20px;
     text-align: center;
-}
-
-/* Asegurar que todos los nav-items sean visibles */
-.sidebar-nav .nav-item:last-child {
-    margin-bottom: 0.5rem;
 }
 
 .sidebar-footer {
@@ -158,6 +173,32 @@ body {
     align-items: center;
     max-width: 1400px;
     margin: 0 auto;
+}
+
+.header-left {
+    flex: 1;
+}
+
+.header-left h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1a3a2e;
+    margin-bottom: 0.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.header-left p {
+    font-size: 0.9rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.header-actions {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
 }
 
 .search-container {

@@ -1,518 +1,718 @@
-// JavaScript para el módulo de Gestión de Usuarios
-// Cooperativa Agrícola La Pintada
+// JavaScript para Gestión de Usuarios - Cooperativa Agrícola La Pintada
 
-let usuarios = [];
-let estadisticas = {};
+let currentUser = null;
+let currentPage = 1;
+let totalPages = 1;
 
-// Inicializar el módulo
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Módulo de usuarios iniciado');
-    cargarDatos();
+    checkSession();
+    setupEventListeners();
 });
 
-// Cargar datos iniciales
-async function cargarDatos() {
+async function checkSession() {
     try {
-        await Promise.all([
-            cargarEstadisticas(),
-            cargarUsuarios()
-        ]);
-    } catch (error) {
-        console.error('Error cargando datos:', error);
-        mostrarNotificacion('Error cargando datos del módulo', 'error');
-    }
-}
-
-// Cargar estadísticas de usuarios
-async function cargarEstadisticas() {
-    try {
-        const response = await fetch('php/usuarios.php?action=estadisticas');
+        console.log('Verificando sesión...');
+        updateDebugInfo('Verificando sesión...');
+        
+        const response = await fetch('php/verificar_sesion.php');
         const data = await response.json();
         
-        if (data.success) {
-            estadisticas = data.estadisticas;
-            actualizarEstadisticas();
-        } else {
-            console.error('Error cargando estadísticas:', data.message);
-            mostrarNotificacion('Error cargando estadísticas: ' + data.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error cargando estadísticas:', error);
-        mostrarNotificacion('Error cargando estadísticas', 'error');
-    }
-}
-
-// Actualizar la interfaz de estadísticas
-function actualizarEstadisticas() {
-    document.getElementById('totalUsuarios').textContent = estadisticas.total_usuarios || 0;
-    document.getElementById('usuariosActivos').textContent = estadisticas.usuarios_activos || 0;
-    document.getElementById('administradores').textContent = estadisticas.administradores || 0;
-    document.getElementById('productores').textContent = estadisticas.productores || 0;
-}
-
-// Cargar lista de usuarios
-async function cargarUsuarios() {
-    try {
-        const response = await fetch('php/usuarios.php?action=lista');
-        const data = await response.json();
+        console.log('Respuesta de sesión:', data);
+        updateDebugInfo('Sesión verificada: ' + (data.authenticated ? 'Autenticado' : 'No autenticado'));
         
-        if (data.success) {
-            usuarios = data.usuarios;
-            mostrarUsuarios(usuarios);
+        if (data.authenticated) {
+            currentUser = data.user;
+            console.log('Usuario autenticado:', currentUser);
+            updateDebugInfo('Cargando página de usuarios...');
+            loadUsuariosPage();
         } else {
-            console.error('Error cargando usuarios:', data.message);
-            mostrarNotificacion('Error cargando usuarios: ' + data.message, 'error');
-            mostrarUsuarios([]);
+            console.log('Usuario no autenticado, redirigiendo a login');
+            updateDebugInfo('Redirigiendo al login...');
+            window.location.href = 'login.html';
         }
     } catch (error) {
-        console.error('Error cargando usuarios:', error);
-        mostrarNotificacion('Error cargando usuarios', 'error');
-        mostrarUsuarios([]);
+        console.error('Error checking session:', error);
+        updateDebugInfo('Error de conexión: ' + error.message);
+        showToast('Error de conexión. Redirigiendo al login...', 'error');
+        setTimeout(() => {
+            window.location.href = 'login.html';
+        }, 2000);
     }
 }
 
-// Mostrar usuarios en la tabla
-function mostrarUsuarios(listaUsuarios) {
+function updateDebugInfo(message) {
+    const debugElement = document.getElementById('debugInfo');
+    if (debugElement) {
+        debugElement.textContent = message;
+    }
+}
+
+// ===== FUNCIONES DE ANIMACIÓN =====
+
+function animatePageTransition(callback) {
+    const tableContainer = document.querySelector('.table-container');
     const tbody = document.getElementById('usuariosTableBody');
     
-    if (listaUsuarios.length === 0) {
-        tbody.innerHTML = `
-            <tr>
-                <td colspan="5" class="loading">
-                    <i class="fas fa-info-circle"></i> No hay usuarios registrados
-                </td>
-            </tr>
-        `;
-        return;
-    }
+    // Animación de salida
+    tbody.style.animation = 'fadeOutDown 0.3s ease-in forwards';
     
-    tbody.innerHTML = listaUsuarios.map(usuario => `
-        <tr>
+    setTimeout(() => {
+        callback();
+        // Animación de entrada
+        tbody.style.animation = 'fadeInUp 0.5s ease-out forwards';
+    }, 300);
+}
+
+function animateModalOpen(modal) {
+    modal.style.display = 'flex';
+    modal.classList.add('modal-backdrop-enter');
+    
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.classList.add('modal-enter');
+    
+    // Animar elementos del formulario
+    const formElements = modal.querySelectorAll('.form-group, .modal-buttons');
+    formElements.forEach((element, index) => {
+        element.style.opacity = '0';
+        element.style.transform = 'translateY(20px)';
+        element.style.transition = 'all 0.3s ease';
+        
+        setTimeout(() => {
+            element.style.opacity = '1';
+            element.style.transform = 'translateY(0)';
+        }, 200 + (index * 100));
+    });
+}
+
+function animateModalClose(modal) {
+    const modalContent = modal.querySelector('.modal-content');
+    modalContent.classList.add('modal-exit');
+    modal.classList.add('modal-backdrop-exit');
+    
+    setTimeout(() => {
+        modal.style.display = 'none';
+        modal.classList.remove('modal-backdrop-enter', 'modal-backdrop-exit');
+        modalContent.classList.remove('modal-enter', 'modal-exit');
+    }, 300);
+}
+
+function animateRowDelete(row) {
+    row.classList.add('table-row-exit');
+    
+    setTimeout(() => {
+        row.remove();
+    }, 300);
+}
+
+function animateRowAdd(row) {
+    row.style.opacity = '0';
+    row.style.transform = 'translateY(20px)';
+    row.style.transition = 'all 0.5s ease';
+    
+    setTimeout(() => {
+        row.style.opacity = '1';
+        row.style.transform = 'translateY(0)';
+    }, 100);
+}
+
+function animateButtonClick(button) {
+    button.classList.add('micro-bounce');
+    setTimeout(() => {
+        button.classList.remove('micro-bounce');
+    }, 300);
+}
+
+function animateSearch() {
+    const searchInput = document.getElementById('searchInput');
+    searchInput.classList.add('pulse-animation');
+    
+    setTimeout(() => {
+        searchInput.classList.remove('pulse-animation');
+    }, 1000);
+}
+
+function animateLoading() {
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.style.display = 'flex';
+        loading.classList.add('animate-fade-in-scale');
+    }
+}
+
+function animateLoadingHide() {
+    const loading = document.getElementById('loading');
+    if (loading) {
+        loading.classList.add('animate-fade-out-scale');
+        setTimeout(() => {
+            loading.style.display = 'none';
+            loading.classList.remove('animate-fade-in-scale', 'animate-fade-out-scale');
+        }, 300);
+    }
+}
+
+function loadUsuariosPage() {
+    animateLoadingHide();
+    document.getElementById('userName').textContent = currentUser.nombre;
+    document.getElementById('userRole').textContent = getRoleDisplay(currentUser.rol);
+    
+    // Cargar usuarios al iniciar la página
+    loadUsuarios();
+}
+
+function getRoleDisplay(role) {
+    const roles = {
+        'admin': 'Administrador',
+        'productor': 'Productor Agrícola',
+        'cliente': 'Cliente',
+        'contador': 'Contador'
+    };
+    return roles[role] || 'Miembro';
+}
+
+async function loadUsuarios(page = 1, search = '') {
+    try {
+        console.log('Cargando usuarios...', { page, search });
+        updateDebugInfo('Cargando datos de usuarios...');
+        
+        const params = new URLSearchParams({
+            page: page,
+            search: search
+        });
+        
+        console.log('Parámetros de búsqueda:', params.toString());
+        
+        const response = await fetch(`php/usuarios.php?${params}`);
+        console.log('Respuesta del servidor:', response.status);
+        updateDebugInfo(`Servidor respondió: ${response.status}`);
+        
+        const data = await response.json();
+        console.log('Datos recibidos:', data);
+        
+        if (data.success) {
+            console.log('Usuarios cargados exitosamente:', data.data);
+            updateDebugInfo(`Usuarios cargados: ${data.data.length} registros`);
+            displayUsuarios(data.data);
+            displayPagination(data.pagination);
+            currentPage = data.pagination.current_page;
+            totalPages = data.pagination.total_pages;
+        } else {
+            console.error('Error del servidor:', data.message);
+            updateDebugInfo('Error: ' + data.message);
+            showToast('Error al cargar usuarios: ' + data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error al cargar usuarios:', error);
+        updateDebugInfo('Error de conexión: ' + error.message);
+        showToast('Error de conexión al cargar usuarios', 'error');
+    }
+}
+
+function displayUsuarios(usuarios) {
+    const tbody = document.getElementById('usuariosTableBody');
+    tbody.innerHTML = '';
+    
+    usuarios.forEach((usuario, index) => {
+        const row = document.createElement('tr');
+        row.className = 'table-row-enter';
+        row.style.setProperty('--row-index', index);
+        row.innerHTML = `
+            <td>${usuario.id_usuario}</td>
+            <td>${usuario.nombre}</td>
+            <td>${usuario.correo}</td>
+            <td><span class="status-badge status-${usuario.rol} smooth-transition">${getRoleDisplay(usuario.rol)}</span></td>
+            <td><span class="status-badge status-${usuario.estado} smooth-transition">${usuario.estado}</span></td>
+            <td>${formatDate(usuario.fecha_registro)}</td>
             <td>
-                <div class="user-info">
-                    <div class="user-avatar">
-                        ${usuario.nombre.charAt(0).toUpperCase()}${usuario.apellido.charAt(0).toUpperCase()}
-                    </div>
-                    <div class="user-details">
-                        <h4>${usuario.nombre} ${usuario.apellido}</h4>
-                        <p>${usuario.email}</p>
-                    </div>
-                </div>
-            </td>
-            <td>
-                <span class="role-badge ${usuario.rol}">${usuario.rol}</span>
-            </td>
-            <td>
-                <span class="status-badge ${usuario.estado}">${usuario.estado}</span>
-            </td>
-            <td>
-                ${usuario.ultimo_acceso ? 
-                    new Date(usuario.ultimo_acceso).toLocaleDateString('es-ES') : 
-                    'Nunca'
-                }
-            </td>
-            <td>
-                <div class="table-actions">
-                    <button class="btn btn-info" onclick="editarUsuario(${usuario.id_usuario})" title="Editar">
+                <div class="actions">
+                    <button class="btn btn-sm btn-secondary btn-animate hover-scale micro-bounce" onclick="editUsuario(${usuario.id_usuario})" title="Editar usuario">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button class="btn btn-warning" onclick="gestionarPermisos(${usuario.id_usuario})" title="Permisos">
-                        <i class="fas fa-shield-alt"></i>
-                    </button>
-                    <button class="btn btn-danger" onclick="eliminarUsuario(${usuario.id_usuario})" title="Eliminar">
+                    <button class="btn btn-sm btn-danger btn-animate hover-scale micro-bounce" onclick="confirmDeleteUsuario(${usuario.id_usuario}, '${usuario.nombre}')" title="Eliminar usuario">
                         <i class="fas fa-trash"></i>
                     </button>
                 </div>
             </td>
-        </tr>
-    `).join('');
+        `;
+        tbody.appendChild(row);
+    });
 }
 
-// Filtrar usuarios
-function filtrarUsuarios() {
-    const filtroRol = document.getElementById('filtroRol').value;
-    const filtroEstado = document.getElementById('filtroEstado').value;
-    
-    let usuariosFiltrados = usuarios;
-    
-    if (filtroRol) {
-        usuariosFiltrados = usuariosFiltrados.filter(usuario => usuario.rol === filtroRol);
-    }
-    
-    if (filtroEstado) {
-        usuariosFiltrados = usuariosFiltrados.filter(usuario => usuario.estado === filtroEstado);
-    }
-    
-    mostrarUsuarios(usuariosFiltrados);
+function formatDate(dateString) {
+    if (!dateString) return '-';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('es-ES', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
 }
 
-// Mostrar modal de nuevo usuario
-function mostrarModalNuevoUsuario() {
-    document.getElementById('modalNuevoUsuario').style.display = 'block';
-    document.getElementById('formNuevoUsuario').reset();
-}
-
-// Crear nuevo usuario
-async function crearUsuario(event) {
-    event.preventDefault();
+function displayPagination(pagination) {
+    const paginationDiv = document.getElementById('pagination');
+    paginationDiv.innerHTML = '';
     
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'pagination-btn btn-animate hover-lift';
+    prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+    prevBtn.disabled = pagination.current_page === 1;
+    prevBtn.onclick = () => {
+        animatePageTransition(() => loadUsuarios(pagination.current_page - 1, document.getElementById('searchInput').value));
+    };
+    paginationDiv.appendChild(prevBtn);
     
-    try {
-        const response = await fetch('php/usuarios.php?action=crear', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            mostrarNotificacion('Usuario creado exitosamente', 'success');
-            cerrarModal('modalNuevoUsuario');
-            cargarDatos(); // Recargar datos
-        } else {
-            mostrarNotificacion('Error: ' + result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error creando usuario:', error);
-        mostrarNotificacion('Error creando usuario', 'error');
-    }
-}
-
-// Editar usuario
-async function editarUsuario(idUsuario) {
-    const usuario = usuarios.find(u => u.id_usuario == idUsuario);
-    if (!usuario) return;
-    
-    // Llenar formulario de edición
-    document.getElementById('editId').value = usuario.id_usuario;
-    document.getElementById('editNombre').value = usuario.nombre;
-    document.getElementById('editApellido').value = usuario.apellido;
-    document.getElementById('editEmail').value = usuario.email;
-    document.getElementById('editTelefono').value = usuario.telefono || '';
-    document.getElementById('editUsername').value = usuario.username;
-    document.getElementById('editRol').value = usuario.rol;
-    document.getElementById('editEstado').value = usuario.estado;
-    document.getElementById('editNotas').value = usuario.notas || '';
-    
-    document.getElementById('modalEditarUsuario').style.display = 'block';
-}
-
-// Actualizar usuario
-async function actualizarUsuario(event) {
-    event.preventDefault();
-    
-    const formData = new FormData(event.target);
-    const data = Object.fromEntries(formData.entries());
-    
-    try {
-        const response = await fetch('php/usuarios.php?action=actualizar', {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            mostrarNotificacion('Usuario actualizado exitosamente', 'success');
-            cerrarModal('modalEditarUsuario');
-            cargarDatos(); // Recargar datos
-        } else {
-            mostrarNotificacion('Error: ' + result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error actualizando usuario:', error);
-        mostrarNotificacion('Error actualizando usuario', 'error');
-    }
-}
-
-// Eliminar usuario
-async function eliminarUsuario(idUsuario) {
-    const usuario = usuarios.find(u => u.id_usuario == idUsuario);
-    if (!usuario) return;
-    
-    if (!confirm(`¿Estás seguro de que quieres eliminar al usuario ${usuario.nombre} ${usuario.apellido}?`)) {
-        return;
-    }
-    
-    try {
-        const response = await fetch(`php/usuarios.php?action=eliminar&id=${idUsuario}`, {
-            method: 'DELETE'
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            mostrarNotificacion('Usuario eliminado exitosamente', 'success');
-            cargarDatos(); // Recargar datos
-        } else {
-            mostrarNotificacion('Error: ' + result.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error eliminando usuario:', error);
-        mostrarNotificacion('Error eliminando usuario', 'error');
-    }
-}
-
-// Gestionar permisos
-async function gestionarPermisos(idUsuario) {
-    const usuario = usuarios.find(u => u.id_usuario == idUsuario);
-    if (!usuario) return;
-    
-    try {
-        const response = await fetch(`php/usuarios.php?action=permisos&id=${idUsuario}`);
-        const data = await response.json();
-        
-        if (data.success) {
-            mostrarModalPermisos(usuario, data.permisos);
-        } else {
-            mostrarNotificacion('Error cargando permisos: ' + data.message, 'error');
-        }
-    } catch (error) {
-        console.error('Error cargando permisos:', error);
-        mostrarNotificacion('Error cargando permisos', 'error');
-    }
-}
-
-// Mostrar modal de permisos
-function mostrarModalPermisos(usuario, permisos) {
-    const modal = document.createElement('div');
-    modal.className = 'modal';
-    modal.id = 'modalPermisos';
-    modal.style.display = 'block';
-    
-    modal.innerHTML = `
-        <div class="modal-content large">
-            <div class="modal-header">
-                <h3><i class="fas fa-shield-alt"></i> Gestión de Permisos - ${usuario.nombre} ${usuario.apellido}</h3>
-                <button class="close" onclick="cerrarModal('modalPermisos')">&times;</button>
-            </div>
-            <div style="padding: 20px;">
-                <p><strong>Rol:</strong> ${usuario.rol}</p>
-                <p><strong>Estado:</strong> ${usuario.estado}</p>
-                
-                <h4>Permisos Actuales:</h4>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin: 15px 0;">
-                    ${permisos.map(permiso => `
-                        <div style="background: #f8f9fa; padding: 10px; border-radius: 5px; border-left: 4px solid #2d5016;">
-                            <strong>${permiso.modulo}</strong><br>
-                            <small>${permiso.permiso}</small>
-                        </div>
-                    `).join('')}
-                </div>
-                
-                <div style="text-align: center; margin-top: 20px;">
-                    <button class="btn btn-primary" onclick="cerrarModal('modalPermisos')">
-                        <i class="fas fa-check"></i> Cerrar
-                    </button>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-}
-
-// Cerrar modal
-function cerrarModal(modalId) {
-    const modal = document.getElementById(modalId);
-    if (modal) {
-        modal.style.display = 'none';
-        if (modalId === 'modalPermisos') {
-            modal.remove();
+    for (let i = 1; i <= pagination.total_pages; i++) {
+        if (i === 1 || i === pagination.total_pages || (i >= pagination.current_page - 2 && i <= pagination.current_page + 2)) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `pagination-btn btn-animate hover-lift ${i === pagination.current_page ? 'active' : ''}`;
+            pageBtn.textContent = i;
+            pageBtn.onclick = () => {
+                animatePageTransition(() => loadUsuarios(i, document.getElementById('searchInput').value));
+            };
+            paginationDiv.appendChild(pageBtn);
+        } else if (i === pagination.current_page - 3 || i === pagination.current_page + 3) {
+            const dots = document.createElement('span');
+            dots.textContent = '...';
+            dots.style.padding = '0.4rem';
+            dots.className = 'smooth-transition';
+            paginationDiv.appendChild(dots);
         }
     }
+    
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'pagination-btn btn-animate hover-lift';
+    nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+    nextBtn.disabled = pagination.current_page === pagination.total_pages;
+    nextBtn.onclick = () => {
+        animatePageTransition(() => loadUsuarios(pagination.current_page + 1, document.getElementById('searchInput').value));
+    };
+    paginationDiv.appendChild(nextBtn);
 }
 
-// Actualizar datos
-async function actualizarDatos() {
-    mostrarNotificacion('Actualizando datos...', 'info');
-    await cargarDatos();
-    mostrarNotificacion('Datos actualizados', 'success');
-}
-
-// Mostrar notificación
-function mostrarNotificacion(mensaje, tipo = 'info') {
-    // Crear elemento de notificación
-    const notification = document.createElement('div');
-    notification.className = `notification ${tipo}`;
-    notification.innerHTML = `
-        <div class="notification-content">
-            <i class="fas fa-${tipo === 'success' ? 'check-circle' : tipo === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
-            <span>${mensaje}</span>
-        </div>
-    `;
-    
-    // Estilos para la notificación
-    notification.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${tipo === 'success' ? '#d4edda' : tipo === 'error' ? '#f8d7da' : '#d1ecf1'};
-        color: ${tipo === 'success' ? '#155724' : tipo === 'error' ? '#721c24' : '#0c5460'};
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-        z-index: 10000;
-        animation: slideInRight 0.3s ease;
-        max-width: 400px;
-    `;
-    
-    // Agregar al DOM
-    document.body.appendChild(notification);
-    
-    // Remover después de 3 segundos
-    setTimeout(() => {
-        notification.style.animation = 'slideOutRight 0.3s ease';
-        setTimeout(() => {
-            if (notification.parentNode) {
-                notification.parentNode.removeChild(notification);
+function setupEventListeners() {
+    // Navegación
+    document.querySelectorAll('.nav-item').forEach(item => {
+        item.addEventListener('click', function() {
+            const section = this.dataset.section;
+            
+            if (section === 'dashboard') {
+                window.location.href = 'dashboard.html';
+                return;
             }
-        }, 300);
-    }, 3000);
-}
+            
+            if (section === 'socios') {
+                window.location.href = 'socios.html';
+                return;
+            }
+            
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
 
-// Cerrar modal al hacer clic fuera
-window.onclick = function(event) {
-    const modales = document.querySelectorAll('.modal');
-    modales.forEach(modal => {
-        if (event.target === modal) {
-            modal.style.display = 'none';
+    // Logout
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'flex';
+    });
+
+    document.getElementById('confirmLogout').addEventListener('click', async function() {
+        try {
+            const response = await fetch('php/logout.php', {
+                method: 'POST'
+            });
+            const data = await response.json();
+
+            if (data.success) {
+                window.location.href = 'index.html';
+            } else {
+                showToast('Error al cerrar sesión', 'error');
+            }
+        } catch (error) {
+            console.error('Error logging out:', error);
+            window.location.href = 'index.html';
+        }
+    });
+
+    document.getElementById('cancelLogout').addEventListener('click', function() {
+        document.getElementById('logoutModal').style.display = 'none';
+    });
+
+    // Búsqueda de usuarios
+    document.getElementById('searchInput').addEventListener('input', function() {
+        const searchTerm = this.value;
+        animateSearch();
+        loadUsuarios(1, searchTerm);
+    });
+
+    // Agregar usuario
+    document.getElementById('addUsuarioBtn').addEventListener('click', function() {
+        animateButtonClick(this);
+        openUsuarioModal();
+    });
+
+    // Formulario de usuario
+    document.getElementById('usuarioForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        await saveUsuario();
+    });
+
+    document.getElementById('cancelBtn').addEventListener('click', function() {
+        closeUsuarioModal();
+    });
+
+    document.getElementById('usuarioModal').addEventListener('click', function(e) {
+        if (e.target === this) {
+            closeUsuarioModal();
         }
     });
 }
 
-// Agregar estilos para las animaciones de notificaciones
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInRight {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
+function openUsuarioModal(usuario = null) {
+    const modal = document.getElementById('usuarioModal');
+    const form = document.getElementById('usuarioForm');
+    const title = document.getElementById('modalTitle');
+    const passwordRow = document.getElementById('passwordRow');
+    const passwordInput = document.getElementById('contraseña');
+    const confirmPasswordInput = document.getElementById('confirmar_contraseña');
+    const passwordLabel = document.getElementById('passwordLabel');
+    const confirmPasswordLabel = document.getElementById('confirmPasswordLabel');
+    
+    if (usuario) {
+        // MODO EDICIÓN - Editar usuario existente
+        title.textContent = 'Editar Usuario';
+        console.log('MODO EDICIÓN - Estableciendo datos en el formulario:', usuario);
+        
+        // Limpiar formulario primero
+        form.reset();
+        
+        // Establecer datos del usuario
+        document.getElementById('usuarioId').value = usuario.id_usuario;
+        document.getElementById('nombre').value = usuario.nombre;
+        document.getElementById('correo').value = usuario.correo;
+        document.getElementById('rol').value = usuario.rol;
+        document.getElementById('estado').value = usuario.estado;
+        
+        // Hacer campos de contraseña opcionales en edición
+        passwordLabel.innerHTML = 'Contraseña <small>(dejar vacío para no cambiar)</small>';
+        confirmPasswordLabel.innerHTML = 'Confirmar Contraseña <small>(solo si desea cambiar)</small>';
+        passwordInput.removeAttribute('required');
+        confirmPasswordInput.removeAttribute('required');
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+    } else {
+        // MODO CREACIÓN - Agregar nuevo usuario
+        title.textContent = 'Agregar Nuevo Usuario';
+        console.log('MODO CREACIÓN - Limpiando formulario para nuevo usuario');
+        
+        // Limpiar completamente el formulario
+        form.reset();
+        
+        // FORZAR limpieza del campo ID
+        const idField = document.getElementById('usuarioId');
+        if (idField) {
+            idField.value = '';
+            idField.removeAttribute('value');
+            idField.setAttribute('value', '');
+            console.log('Campo ID limpiado y forzado a vacío:', idField.value);
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
+        
+        // Hacer campos de contraseña obligatorios en creación
+        passwordLabel.innerHTML = 'Contraseña *';
+        confirmPasswordLabel.innerHTML = 'Confirmar Contraseña *';
+        passwordInput.setAttribute('required', 'required');
+        confirmPasswordInput.setAttribute('required', 'required');
+        passwordInput.value = '';
+        confirmPasswordInput.value = '';
+        
+        // Establecer valores por defecto
+        const estadoField = document.getElementById('estado');
+        if (estadoField) {
+            estadoField.value = 'activo';
         }
+        
+        console.log('Formulario completamente limpio para nuevo usuario');
     }
     
-    @keyframes slideOutRight {
-        from {
-            transform: translateX(0);
-            opacity: 1;
+    animateModalOpen(modal);
+}
+
+function closeUsuarioModal() {
+    const modal = document.getElementById('usuarioModal');
+    
+    // Limpiar completamente el formulario al cerrar
+    const form = document.getElementById('usuarioForm');
+    if (form) {
+        form.reset();
+        
+        // Limpiar específicamente el campo ID
+        const idField = document.getElementById('usuarioId');
+        if (idField) {
+            idField.value = '';
+            idField.removeAttribute('value');
         }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
+        
+        console.log('Formulario limpiado al cerrar modal');
+    }
+    
+    animateModalClose(modal);
+}
+
+async function saveUsuario() {
+    const form = document.getElementById('usuarioForm');
+    const usuarioId = document.getElementById('usuarioId').value;
+    
+    // VERIFICACIÓN ESTRICTA - Si hay ID es actualización, si no hay ID es creación
+    const isUpdate = usuarioId && usuarioId.trim() !== '';
+    
+    console.log('=== VERIFICACIÓN DE ACCIÓN ===');
+    console.log('UsuarioId value:', usuarioId);
+    console.log('Is Update:', isUpdate);
+    console.log('Acción:', isUpdate ? 'ACTUALIZAR usuario existente' : 'CREAR nuevo usuario');
+    
+    try {
+        const url = 'php/usuarios.php';
+        
+        if (isUpdate) {
+            // ACTUALIZAR: Usar PUT con URL-encoded
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+            for (let [key, value] of formData.entries()) {
+                // Solo agregar contraseña si se proporcionó
+                if ((key === 'contraseña' || key === 'confirmar_contraseña') && !value) {
+                    continue;
+                }
+                params.append(key, value);
+            }
+            
+            console.log('ACTUALIZANDO usuario con ID:', usuarioId);
+            console.log('Params being sent:', params.toString());
+            
+            const response = await fetch(url, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: params
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                closeUsuarioModal();
+                loadUsuarios(currentPage, document.getElementById('searchInput').value);
+                showToast('✏️ Usuario actualizado exitosamente', 'update');
+            } else {
+                showToast('🚨 Error al actualizar usuario: ' + data.message, 'error');
+            }
+        } else {
+            // CREAR: Usar POST con FormData
+            console.log('CREANDO NUEVO USUARIO - No hay ID, es un usuario nuevo');
+            
+            // CREAR FormData SIN el campo id_usuario
+            const formData = new FormData();
+            const formElements = form.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                // EXCLUIR completamente el campo id_usuario
+                if (element.name !== 'id_usuario' && element.name !== '' && element.value) {
+                    formData.append(element.name, element.value);
+                    console.log(`Agregando campo: ${element.name} = ${element.value}`);
+                }
+            });
+            
+            console.log('FormData contents (SIN id_usuario):');
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            
+            const response = await fetch(url, {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                closeUsuarioModal();
+                loadUsuarios(currentPage, document.getElementById('searchInput').value);
+                showToast('🌱 Nuevo usuario agregado exitosamente', 'create');
+            } else {
+                showToast('🚨 Error al agregar usuario: ' + data.message, 'error');
+            }
         }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al guardar el usuario', 'error');
+    }
+}
+
+async function editUsuario(id) {
+    try {
+        console.log('Editando usuario con ID:', id);
+        
+        // Obtener datos completos del usuario desde la base de datos
+        const response = await fetch(`php/usuarios.php?id_usuario=${id}`);
+        const data = await response.json();
+        
+        console.log('Datos recibidos del servidor:', data);
+        
+        if (data.success && data.data) {
+            const usuario = data.data;
+            console.log('Datos del usuario a editar:', usuario);
+            openUsuarioModal(usuario);
+        } else {
+            showToast('Error al cargar los datos del usuario', 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al cargar los datos del usuario', 'error');
+    }
+}
+
+function confirmDeleteUsuario(id, nombre) {
+    const confirmationModal = document.createElement('div');
+    confirmationModal.className = 'confirmation-modal';
+    confirmationModal.id = 'confirmationModal';
+    
+    confirmationModal.innerHTML = `
+        <div class="confirmation-content">
+            <div class="confirmation-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <h3 class="confirmation-title">¿Eliminar Usuario?</h3>
+            <p class="confirmation-message">
+                ¿Estás seguro de que deseas eliminar al usuario <strong>"${nombre}"</strong>?<br>
+                Esta acción no se puede deshacer y se perderán todos los datos asociados.
+            </p>
+            <div class="confirmation-buttons">
+                <button class="btn btn-secondary" id="cancelDeleteBtn">
+                    <i class="fas fa-times"></i> Cancelar
+                </button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">
+                    <i class="fas fa-trash"></i> Sí, Eliminar
+                </button>
+            </div>
+        </div>
+    `;
+    
+    document.body.appendChild(confirmationModal);
+    confirmationModal.style.display = 'flex';
+    
+    document.getElementById('cancelDeleteBtn').addEventListener('click', function() {
+        confirmationModal.remove();
+    });
+    
+    document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
+        await deleteUsuario(id);
+        confirmationModal.remove();
+    });
+    
+    confirmationModal.addEventListener('click', function(e) {
+        if (e.target === confirmationModal) {
+            confirmationModal.remove();
+        }
+    });
+}
+
+async function deleteUsuario(id) {
+    try {
+        // Encontrar la fila a eliminar para animarla
+        const rows = document.querySelectorAll('#usuariosTableBody tr');
+        const rowToDelete = Array.from(rows).find(row => 
+            row.querySelector('td:first-child').textContent === id.toString()
+        );
+        
+        if (rowToDelete) {
+            animateRowDelete(rowToDelete);
+        }
+        
+        // Para DELETE, usar URL-encoded (como socios.php)
+        const params = new URLSearchParams();
+        params.append('id_usuario', id);
+        
+        const response = await fetch('php/usuarios.php', {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: params
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            // Recargar datos después de la animación
+            setTimeout(() => {
+                loadUsuarios(currentPage, document.getElementById('searchInput').value);
+            }, 300);
+            showToast('🗑️ Usuario eliminado exitosamente', 'delete');
+        } else {
+            showToast(data.message, 'error');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Error al eliminar el usuario', 'error');
+    }
+}
+
+function showToast(message, type) {
+    const toast = document.createElement('div');
+    toast.className = `toast ${type} toast-enter`;
+    toast.textContent = message;
+    
+    // Agregar barra de progreso
+    const progressBar = document.createElement('div');
+    progressBar.className = 'toast-progress';
+    toast.appendChild(progressBar);
+    
+    // Agregar efectos especiales según el tipo
+    if (type === 'success' || type === 'create') {
+        toast.classList.add('glow');
+    } else if (type === 'error') {
+        toast.classList.add('pulse');
+    } else if (type === 'warning' || type === 'update') {
+        toast.classList.add('shimmer');
+    } else if (type === 'delete') {
+        toast.classList.add('pulse');
     }
     
-    .notification-content {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
+    document.getElementById('toastContainer').appendChild(toast);
     
-    .user-info {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
+    // Animación de entrada con bounce
+    setTimeout(() => {
+        toast.classList.add('show', 'toast-bounce');
+    }, 100);
     
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 50%;
-        background: linear-gradient(135deg, #2d5016, #4a7c59);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-weight: bold;
-    }
+    // Efecto hover para pausar el timer
+    toast.addEventListener('mouseenter', () => {
+        toast.style.animationPlayState = 'paused';
+        toast.style.transform = 'translateX(-5px) scale(1.02)';
+    });
     
-    .user-details h4 {
-        color: #2d5016;
-        margin-bottom: 5px;
-    }
+    toast.addEventListener('mouseleave', () => {
+        toast.style.animationPlayState = 'running';
+        toast.style.transform = 'translateX(0) scale(1)';
+    });
     
-    .user-details p {
-        color: #6c757d;
-        font-size: 0.9rem;
-    }
+    // Click para cerrar manualmente
+    toast.addEventListener('click', () => {
+        closeToast(toast);
+    });
     
-    .role-badge {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: capitalize;
-    }
+    // Auto-close después de 4 segundos
+    setTimeout(() => {
+        if (toast.parentNode) {
+            closeToast(toast);
+        }
+    }, 4000);
+}
+
+function closeToast(toast) {
+    toast.classList.remove('show', 'toast-bounce');
+    toast.classList.add('toast-exit');
     
-    .role-badge.administrador {
-        background: #dc3545;
-        color: white;
-    }
-    
-    .role-badge.productor {
-        background: #2d5016;
-        color: white;
-    }
-    
-    .role-badge.cliente {
-        background: #17a2b8;
-        color: white;
-    }
-    
-    .role-badge.contador {
-        background: #ffc107;
-        color: #212529;
-    }
-    
-    .status-badge {
-        padding: 5px 12px;
-        border-radius: 20px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        text-transform: capitalize;
-    }
-    
-    .status-badge.activo {
-        background: #d4edda;
-        color: #155724;
-    }
-    
-    .status-badge.inactivo {
-        background: #f8d7da;
-        color: #721c24;
-    }
-    
-    .status-badge.suspendido {
-        background: #fff3cd;
-        color: #856404;
-    }
-    
-    .table-actions {
-        display: flex;
-        gap: 10px;
-    }
-    
-    .table-actions .btn {
-        padding: 8px 12px;
-        font-size: 12px;
-    }
-    
-    .loading {
-        text-align: center;
-        padding: 40px;
-        color: #6c757d;
-    }
-`;
-document.head.appendChild(style);
+    setTimeout(() => {
+        if (toast.parentNode) {
+            toast.remove();
+        }
+    }, 300);
+}
