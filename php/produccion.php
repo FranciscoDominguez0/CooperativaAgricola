@@ -21,15 +21,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             $stats['total_produccion'] = $totalData ? number_format($totalData['total'], 2) : '0';
             $stats['unidad_principal'] = $totalData ? $totalData['unidad'] : 'quintales';
             
-            // Cultivos activos
-            $stmt = $pdo->query("SELECT COUNT(DISTINCT cultivo) as cultivos FROM produccion");
-            $cultivosData = $stmt->fetch();
-            $stats['cultivos_activos'] = $cultivosData ? $cultivosData['cultivos'] : '0';
+            // Cultivos activos: además devolver la lista real para debugging
+            // Usamos DISTINCT sobre TRIM(cultivo) para evitar diferencias por espacios
+            $stmt = $pdo->query("SELECT DISTINCT TRIM(cultivo) as cultivo FROM produccion");
+            $cultivosRows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+            $stats['cultivos_list'] = $cultivosRows;
+            $stats['cultivos_activos'] = is_array($cultivosRows) ? count($cultivosRows) : 0;
             
-            // Productores activos
-            $stmt = $pdo->query("SELECT COUNT(DISTINCT id_socio) as productores FROM produccion");
-            $productoresData = $stmt->fetch();
-            $stats['productores_activos'] = $productoresData ? $productoresData['productores'] : '0';
+            // Productores activos: contar solo los socios que actualmente tienen estado = 'activo'
+            // Además devolver la lista de productores vinculados a producción para debugging
+            $stmt = $pdo->query("SELECT DISTINCT p.id_socio, s.nombre, s.estado FROM produccion p LEFT JOIN socios s ON p.id_socio = s.id_socio");
+            $productoresRows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            $stats['productores_list'] = $productoresRows;
+
+            // Contar solo aquellos cuyo estado en la tabla socios es 'activo' (case-insensitive)
+            $activeCount = 0;
+            foreach ($productoresRows as $row) {
+                $estado = $row['estado'] ?? null;
+                if ($estado !== null && strtolower(trim($estado)) === 'activo') {
+                    $activeCount++;
+                }
+            }
+            $stats['productores_activos'] = $activeCount;
             
             // Calidad premium
             $stmt = $pdo->query("SELECT 
